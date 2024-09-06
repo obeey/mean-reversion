@@ -1,0 +1,30 @@
+{
+  "name": "mean-reversion",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "type": "commonjs",
+  "scripts": {
+    "start": "nodemon --exec ts-node index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/obeey/mean-reversion.git"
+  },
+  "author": "obeeycyc@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/obeey/mean-reversion/issues"
+  },
+  "homepage": "https://github.com/obeey/mean-reversion#readme",
+  "dependencies": {
+    "@uniswap/v2-sdk": "^4.4.1",
+    "ethers": "^6.13.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.4",
+    "nodemon": "^3.1.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  }
+}
