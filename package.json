@@ -5,7 +5,8 @@
   "main": "index.ts",
   "type": "commonjs",
   "scripts": {
-    "start": "nodemon --exec ts-node index.ts"
+    "start": "nodemon --exec ts-node index.ts",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
