@@ -1,52 +1,32 @@
-import { ethers } from "ethers";
-import { ChainId, Token, WETH9, CurrencyAmount } from '@uniswap/sdk-core'
-import { Pair, Route } from '@uniswap/v2-sdk'
-import FARMabi from './abi/FARMWETH.json'
-console.log(`The chainId of mainnet is ${ChainId.MAINNET}.`)
+import eth from "./src/utils/eth";
+import logger from "./src/utils/logger";
 
-const HTTP_PROVIDER_LINK = `https://eth-mainnet.g.alchemy.com/v2/HqMqCcOiNeA_LwLQWHo9ZIgU1V1IG8Q3`;
+const tokenAddress = "0x6db6fdb5182053eecec778afec95e0814172a474"; // FARM
 
-const provider = new ethers.JsonRpcProvider(HTTP_PROVIDER_LINK, ChainId.MAINNET);
-// const signer = provider.getSigner();
+let prevPriceNum: number = NaN;
 
+setInterval(() => {
+  eth.getMidPrice(tokenAddress).then(([tokenPrice, ethPrice]) => {
+    const curNum = Number(ethPrice);
 
-/*
-async function getDecimals(chainId: ChainId, tokenAddress: string): Promise<number> {
-  // Setup provider, import necessary ABI ...
-  const tokenContract = new ethers.Contract(tokenAddress, erc20abi, provider)
-  return tokenContract["decimals"]()
-}
-*/
+    if (Number.isNaN(prevPriceNum)) {
+      prevPriceNum = curNum;
+      return;
+    }
 
-const chainId = ChainId.MAINNET
-const tokenAddress = '0x6db6fdb5182053eecec778afec95e0814172a474' // must be checksummed
-const decimals = 18
+    // const preNum = Number(prevPrice);
 
-const DAI = new Token(chainId, tokenAddress, decimals)
+    if (curNum >= prevPriceNum) {
+      prevPriceNum = curNum;
+      return;
+    }
 
-async function createPair(DAI: Token): Promise<Pair> {
-  const pairAddress = Pair.getAddress(DAI, WETH9[DAI.chainId])
+    const downPercent = (prevPriceNum - curNum) / prevPriceNum;
 
-  // Setup provider, import necessary ABI ...
-  const pairContract = new ethers.Contract(pairAddress, FARMabi, provider)
-  const reserves = await pairContract["getReserves"]()
-  const [reserve0, reserve1] = reserves
+    if (downPercent >= 0.1) {
+      logger.info(`${tokenPrice} ${ethPrice} ${downPercent}`);
+    }
 
-  const tokens = [DAI, WETH9[DAI.chainId]]
-  const [token0, token1] = tokens[0].sortsBefore(tokens[1]) ? tokens : [tokens[1], tokens[0]]
-
-  const pair = new Pair(CurrencyAmount.fromRawAmount(token0, reserve0.toString()), CurrencyAmount.fromRawAmount(token1, reserve1.toString()))
-  return pair
-}
-
-async function main() {
-
-const pair = await createPair(DAI)
-
-const route = new Route([pair], WETH9[DAI.chainId], DAI)
-
-console.log(route.midPrice.toSignificant(6)) // 1901.08
-console.log(route.midPrice.invert().toSignificant(6))
-}
-
-main()
+    prevPriceNum = curNum;
+  });
+}, 12000 * 6);

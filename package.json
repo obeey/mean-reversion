@@ -19,7 +19,8 @@
   "homepage": "https://github.com/obeey/mean-reversion#readme",
   "dependencies": {
     "@uniswap/v2-sdk": "^4.4.1",
-    "ethers": "^6.13.2"
+    "ethers": "^6.13.2",
+    "winston": "^3.14.2"
   },
   "devDependencies": {
     "@types/node": "^22.5.4",
