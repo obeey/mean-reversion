@@ -4,6 +4,8 @@ import logger from "./src/utils/logger";
 const tokenAddress = "0x6db6fdb5182053eecec778afec95e0814172a474"; // FARM
 
 let prevPriceNum: number = NaN;
+let buyNum: number = 0;
+let profile: number = 0.01;
 
 setInterval(() => {
   eth.getMidPrice(tokenAddress).then(([tokenPrice, ethPrice]) => {
@@ -22,9 +24,20 @@ setInterval(() => {
     }
 
     const downPercent = (prevPriceNum - curNum) / prevPriceNum;
+    if (downPercent >= 0.05 && buyNum > 0) {
+      const returnProfile = (buyNum * curNum) / Number(tokenPrice);
+      buyNum = 0;
+      profile += returnProfile;
+      logger.info(`S ${returnProfile} ${profile}`);
+    }
 
     if (downPercent >= 0.1) {
-      logger.info(`${tokenPrice} ${ethPrice} ${downPercent}`);
+      logger.info(`${tokenPrice} ${ethPrice} ${downPercent} `);
+      if (buyNum === 0) {
+        const buyNum = Number(tokenPrice) / 100;
+        profile -= 0.01;
+        logger.info(`B ${buyNum} ${profile}`);
+      }
     }
 
     prevPriceNum = curNum;
