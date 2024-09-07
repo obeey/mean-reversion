@@ -1,47 +1,51 @@
 import eth from "./src/utils/eth";
 import logger from "./src/utils/logger";
+import tokens from "./src/tokens";
 
-const tokenAddress = "0x6db6fdb5182053eecec778afec95e0814172a474"; // FARM
-
-let prevPriceNum: number = NaN;
-let buyNum: number = 0;
 let profile: number = 0.01;
 
 function main() {
   logger.info("Starting profile...");
 
   setInterval(() => {
-    eth.getMidPrice(tokenAddress).then(([tokenPrice, ethPrice]) => {
-      const curNum = Number(ethPrice);
-      if (Number.isNaN(prevPriceNum)) {
-        prevPriceNum = curNum;
-        return;
-      }
+    tokens.forEach((token) => {
+      logger.info(
+        `${token.name} ${token.address} $${token.prevPrice} ${token.buyAmount}`
+      );
 
-      const downPercent = (curNum - prevPriceNum) / prevPriceNum;
-      logger.info(`${tokenPrice} ${ethPrice} ${downPercent} `);
+      eth.getMidPrice(token.address).then(([tokenPrice, ethPrice]) => {
+        const curNum = Number(ethPrice);
+        if (Number.isNaN(token.prevPrice)) {
+          token.prevPrice = curNum;
+          return;
+        }
 
-      // const preNum = Number(prevPrice);
+        const downPercent = (curNum - token.prevPrice) / token.prevPrice;
+        logger.info(`${token.name} ${tokenPrice} ${ethPrice} ${downPercent} `);
 
-      if (curNum >= prevPriceNum) {
-        prevPriceNum = curNum;
-        return;
-      }
+        // const preNum = Number(prevPrice);
 
-      if (downPercent >= 0.05 && buyNum > 0) {
-        const returnProfile = (buyNum * curNum) / Number(tokenPrice);
-        buyNum = 0;
-        profile += returnProfile;
-        logger.info(`S ${returnProfile} ${profile}`);
-      }
+        if (curNum >= token.prevPrice) {
+          token.prevPrice = curNum;
+          return;
+        }
 
-      if (downPercent <= -0.1 && buyNum === 0) {
-        const buyNum = Number(tokenPrice) / 100;
-        profile -= 0.01;
-        logger.info(`B ${buyNum} ${profile}`);
-      }
+        if (downPercent >= 0.05 && token.buyAmount > 0) {
+          const returnProfile = (token.buyAmount * curNum) / Number(tokenPrice);
+          token.buyAmount = 0;
+          profile += returnProfile;
+          logger.info(`S ${token.name} ${returnProfile} ${profile}`);
+        }
 
-      prevPriceNum = curNum;
+        if (downPercent <= -0.1 && token.buyAmount === 0) {
+          const buyEth = profile >= 0.01 ? 0.01 : profile;
+          const buyNum = Number(tokenPrice) * buyEth;
+          profile -= buyEth;
+          logger.info(`B ${token.name} ${buyNum} ${profile}`);
+        }
+
+        token.prevPrice = curNum;
+      });
     });
   }, 12000 * 6);
 }
