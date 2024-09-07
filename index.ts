@@ -23,13 +23,13 @@ function main() {
       );
 
       eth.getMidPrice(token.address).then(([tokenPrice, ethPrice]) => {
-        const curNum = Number(ethPrice);
+        const curPrice = Number(ethPrice);
         if (Number.isNaN(token.prevPrice)) {
-          token.prevPrice = curNum;
+          token.prevPrice = curPrice;
           return;
         }
 
-        const downPercent = (curNum - token.prevPrice) / token.prevPrice;
+        const downPercent = (curPrice - token.prevPrice) / token.prevPrice;
         logger.info(
           `\x1b[34m ${token.name.padEnd(SYMBAL_PAD)} ${tokenPrice
             .toString()
@@ -40,20 +40,29 @@ function main() {
 
         // const preNum = Number(prevPrice);
 
-        if (curNum >= token.prevPrice) {
-          token.prevPrice = curNum;
+        if (curPrice >= token.prevPrice) {
+          if (!Number.isNaN(token.highPrice) && curPrice > token.highPrice) {
+            token.highPrice = curPrice;
+          }
+          token.prevPrice = curPrice;
           return;
         }
 
-        if (downPercent <= -0.05 && token.buyAmount > 0) {
-          const returnProfile = (token.buyAmount * curNum) / Number(tokenPrice);
-          token.buyAmount = 0;
-          profile += returnProfile;
-          logger.info(
-            `\x1b[32m S ${token.name.padEnd(
-              SYMBAL_PAD
-            )} ${returnProfile} ${profile} \x1b[0m`
-          );
+        if (token.buyAmount > 0) {
+          const maxDownPercent = (curPrice - token.highPrice) / token.highPrice;
+          if (maxDownPercent <= -0.05 && token.buyAmount > 0) {
+            const returnProfile =
+              (token.buyAmount * curPrice) / Number(tokenPrice);
+            token.buyAmount = 0;
+            token.highPrice = NaN;
+            profile += returnProfile;
+
+            logger.info(
+              `\x1b[32m S ${token.name.padEnd(
+                SYMBAL_PAD
+              )} ${returnProfile} ${profile} \x1b[0m`
+            );
+          }
         }
 
         if (downPercent <= -0.1 && token.buyAmount === 0) {
@@ -61,6 +70,7 @@ function main() {
           const buyNum = Number(tokenPrice) * buyEth;
           profile -= buyEth;
           token.buyAmount += buyNum;
+          token.highPrice = curPrice;
 
           logger.info(
             `\x1b[31m B ${token.name.padEnd(
@@ -69,7 +79,7 @@ function main() {
           );
         }
 
-        token.prevPrice = curNum;
+        token.prevPrice = curPrice;
       });
     });
   }, 12000 * 6);
