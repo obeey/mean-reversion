@@ -7,39 +7,45 @@ let prevPriceNum: number = NaN;
 let buyNum: number = 0;
 let profile: number = 0.01;
 
-setInterval(() => {
-  eth.getMidPrice(tokenAddress).then(([tokenPrice, ethPrice]) => {
-    const curNum = Number(ethPrice);
+async function main() {
+  logger.info("Starting profile...");
 
-    if (Number.isNaN(prevPriceNum)) {
-      prevPriceNum = curNum;
-      return;
-    }
+  setInterval(() => {
+    eth.getMidPrice(tokenAddress).then(([tokenPrice, ethPrice]) => {
+      const curNum = Number(ethPrice);
 
-    // const preNum = Number(prevPrice);
-
-    if (curNum >= prevPriceNum) {
-      prevPriceNum = curNum;
-      return;
-    }
-
-    const downPercent = (prevPriceNum - curNum) / prevPriceNum;
-    if (downPercent >= 0.05 && buyNum > 0) {
-      const returnProfile = (buyNum * curNum) / Number(tokenPrice);
-      buyNum = 0;
-      profile += returnProfile;
-      logger.info(`S ${returnProfile} ${profile}`);
-    }
-
-    if (downPercent >= 0.1) {
-      logger.info(`${tokenPrice} ${ethPrice} ${downPercent} `);
-      if (buyNum === 0) {
-        const buyNum = Number(tokenPrice) / 100;
-        profile -= 0.01;
-        logger.info(`B ${buyNum} ${profile}`);
+      if (Number.isNaN(prevPriceNum)) {
+        prevPriceNum = curNum;
+        return;
       }
-    }
 
-    prevPriceNum = curNum;
-  });
-}, 12000 * 6);
+      // const preNum = Number(prevPrice);
+
+      if (curNum >= prevPriceNum) {
+        prevPriceNum = curNum;
+        return;
+      }
+
+      const downPercent = (prevPriceNum - curNum) / prevPriceNum;
+      if (downPercent >= 0.05 && buyNum > 0) {
+        const returnProfile = (buyNum * curNum) / Number(tokenPrice);
+        buyNum = 0;
+        profile += returnProfile;
+        logger.info(`S ${returnProfile} ${profile}`);
+      }
+
+      if (downPercent >= 0.1) {
+        logger.info(`${tokenPrice} ${ethPrice} ${downPercent} `);
+        if (buyNum === 0) {
+          const buyNum = Number(tokenPrice) / 100;
+          profile -= 0.01;
+          logger.info(`B ${buyNum} ${profile}`);
+        }
+      }
+
+      prevPriceNum = curNum;
+    });
+  }, 12000 * 6);
+}
+
+main();
