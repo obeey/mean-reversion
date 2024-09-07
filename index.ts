@@ -33,9 +33,9 @@ function main() {
         logger.info(
           `\x1b[34m ${token.name.padEnd(SYMBAL_PAD)} ${tokenPrice
             .toString()
-            .padEnd(PRICE_PAD)} ${ethPrice
+            .padEnd(PRICE_PAD - 4)} ${ethPrice
             .toString()
-            .padEnd(PRICE_PAD)} ${downPercent} \x1b[0m`
+            .padEnd(PRICE_PAD + 4)} ${downPercent} \x1b[0m`
         );
 
         // const preNum = Number(prevPrice);
