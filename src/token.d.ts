@@ -1,7 +1,7 @@
 export interface Token {
   name: string;
   address: string;
-  prevPrice: number;
-  highPrice: number;
+  historyPrice: number[];
+  buyPrice: number;
   buyAmount: number;
 }

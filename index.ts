@@ -1,6 +1,7 @@
 import eth from "./src/utils/eth";
 import logger from "./src/utils/logger";
 import tokens from "./src/tokens";
+import { canBuy, canSell } from "./src/utils/helper";
 
 const SYMBAL_PAD = 8;
 const PRICE_PAD = 15;
@@ -15,21 +16,23 @@ function main() {
       `+++++++++++++++++++++++++++++++ PROFILING(\x1b[33m ${profile} \x1b[0m) +++++++++++++++++++++++++++++++`
     );
 
-    tokens.forEach((token) => {
+    tokens.tokens.forEach((token) => {
       logger.info(
-        `\x1b[35m ${token.name.padEnd(SYMBAL_PAD)} $${token.prevPrice
+        `\x1b[35m ${token.name.padEnd(SYMBAL_PAD)} ${token.historyPrice.length
           .toString()
-          .padEnd(PRICE_PAD)} ${token.buyAmount} \x1b[0m`
+          .padEnd(5)} ${token.buyAmount} \x1b[0m`
       );
 
       eth.getMidPrice(token.address).then(([tokenPrice, ethPrice]) => {
         const curPrice = Number(ethPrice);
-        if (Number.isNaN(token.prevPrice)) {
-          token.prevPrice = curPrice;
-          return;
+
+        token.historyPrice.push(curPrice);
+        if (token.historyPrice.length > tokens.MAX_HISTORY_PRICE_LEN) {
+          token.historyPrice.shift();
         }
 
-        const downPercent = (curPrice - token.prevPrice) / token.prevPrice;
+        const prevPrice = token.historyPrice[token.historyPrice.length - 2];
+        const downPercent = (curPrice - prevPrice) / prevPrice;
         logger.info(
           `\x1b[34m ${token.name.padEnd(SYMBAL_PAD)} ${tokenPrice
             .toString()
@@ -38,23 +41,11 @@ function main() {
             .padEnd(PRICE_PAD + 4)} ${downPercent} \x1b[0m`
         );
 
-        // const preNum = Number(prevPrice);
-
-        if (curPrice >= token.prevPrice) {
-          if (!Number.isNaN(token.highPrice) && curPrice > token.highPrice) {
-            token.highPrice = curPrice;
-          }
-          token.prevPrice = curPrice;
-          return;
-        }
-
         if (token.buyAmount > 0) {
-          const maxDownPercent = (curPrice - token.highPrice) / token.highPrice;
-          if (maxDownPercent <= -0.05 && token.buyAmount > 0) {
-            const returnProfile =
-              (token.buyAmount * curPrice) / Number(tokenPrice);
+          if (canSell(token.historyPrice)) {
+            const returnProfile = token.buyAmount / Number(tokenPrice);
             token.buyAmount = 0;
-            token.highPrice = NaN;
+            token.buyPrice = NaN;
             profile += returnProfile;
 
             logger.info(
@@ -63,14 +54,16 @@ function main() {
               )} ${returnProfile} ${profile} \x1b[0m`
             );
           }
+
+          return;
         }
 
-        if (downPercent <= -0.1 && token.buyAmount === 0) {
+        if (token.buyAmount === 0 && canBuy(token.historyPrice)) {
           const buyEth = profile >= 0.01 ? 0.01 : profile;
           const buyNum = Number(tokenPrice) * buyEth;
           profile -= buyEth;
           token.buyAmount += buyNum;
-          token.highPrice = curPrice;
+          token.buyPrice = curPrice;
 
           logger.info(
             `\x1b[31m B ${token.name.padEnd(
@@ -78,11 +71,9 @@ function main() {
             )} ${buyNum} ${profile} \x1b[0m`
           );
         }
-
-        token.prevPrice = curPrice;
       });
     });
-  }, 12000 * 6);
+  }, 12000);
 }
 
 main();
