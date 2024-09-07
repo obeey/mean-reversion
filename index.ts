@@ -45,7 +45,7 @@ function main() {
           return;
         }
 
-        if (downPercent >= 0.05 && token.buyAmount > 0) {
+        if (downPercent <= -0.05 && token.buyAmount > 0) {
           const returnProfile = (token.buyAmount * curNum) / Number(tokenPrice);
           token.buyAmount = 0;
           profile += returnProfile;
