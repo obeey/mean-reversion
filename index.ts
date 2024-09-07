@@ -50,7 +50,7 @@ function main() {
           token.buyAmount = 0;
           profile += returnProfile;
           logger.info(
-            `\x1b[32mS ${token.name.padEnd(
+            `\x1b[32m S ${token.name.padEnd(
               SYMBAL_PAD
             )} ${returnProfile} ${profile} \x1b[0m`
           );
@@ -60,8 +60,10 @@ function main() {
           const buyEth = profile >= 0.01 ? 0.01 : profile;
           const buyNum = Number(tokenPrice) * buyEth;
           profile -= buyEth;
+          token.buyAmount += buyNum;
+
           logger.info(
-            `\x1b[31mB ${token.name.padEnd(
+            `\x1b[31m B ${token.name.padEnd(
               SYMBAL_PAD
             )} ${buyNum} ${profile} \x1b[0m`
           );
