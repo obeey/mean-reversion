@@ -8,11 +8,11 @@ const PRICE_PAD = 15;
 let profile: number = 0.01;
 
 function main() {
-  logger.info("Starting profile...");
+  logger.info("Start profiling...");
 
   setInterval(() => {
     logger.info(
-      "++++++++++++++++++++++++++++++++++++++ PROFILING... ++++++++++++++++++++++++++++++++++++++"
+      `+++++++++++++++++++++++++++++++ PROFILING(\x1b[33m ${profile} \x1b[0m) +++++++++++++++++++++++++++++++`
     );
 
     tokens.forEach((token) => {
