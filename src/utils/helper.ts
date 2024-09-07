@@ -38,7 +38,7 @@ export function canBuy(historyPrice: number[]): boolean {
   const lowPrice = Math.min(...historyPrice);
   const deltaPrice = highPrice - lowPrice;
   const downPercent = deltaPrice / highPrice;
-  if (downPercent > 0.1) {
+  if (downPercent > 0.5) {
     return true;
   }
 
@@ -51,7 +51,7 @@ export function canSell(historyPrice: number[]): boolean {
   const deltaPrice = highPrice - newestPrice;
   const downPercent = deltaPrice / highPrice;
 
-  if (downPercent > 0.03) {
+  if (downPercent > 0.02) {
     return true;
   }
 

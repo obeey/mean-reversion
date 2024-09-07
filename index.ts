@@ -38,7 +38,7 @@ function main() {
             .toString()
             .padEnd(PRICE_PAD - 4)} ${ethPrice
             .toString()
-            .padEnd(PRICE_PAD + 4)} ${downPercent} \x1b[0m`
+            .padEnd(PRICE_PAD + 4)} ${downPercent * 100} \x1b[0m`
         );
 
         if (token.buyAmount > 0) {

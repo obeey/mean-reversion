@@ -1,6 +1,6 @@
 import { Token } from "./token.d";
 
-const MAX_HISTORY_PRICE_LEN = 25;
+const MAX_HISTORY_PRICE_LEN = 16; // 3min: 15+1. 15*12=180sec
 
 let tokens: Token[] = [
   {
