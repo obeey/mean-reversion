@@ -1,6 +1,7 @@
 import eth from "./src/utils/eth";
 import logger from "./src/utils/logger";
 import tokens from "./src/tokens";
+import { log } from "console";
 
 let profile: number = 0.01;
 
@@ -8,6 +9,10 @@ function main() {
   logger.info("Starting profile...");
 
   setInterval(() => {
+    logger.info(
+      "++++++++++++++++++++++++++++++++++++++ PROFILING... ++++++++++++++++++++++++++++++++++++++"
+    );
+
     tokens.forEach((token) => {
       logger.info(
         `${token.name} ${token.address} $${token.prevPrice} ${token.buyAmount}`

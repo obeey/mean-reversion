@@ -25,6 +25,42 @@ let tokens: Token[] = [
     prevPrice: NaN,
     buyAmount: 0,
   },
+  {
+    name: "BIAO",
+    address: "0x9Fd9278f04f01c6a39a9d1c1CD79f7782C6ADe08",
+    prevPrice: NaN,
+    buyAmount: 0,
+  },
+  {
+    name: "$yawn",
+    address: "0x881d4C8618D68872fA404518B2460eA839A02a6a",
+    prevPrice: NaN,
+    buyAmount: 0,
+  },
+  {
+    name: "BIRDDOG",
+    address: "0xF6Ce4BE313EaD51511215F1874c898239A331E37",
+    prevPrice: NaN,
+    buyAmount: 0,
+  },
+  {
+    name: "EBULL",
+    address: "0x71297312753EA7A2570a5a3278eD70D9a75F4f44",
+    prevPrice: NaN,
+    buyAmount: 0,
+  },
+  {
+    name: "SPX",
+    address: "0xE0f63A424a4439cBE457D80E4f4b51aD25b2c56C",
+    prevPrice: NaN,
+    buyAmount: 0,
+  },
+  {
+    name: "NEMO",
+    address: "0xb60FDF036F2ad584f79525B5da76C5c531283A1B",
+    prevPrice: NaN,
+    buyAmount: 0,
+  },
 ];
 
 export default tokens;
