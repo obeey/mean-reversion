@@ -9,27 +9,30 @@ export function canBuy(historyPrice: number[]): boolean {
     return false;
   }
 
-  const priceDifferences = historyPrice
+  const priceDifferencesPercent = historyPrice
     .map((price, index, array) => {
       if (index === 0) return null; // 第一个元素没有前一个元素
-      return price - array[index - 1];
+      const prevPrice = array[index - 1];
+      return (price - prevPrice) / prevPrice;
     })
     .filter((diff) => diff !== null); // 过滤掉 null 值
 
+  /*
   const newest = priceDifferences.pop();
   if (newest === undefined || 0 > newest) {
     logger.debug(`B Continue down ${newest}`);
     return false;
   }
+    */
 
-  logger.debug(`B Diff: ${priceDifferences}`);
+  logger.debug(`B Diff: ${priceDifferencesPercent}`);
 
-  const allZero = priceDifferences.every((num) => num === 0);
+  const allZero = priceDifferencesPercent.every((num) => num === 0);
   if (allZero) {
     return false;
   }
 
-  const priceMa = priceDifferences
+  const priceMa = priceDifferencesPercent
     .map((priceDiff, index, array) => {
       if (index < MA) return null;
       let sum = 0;
@@ -54,7 +57,12 @@ export function canBuy(historyPrice: number[]): boolean {
   const downPercent = deltaPrice / highPrice;
   logger.debug(`B H ${highPrice} L ${lowPrice} -${downPercent * 100}%`);
 
-  if (downPercent > 0.05) {
+  const lastMa = priceMa.pop();
+  if (
+    downPercent > 0.05 &&
+    lastMa !== undefined &&
+    Math.abs(lastMa) < 0.00003
+  ) {
     return true;
   }
 
