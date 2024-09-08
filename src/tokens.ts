@@ -73,6 +73,20 @@ let tokens: Token[] = [
     buyPrice: NaN,
     buyAmount: 0,
   },
+  {
+    name: "FAC",
+    address: "0x1a3A8Cf347b2bF5890D3D6A1B981c4f4432C8661",
+    historyPrice: [],
+    buyPrice: NaN,
+    buyAmount: 0,
+  },
+  {
+    name: "WUKONG",
+    address: "0x132B96b1152bb6Be197501E8220A74D3e63E4682",
+    historyPrice: [],
+    buyPrice: NaN,
+    buyAmount: 0,
+  },
 ];
 
 export default { tokens, MAX_HISTORY_PRICE_LEN };
