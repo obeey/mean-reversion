@@ -64,6 +64,8 @@ function main() {
           profile -= buyEth;
           token.buyAmount += buyNum;
           token.buyPrice = curPrice;
+          token.historyPrice.length = 0;
+          token.historyPrice.push(curPrice);
 
           logger.info(
             `\x1b[31m B ${token.name.padEnd(
