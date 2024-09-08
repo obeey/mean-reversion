@@ -1,4 +1,4 @@
-import { createLogger, format, transports, Logger } from "winston";
+import { createLogger, format, transports, Logger, level } from "winston";
 
 const { combine, timestamp, printf } = format;
 
@@ -20,7 +20,7 @@ const logger: Logger = createLogger({
     // - Write all logs with importance level of `info` or less to `combined.log`
     new transports.File({ filename: "error.log", level: "error" }),
     new transports.File({ filename: "combined.log" }),
-    new transports.Console(),
+    new transports.Console({ level: "debug" }),
   ],
 });
 

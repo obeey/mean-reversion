@@ -1,7 +1,11 @@
+import logger from "./logger";
+
 export function canBuy(historyPrice: number[]): boolean {
-  const MA = 3;
+  const MA = 5;
 
   if (!historyPrice || historyPrice.length < MA + 2) {
+    logger.debug("B history too short");
+
     return false;
   }
 
@@ -13,7 +17,15 @@ export function canBuy(historyPrice: number[]): boolean {
     .filter((diff) => diff !== null); // 过滤掉 null 值
 
   const newest = priceDifferences.pop();
-  if (!newest || 0 > newest) {
+  if (newest === undefined || 0 > newest) {
+    logger.debug(`B Continue down ${newest}`);
+    return false;
+  }
+
+  logger.debug(`B Diff: ${priceDifferences}`);
+
+  const allZero = priceDifferences.every((num) => num === 0);
+  if (allZero) {
     return false;
   }
 
@@ -29,6 +41,8 @@ export function canBuy(historyPrice: number[]): boolean {
     })
     .filter((diff) => diff !== null); // 过滤掉 null 值
 
+  logger.debug(`B MA: ${priceMa}`);
+
   const allLessThanOrEqualToZero = priceMa.every((num) => num <= 0);
   if (!allLessThanOrEqualToZero) {
     return false;
@@ -38,7 +52,9 @@ export function canBuy(historyPrice: number[]): boolean {
   const lowPrice = Math.min(...historyPrice);
   const deltaPrice = highPrice - lowPrice;
   const downPercent = deltaPrice / highPrice;
-  if (downPercent > 0.5) {
+  logger.debug(`B H ${highPrice} L ${lowPrice} -${downPercent * 100}%`);
+
+  if (downPercent > 0.05) {
     return true;
   }
 
@@ -51,6 +67,7 @@ export function canSell(historyPrice: number[]): boolean {
   const deltaPrice = highPrice - newestPrice;
   const downPercent = deltaPrice / highPrice;
 
+  logger.debug(`S H ${highPrice} L ${newestPrice} -${downPercent * 100}%`);
   if (downPercent > 0.02) {
     return true;
   }
