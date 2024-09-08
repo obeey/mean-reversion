@@ -1,4 +1,5 @@
 import logger from "./logger";
+import tokens from "../tokens";
 
 export function canBuy(historyPrice: number[]): boolean {
   const MA = 5;
@@ -70,6 +71,10 @@ export function canBuy(historyPrice: number[]): boolean {
 }
 
 export function canSell(historyPrice: number[]): boolean {
+  if (historyPrice.length < tokens.MAX_HISTORY_PRICE_LEN) {
+    return false;
+  }
+
   const newestPrice = historyPrice[historyPrice.length - 1];
   const highPrice = Math.max(...historyPrice);
   const deltaPrice = highPrice - newestPrice;
