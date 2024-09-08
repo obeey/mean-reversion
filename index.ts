@@ -20,13 +20,16 @@ function main() {
       logger.info(
         `\x1b[34m ${token.name.padEnd(SYMBAL_PAD)} ${token.historyPrice.length
           .toString()
-          .padEnd(5)} ${token.buyAmount.toString().padEnd(SYMBAL_PAD)} ${
+          .padEnd(5)} ${token.buyAmount.toString().padEnd(SYMBAL_PAD + 2)} ${
           token.buyPrice
         } \x1b[0m`
       );
 
       eth.getMidPrice(token.address).then(([tokenPrice, ethPrice]) => {
         const curPrice = Number(ethPrice);
+        if (!Number.isNaN(token.highPrice) && token.highPrice < curPrice) {
+          token.highPrice = curPrice;
+        }
 
         token.historyPrice.push(curPrice);
         if (token.historyPrice.length > tokens.MAX_HISTORY_PRICE_LEN) {
@@ -40,14 +43,15 @@ function main() {
             .toString()
             .padEnd(PRICE_PAD - 4)} ${ethPrice
             .toString()
-            .padEnd(PRICE_PAD + 4)} ${downPercent * 100} \x1b[0m`
+            .padEnd(PRICE_PAD + 4)} ${downPercent * 100}% \x1b[0m`
         );
 
         if (token.buyAmount > 0) {
-          if (canSell(token.historyPrice, token.buyPrice)) {
+          if (canSell(token.historyPrice, token.buyPrice, token.highPrice)) {
             const returnProfile = token.buyAmount / Number(tokenPrice);
             token.buyAmount = 0;
             token.buyPrice = NaN;
+            token.highPrice = NaN;
             profile += returnProfile;
 
             logger.info(
@@ -66,6 +70,7 @@ function main() {
           profile -= buyEth;
           token.buyAmount += buyNum;
           token.buyPrice = curPrice;
+          token.highPrice = curPrice;
           token.historyPrice.length = 0;
           token.historyPrice.push(curPrice);
 

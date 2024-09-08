@@ -70,13 +70,17 @@ export function canBuy(historyPrice: number[]): boolean {
   return false;
 }
 
-export function canSell(historyPrice: number[], buyPrice: number): boolean {
+export function canSell(
+  historyPrice: number[],
+  buyPrice: number,
+  highPrice: number
+): boolean {
   if (historyPrice.length < tokens.MAX_HISTORY_PRICE_LEN) {
     return false;
   }
 
   const newestPrice = historyPrice[historyPrice.length - 1];
-  const highPrice = Math.max(...historyPrice);
+  // const highPrice = Math.max(...historyPrice);
   const deltaPrice = highPrice - newestPrice;
   const downPercent = deltaPrice / highPrice;
 

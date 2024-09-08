@@ -3,5 +3,6 @@ export interface Token {
   address: string;
   historyPrice: number[];
   buyPrice: number;
+  highPrice: number;
   buyAmount: number;
 }
