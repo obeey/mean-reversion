@@ -6,7 +6,7 @@ import { canBuy, canSell } from "./src/utils/helper";
 const SYMBAL_PAD = 8;
 const PRICE_PAD = 15;
 
-let profile: number = 0.01;
+let profile: number = 0.03;
 
 function main() {
   logger.info("Start profiling...");
@@ -20,7 +20,9 @@ function main() {
       logger.info(
         `\x1b[34m ${token.name.padEnd(SYMBAL_PAD)} ${token.historyPrice.length
           .toString()
-          .padEnd(5)} ${token.buyAmount} \x1b[0m`
+          .padEnd(5)} ${token.buyAmount.toString().padEnd(SYMBAL_PAD)} ${
+          token.buyPrice
+        } \x1b[0m`
       );
 
       eth.getMidPrice(token.address).then(([tokenPrice, ethPrice]) => {
@@ -42,7 +44,7 @@ function main() {
         );
 
         if (token.buyAmount > 0) {
-          if (canSell(token.historyPrice)) {
+          if (canSell(token.historyPrice, token.buyPrice)) {
             const returnProfile = token.buyAmount / Number(tokenPrice);
             token.buyAmount = 0;
             token.buyPrice = NaN;

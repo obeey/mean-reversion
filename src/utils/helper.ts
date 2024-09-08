@@ -28,8 +28,8 @@ export function canBuy(historyPrice: number[]): boolean {
 
   logger.debug(`B Diff: ${priceDifferencesPercent}`);
 
-  const allZero = priceDifferencesPercent.every((num) => num === 0);
-  if (allZero) {
+  const allLargerOrEqualZero = priceDifferencesPercent.every((num) => num >= 0);
+  if (allLargerOrEqualZero) {
     return false;
   }
 
@@ -59,10 +59,10 @@ export function canBuy(historyPrice: number[]): boolean {
   logger.debug(`B H ${highPrice} L ${lowPrice} -${downPercent * 100}%`);
 
   const lastMa = priceMa.pop();
+  const variance = calculateVariance(priceDifferencesPercent.slice(-5));
   if (
     downPercent > 0.05 &&
-    lastMa !== undefined &&
-    Math.abs(lastMa) < 0.00003
+    ((lastMa !== undefined && lastMa > 0.005) || variance < 1)
   ) {
     return true;
   }
@@ -70,7 +70,7 @@ export function canBuy(historyPrice: number[]): boolean {
   return false;
 }
 
-export function canSell(historyPrice: number[]): boolean {
+export function canSell(historyPrice: number[], buyPrice: number): boolean {
   if (historyPrice.length < tokens.MAX_HISTORY_PRICE_LEN) {
     return false;
   }
@@ -94,8 +94,9 @@ export function canSell(historyPrice: number[]): boolean {
     .filter((diff) => diff !== null);
 
   const priceVariance = calculateVariance(priceDifferences);
-  logger.debug(`S Price Variance: ${priceVariance}`);
-  if (priceVariance < 1) {
+  const profilePercent = (buyPrice - newestPrice) / buyPrice;
+  logger.debug(`S Price Variance: ${priceVariance} ${profilePercent}`);
+  if (profilePercent > 0.01 && priceVariance < 1) {
     return true;
   }
 
