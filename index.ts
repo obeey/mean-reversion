@@ -18,7 +18,7 @@ function main() {
 
     tokens.tokens.forEach((token) => {
       logger.info(
-        `\x1b[35m ${token.name.padEnd(SYMBAL_PAD)} ${token.historyPrice.length
+        `\x1b[34m ${token.name.padEnd(SYMBAL_PAD)} ${token.historyPrice.length
           .toString()
           .padEnd(5)} ${token.buyAmount} \x1b[0m`
       );
@@ -34,7 +34,7 @@ function main() {
         const prevPrice = token.historyPrice[token.historyPrice.length - 2];
         const downPercent = (curPrice - prevPrice) / prevPrice;
         logger.info(
-          `\x1b[34m ${token.name.padEnd(SYMBAL_PAD)} ${tokenPrice
+          `\x1b[35m ${token.name.padEnd(SYMBAL_PAD)} ${tokenPrice
             .toString()
             .padEnd(PRICE_PAD - 4)} ${ethPrice
             .toString()
