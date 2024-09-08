@@ -80,7 +80,37 @@ export function canSell(historyPrice: number[]): boolean {
     return true;
   }
 
+  const priceDifferences = historyPrice
+    .map((price, index, array) => {
+      if (index === 0) return null;
+      const prevPrice = array[index - 1];
+      return price - prevPrice;
+    })
+    .filter((diff) => diff !== null);
+
+  const priceVariance = calculateVariance(priceDifferences);
+  logger.debug(`S Price Variance: ${priceVariance}`);
+  if (priceVariance < 1) {
+    return true;
+  }
+
   return false;
+}
+
+function calculateVariance(numbers: number[]): number {
+  if (numbers.length === 0) return 0;
+
+  // 计算平均值
+  const mean = numbers.reduce((sum, value) => sum + value, 0) / numbers.length;
+
+  // 计算每个元素与平均值的差的平方，并求平均
+  const variance =
+    numbers.reduce((sum, value) => {
+      const diff = value - mean;
+      return sum + diff * diff;
+    }, 0) / numbers.length;
+
+  return variance;
 }
 
 function main() {
