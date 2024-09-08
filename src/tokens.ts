@@ -87,6 +87,34 @@ let tokens: Token[] = [
     buyPrice: NaN,
     buyAmount: 0,
   },
+  {
+    name: "DOGE",
+    address: "0x1121acc14c63f3c872bfca497d10926a6098aac5",
+    historyPrice: [],
+    buyPrice: NaN,
+    buyAmount: 0,
+  },
+  {
+    name: "HARRIS",
+    address: "0x155788dd4b3ccd955a5b2d461c7d6504f83f71fa",
+    historyPrice: [],
+    buyPrice: NaN,
+    buyAmount: 0,
+  },
+  {
+    name: "MOON",
+    address: "0x446e30f35aab8bd4267139559e526af349c14aff",
+    historyPrice: [],
+    buyPrice: NaN,
+    buyAmount: 0,
+  },
+  {
+    name: "PEIPEI",
+    address: "0x3ffeea07a27fab7ad1df5297fa75e77a43cb5790",
+    historyPrice: [],
+    buyPrice: NaN,
+    buyAmount: 0,
+  },
 ];
 
 export default { tokens, MAX_HISTORY_PRICE_LEN };
