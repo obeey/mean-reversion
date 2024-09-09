@@ -64,7 +64,7 @@ function main() {
         const prevPrice = token.historyPrice[token.historyPrice.length - 2];
         const downPercent = ((curPrice - prevPrice) / prevPrice) * 100;
         const tradeProfilePercent =
-          ((token.buyPrice - curPrice) / token.buyPrice) * 100;
+          ((curPrice - token.buyPrice) / token.buyPrice) * 100;
         logger.info(
           `\x1b[35m ${token.name.padEnd(SYMBAL_PAD)} ${tokenPrice
             .toString()
