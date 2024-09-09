@@ -80,12 +80,18 @@ export function canSell(
   buyPrice: number,
   highPrice: number
 ): boolean {
+  const newestPrice = historyPrice[historyPrice.length - 1];
+
+  const profilePercent = (newestPrice - buyPrice) / buyPrice;
+  if (profilePercent > 0.08) {
+    logger.info(`S Large return ${(profilePercent * 100).toPrecision(4)}%`);
+    return true;
+  }
+
   if (historyPrice.length < tokens.MAX_HISTORY_PRICE_LEN) {
     return false;
   }
 
-  const newestPrice = historyPrice[historyPrice.length - 1];
-  // const highPrice = Math.max(...historyPrice);
   const deltaPrice = highPrice - newestPrice;
   const downPercent = deltaPrice / highPrice;
 
@@ -103,7 +109,6 @@ export function canSell(
     .filter((diff) => diff !== null);
 
   const priceVariance = calculateVariance(priceDifferences);
-  const profilePercent = (newestPrice - buyPrice) / buyPrice;
   logger.debug(
     `S Price Variance: ${priceVariance} ${(profilePercent * 100).toPrecision(
       4
