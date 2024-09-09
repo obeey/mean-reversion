@@ -61,7 +61,9 @@ export function canBuy(historyPrice: number[]): boolean {
   const variance = calculateVariance(priceDifferencesPercent.slice(-5));
 
   logger.debug(
-    `B H ${highPrice} L ${lowPrice} -${downPercent * 100}% ${variance}`
+    `B H ${highPrice} L ${lowPrice} -${(downPercent * 100).toPrecision(
+      4
+    )}% ${variance}`
   );
   if (
     downPercent > 0.05 &&
@@ -101,8 +103,12 @@ export function canSell(
     .filter((diff) => diff !== null);
 
   const priceVariance = calculateVariance(priceDifferences);
-  const profilePercent = ((buyPrice - newestPrice) / buyPrice) * 100;
-  logger.debug(`S Price Variance: ${priceVariance} ${profilePercent}%`);
+  const profilePercent = (buyPrice - newestPrice) / buyPrice;
+  logger.debug(
+    `S Price Variance: ${priceVariance} ${(profilePercent * 100).toPrecision(
+      4
+    )}%`
+  );
   if (profilePercent > 0.01 && priceVariance < 1) {
     return true;
   }
