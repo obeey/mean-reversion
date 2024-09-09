@@ -2,12 +2,9 @@ import eth from "./src/utils/eth";
 import logger from "./src/utils/logger";
 import tokens from "./src/tokens";
 import { canBuy, canSell } from "./src/utils/helper";
+import constants from "./src/constants";
 
-const SYMBAL_PAD = 8;
-const PRICE_PAD = 15;
-
-const INIT_PROFILE = 0.03;
-let profile: number = INIT_PROFILE;
+let profile: number = constants.INIT_PROFILE;
 
 function main() {
   logger.info("Start profiling...");
@@ -26,7 +23,7 @@ function main() {
         ) + profile;
 
     const totalReturn = (
-      ((curProfile - INIT_PROFILE) / INIT_PROFILE) *
+      ((curProfile - constants.INIT_PROFILE) / constants.INIT_PROFILE) *
       100
     ).toPrecision(2);
 
@@ -34,20 +31,20 @@ function main() {
       `+++++++++++++++++++++++++++++++ PROFILING(\x1b[33m ${profile
         .toString()
         .padEnd(
-          PRICE_PAD
+          constants.PRICE_PAD
         )} ${totalReturn}% \x1b[0m) +++++++++++++++++++++++++++++++`
     );
 
     tokens.tokens.forEach((token) => {
       logger.info(
-        `\x1b[34m ${token.name.padEnd(SYMBAL_PAD)} ${token.historyPrice.length
-          .toString()
-          .padEnd(5)} ${token.buyAmount
+        `\x1b[34m ${token.name.padEnd(
+          constants.SYMBAL_PAD
+        )} ${token.historyPrice.length.toString().padEnd(5)} ${token.buyAmount
           .toPrecision(4)
           .toString()
-          .padEnd(SYMBAL_PAD + 2)} ${token.buyPrice
+          .padEnd(constants.SYMBAL_PAD + 2)} ${token.buyPrice
           .toString()
-          .padEnd(PRICE_PAD)} ${token.highPrice} \x1b[0m`
+          .padEnd(constants.PRICE_PAD)} ${token.highPrice} \x1b[0m`
       );
 
       eth.getMidPrice(token.address).then(([tokenPrice, ethPrice]) => {
@@ -66,17 +63,17 @@ function main() {
         const tradeProfilePercent =
           ((curPrice - token.buyPrice) / token.buyPrice) * 100;
         logger.info(
-          `\x1b[35m ${token.name.padEnd(SYMBAL_PAD)} ${tokenPrice
+          `\x1b[35m ${token.name.padEnd(constants.SYMBAL_PAD)} ${tokenPrice
             .toString()
-            .padEnd(PRICE_PAD - 4)} ${ethPrice
+            .padEnd(constants.PRICE_PAD - 4)} ${ethPrice
             .toString()
-            .padEnd(PRICE_PAD + 4)} ${downPercent
+            .padEnd(constants.PRICE_PAD + 4)} ${downPercent
             .toPrecision(4)
             .toString()
-            .padStart(PRICE_PAD)}% ${tradeProfilePercent
+            .padStart(constants.PRICE_PAD)}% ${tradeProfilePercent
             .toPrecision(4)
             .toString()
-            .padStart(PRICE_PAD)}% \x1b[0m`
+            .padStart(constants.PRICE_PAD)}% \x1b[0m`
         );
 
         if (token.buyAmount > 0) {
@@ -89,7 +86,7 @@ function main() {
 
             logger.info(
               `\x1b[32m S ${token.name.padEnd(
-                SYMBAL_PAD
+                constants.SYMBAL_PAD
               )} ${returnProfile} ${profile} \x1b[0m`
             );
           }
@@ -98,7 +95,10 @@ function main() {
         }
 
         if (token.buyAmount === 0 && canBuy(token.historyPrice)) {
-          const buyEth = profile >= 0.01 ? 0.01 : profile;
+          const buyEth =
+            profile >= constants.TRADE_AMOUNT
+              ? constants.TRADE_AMOUNT
+              : profile;
           const buyNum = Number(tokenPrice) * buyEth;
           profile -= buyEth;
           token.buyAmount += buyNum;
@@ -109,7 +109,7 @@ function main() {
 
           logger.info(
             `\x1b[31m B ${token.name.padEnd(
-              SYMBAL_PAD
+              constants.SYMBAL_PAD
             )} ${buyNum} ${profile} \x1b[0m`
           );
         }
