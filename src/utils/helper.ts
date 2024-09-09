@@ -103,7 +103,7 @@ export function canSell(
     .filter((diff) => diff !== null);
 
   const priceVariance = calculateVariance(priceDifferences);
-  const profilePercent = (buyPrice - newestPrice) / buyPrice;
+  const profilePercent = (newestPrice - buyPrice) / buyPrice;
   logger.debug(
     `S Price Variance: ${priceVariance} ${(profilePercent * 100).toPrecision(
       4
