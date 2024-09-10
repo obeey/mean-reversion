@@ -3,7 +3,9 @@ import tokens from "../tokens";
 import { Token } from "../token";
 import constants from "../constants";
 
-export function canBuy(historyPrice: number[]): boolean {
+let profile: number = constants.INIT_PROFILE;
+
+function canBuy(historyPrice: number[]): boolean {
   const MA = 5;
 
   if (!historyPrice || historyPrice.length < MA + 2) {
@@ -77,7 +79,7 @@ export function canBuy(historyPrice: number[]): boolean {
   return false;
 }
 
-export function canSell(token: Token): boolean {
+function canSell(token: Token): boolean {
   const historyPrice = token.historyPrice;
   const buyPrice = token.buyPrice;
   const highPrice = token.highPrice;
@@ -150,6 +152,26 @@ function calculateVariance(numbers: number[]): number {
   return variance;
 }
 
+function getInitProfileTest() {
+  return constants.INIT_PROFILE;
+}
+
+function getProfileTest() {
+  return profile;
+}
+
+function addProfileTest(delta: number) {
+  profile += delta;
+}
+
+function subProfileTest(delta: number) {
+  profile -= delta;
+}
+
+function addProfileMainnet(delta: number) {}
+
+function subProfileMainnet(delta: number) {}
+
 function main() {
   const historyPrice = [
     100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 35,
@@ -158,3 +180,12 @@ function main() {
 }
 
 // main();
+
+export default {
+  canBuy,
+  canSell,
+  getInitProfile: getInitProfileTest,
+  getProfile: getProfileTest,
+  addProfile: addProfileTest,
+  subProfile: subProfileTest,
+};

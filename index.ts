@@ -1,15 +1,16 @@
 import eth from "./src/utils/eth";
 import logger from "./src/utils/logger";
 import tokens from "./src/tokens";
-import { canBuy, canSell } from "./src/utils/helper";
+import helpers from "./src/utils/helper";
 import constants from "./src/constants";
-
-let profile: number = constants.INIT_PROFILE;
+import { profile } from "console";
 
 function main() {
   logger.info("Start profiling...");
 
   setInterval(() => {
+    const profile = helpers.getProfile();
+
     const curProfile =
       tokens.tokens
         .filter((token) => token.buyAmount > 0)
@@ -77,13 +78,15 @@ function main() {
         );
 
         if (token.buyAmount > 0) {
-          if (canSell(token)) {
+          if (helpers.canSell(token)) {
             const returnProfile = token.buyAmount / Number(tokenPrice);
             token.buyAmount = 0;
             token.buyPrice = NaN;
             token.buyTimestamp = NaN;
             token.highPrice = NaN;
-            profile += returnProfile;
+            helpers.addProfile(returnProfile);
+
+            eth.sellToken(token.address, token.buyAmount.toString());
 
             logger.info(
               `\x1b[32m S ${token.name.padEnd(
@@ -95,7 +98,7 @@ function main() {
           return;
         }
 
-        if (token.buyAmount === 0 && canBuy(token.historyPrice)) {
+        if (token.buyAmount === 0 && helpers.canBuy(token.historyPrice)) {
           const buyEth =
             profile >= constants.TRADE_AMOUNT
               ? constants.TRADE_AMOUNT
@@ -110,13 +113,15 @@ function main() {
             return;
           }
 
-          profile -= buyEth;
+          helpers.subProfile(buyEth);
           token.buyAmount += buyNum;
           token.buyPrice = curPrice;
           token.buyTimestamp = Date.now();
           token.highPrice = curPrice;
           token.historyPrice.length = 0;
           token.historyPrice.push(curPrice);
+
+          eth.buyToken(token.address, buyNum.toString());
 
           logger.info(
             `\x1b[31m B ${token.name.padEnd(
