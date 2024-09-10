@@ -1,3 +1,4 @@
+import fs from "fs";
 import { ethers } from "ethers";
 import {
   ChainId,
@@ -11,6 +12,7 @@ import { Pair, Route, Trade } from "@uniswap/v2-sdk";
 import poolabi from "../abi/uniswap-pool.abi.json";
 import erc20abi from "../abi/erc20.abi.json";
 import constants from "../constants";
+import logger from "./logger";
 
 async function getDecimals(
   chainId: ChainId,
@@ -71,18 +73,23 @@ async function getMidPrice(tokenAddress: string): Promise<[string, string]> {
   ];
 }
 
-async function buyTokenMainnet(tokenAddress: string, amountIn: string) {
+// amountInETH = ETH
+async function buyTokenMainnet(tokenAddress: string, amountInETH: string) {
   const decimals = await getDecimals(ChainId.MAINNET, tokenAddress);
   const token = new Token(ChainId.MAINNET, tokenAddress, decimals);
 
-  // See the Fetching Data guide to learn how to get Pair data
+  const amountInWei = ethers.parseEther(amountInETH);
+  const balanceWei = await getEthBalance();
+  const amountInWeiStr = (
+    balanceWei >= amountInWei ? amountInWei : balanceWei
+  ).toString();
   const pair = await createPair(token);
 
   const route = new Route([pair], WETH9[token.chainId], token);
 
   const trade = new Trade(
     route,
-    CurrencyAmount.fromRawAmount(WETH9[token.chainId], amountIn),
+    CurrencyAmount.fromRawAmount(WETH9[token.chainId], amountInWeiStr),
     TradeType.EXACT_INPUT
   );
 
@@ -102,22 +109,21 @@ async function buyTokenMainnet(tokenAddress: string, amountIn: string) {
     .then((rawTxn) => {
       //Returns a Promise which resolves to the transaction.
       constants.wallet.sendTransaction(rawTxn).then((trans) => {
-        console.log(
-          " - Transaction is mined - " + "\n" + "Transaction Hash:",
-          trans.hash +
-            "\n" +
-            "Block Number: " +
-            trans.blockNumber +
-            "\n" +
-            "Navigate to https://etherscan.io/tx/" +
-            trans.hash,
-          "to see your transaction"
-        );
+        getErc20Balanceof(tokenAddress).then((balance) => {
+          const amountOut = ethers.formatUnits(balance, decimals);
+          logger.info(
+            ` - Mined : ${trans.hash} Block Number: ${
+              trans.blockNumber
+            } Swap ${ethers.formatEther(amountInWeiStr)}ETH for ${amountOut}`
+          );
+        });
       });
     });
 }
 
-async function sellTokenMainnet(tokenAddress: string, amountIn: string) {
+async function sellTokenMainnet(tokenAddress: string) {
+  const amountIn = await getErc20Balanceof(tokenAddress);
+
   const decimals = await getDecimals(ChainId.MAINNET, tokenAddress);
   const token = new Token(ChainId.MAINNET, tokenAddress, decimals);
 
@@ -148,16 +154,13 @@ async function sellTokenMainnet(tokenAddress: string, amountIn: string) {
     .then((rawTxn) => {
       //Returns a Promise which resolves to the transaction.
       constants.wallet.sendTransaction(rawTxn).then((trans) => {
-        console.log(
-          " - Transaction is mined - " + "\n" + "Transaction Hash:",
-          trans.hash +
-            "\n" +
-            "Block Number: " +
-            trans.blockNumber +
-            "\n" +
-            "Navigate to https://etherscan.io/tx/" +
-            trans.hash,
-          "to see your transaction"
+        logger.info(
+          ` - Mined : ${trans.hash} Block Number: ${
+            trans.blockNumber
+          } Swap ${ethers.formatUnits(
+            amountIn,
+            decimals
+          )} for ${ethers.formatEther(amountOutMin)}ETH`
         );
       });
     });
@@ -165,6 +168,34 @@ async function sellTokenMainnet(tokenAddress: string, amountIn: string) {
 
 async function buyTokenTest(tokenAddress: string, amountIn: string) {}
 async function sellTokenTest(tokenAddress: string, amountIn: string) {}
+
+function getErc20Contract(tokenAddress: string) {
+  const tokenAbi = fs.readFileSync("src/abi/erc20.abi.json").toString();
+  const tokenContract = new ethers.Contract(
+    tokenAddress,
+    tokenAbi,
+    constants.provider
+  );
+
+  return tokenContract;
+}
+
+async function getErc20Balanceof(tokenAddress: string) {
+  return getErc20Contract(tokenAddress)
+    .getFunction("balanceOf")
+    .call(constants.wallet.address);
+}
+
+function getEthBalance() {
+  return constants.provider.getBalance(constants.wallet.address);
+}
+
+function main() {
+  buyTokenMainnet("0xb60fdf036f2ad584f79525b5da76c5c531283a1b", "0.001");
+  sellTokenMainnet("0xb60fdf036f2ad584f79525b5da76c5c531283a1b");
+}
+
+// main();
 
 export default {
   getMidPrice: getMidPrice,
