@@ -100,6 +100,15 @@ function main() {
               ? constants.TRADE_AMOUNT
               : profile;
           const buyNum = Number(tokenPrice) * buyEth;
+          if (buyNum <= 0) {
+            logger.info(
+              `No money buy ${token.name.padEnd(
+                constants.SYMBAL_PAD
+              )} ${profile}`
+            );
+            return;
+          }
+
           profile -= buyEth;
           token.buyAmount += buyNum;
           token.buyPrice = curPrice;
