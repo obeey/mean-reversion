@@ -5,4 +5,5 @@ export interface Token {
   buyPrice: number;
   highPrice: number;
   buyAmount: number;
+  buyTimestamp: number;
 }

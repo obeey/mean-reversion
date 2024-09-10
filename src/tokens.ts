@@ -10,6 +10,7 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyTimestamp: NaN,
   },
   {
     name: "COLON",
@@ -18,6 +19,7 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyTimestamp: NaN,
   },
   {
     name: "GME",
@@ -26,6 +28,7 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyTimestamp: NaN,
   },
   {
     name: "Neiro",
@@ -34,6 +37,7 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyTimestamp: NaN,
   },
   {
     name: "BIAO",
@@ -42,6 +46,7 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyTimestamp: NaN,
   },
   {
     name: "$yawn",
@@ -50,6 +55,7 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyTimestamp: NaN,
   },
   {
     name: "BIRDDOG",
@@ -58,6 +64,7 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyTimestamp: NaN,
   },
   {
     name: "EBULL",
@@ -66,6 +73,7 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyTimestamp: NaN,
   },
   {
     name: "SPX",
@@ -74,6 +82,7 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyTimestamp: NaN,
   },
   {
     name: "NEMO",
@@ -82,6 +91,7 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyTimestamp: NaN,
   },
   {
     name: "FAC",
@@ -90,6 +100,7 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyTimestamp: NaN,
   },
   {
     name: "WUKONG",
@@ -98,6 +109,7 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyTimestamp: NaN,
   },
   {
     name: "DOGE",
@@ -106,6 +118,7 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyTimestamp: NaN,
   },
   {
     name: "HARRIS",
@@ -114,6 +127,7 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyTimestamp: NaN,
   },
   {
     name: "MOON",
@@ -122,6 +136,7 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyTimestamp: NaN,
   },
   {
     name: "PEIPEI",
@@ -130,6 +145,7 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyTimestamp: NaN,
   },
 ];
 

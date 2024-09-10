@@ -6,6 +6,7 @@ const PRICE_PAD = 15;
 
 const INIT_PROFILE = 0.03;
 const TRADE_AMOUNT = 0.03;
+const MAX_TOKEN_HOLD_SECONDS = 3600;
 
 export default {
   HTTP_PROVIDER_LINK,
@@ -13,4 +14,5 @@ export default {
   PRICE_PAD,
   INIT_PROFILE,
   TRADE_AMOUNT,
+  MAX_TOKEN_HOLD_SECONDS,
 };

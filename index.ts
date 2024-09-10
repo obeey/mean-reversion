@@ -77,10 +77,11 @@ function main() {
         );
 
         if (token.buyAmount > 0) {
-          if (canSell(token.historyPrice, token.buyPrice, token.highPrice)) {
+          if (canSell(token)) {
             const returnProfile = token.buyAmount / Number(tokenPrice);
             token.buyAmount = 0;
             token.buyPrice = NaN;
+            token.buyTimestamp = NaN;
             token.highPrice = NaN;
             profile += returnProfile;
 
@@ -112,6 +113,7 @@ function main() {
           profile -= buyEth;
           token.buyAmount += buyNum;
           token.buyPrice = curPrice;
+          token.buyTimestamp = Date.now();
           token.highPrice = curPrice;
           token.historyPrice.length = 0;
           token.historyPrice.push(curPrice);

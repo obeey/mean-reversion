@@ -1,5 +1,7 @@
 import logger from "./logger";
 import tokens from "../tokens";
+import { Token } from "../token";
+import constants from "../constants";
 
 export function canBuy(historyPrice: number[]): boolean {
   const MA = 5;
@@ -75,11 +77,18 @@ export function canBuy(historyPrice: number[]): boolean {
   return false;
 }
 
-export function canSell(
-  historyPrice: number[],
-  buyPrice: number,
-  highPrice: number
-): boolean {
+export function canSell(token: Token): boolean {
+  const historyPrice = token.historyPrice;
+  const buyPrice = token.buyPrice;
+  const highPrice = token.highPrice;
+  const buyTimestamp = token.buyTimestamp;
+
+  const diffSeconds = (Date.now() - buyTimestamp) / 1000;
+  if (diffSeconds > constants.MAX_TOKEN_HOLD_SECONDS) {
+    logger.info(`S ${token.name} hold to long: ${diffSeconds} seconds`);
+    return true;
+  }
+
   const newestPrice = historyPrice[historyPrice.length - 1];
 
   const profilePercent = (newestPrice - buyPrice) / buyPrice;
