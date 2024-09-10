@@ -97,12 +97,16 @@ export function canSell(token: Token): boolean {
     return true;
   }
 
-  if (historyPrice.length < tokens.MAX_HISTORY_PRICE_LEN) {
-    return false;
-  }
-
   const deltaPrice = highPrice - newestPrice;
   const downPercent = deltaPrice / highPrice;
+
+  if (historyPrice.length < tokens.MAX_HISTORY_PRICE_LEN) {
+    // Down too much.
+    if (downPercent > 0.03) {
+      return true;
+    }
+    return false;
+  }
 
   logger.debug(`S H ${highPrice} L ${newestPrice} -${downPercent * 100}%`);
   if (downPercent > 0.01) {
