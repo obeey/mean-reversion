@@ -1,21 +1,31 @@
-import fs from "fs";
-import { ethers } from "ethers";
-import {
+const {
   ChainId,
   Token,
   WETH9,
   CurrencyAmount,
   TradeType,
   Percent,
-} from "@uniswap/sdk-core";
-import { Pair, Route, Trade } from "@uniswap/v2-sdk";
+} = require("@uniswap/sdk-core");
+
+const { ethers } = require("ethers");
+const UNISWAP = require("@uniswap/sdk");
+const fs = require("fs");
+const {
+  WETH,
+  Fetcher,
+  Pair,
+  Route,
+  Trade,
+  TokenAmount,
+} = require("@uniswap/v2-sdk");
+
 import poolabi from "../abi/uniswap-pool.abi.json";
 import erc20abi from "../abi/erc20.abi.json";
 import constants from "../constants";
 import logger from "./logger";
 
 async function getDecimals(
-  chainId: ChainId,
+  chainId: typeof ChainId,
   tokenAddress: string
 ): Promise<number> {
   const tokenContract = new ethers.Contract(
@@ -28,7 +38,7 @@ async function getDecimals(
 
 const chainId = ChainId.MAINNET;
 
-async function createPair(token: Token): Promise<Pair> {
+async function createPair(token: typeof Token): Promise<typeof Pair> {
   const pairAddress = Pair.getAddress(token, WETH9[token.chainId]);
 
   // Setup provider, import necessary ABI ...
@@ -76,6 +86,7 @@ async function getMidPrice(tokenAddress: string): Promise<[string, string]> {
 // amountInETH = ETH
 async function buyTokenMainnet(tokenAddress: string, amountInETH: string) {
   const decimals = await getDecimals(ChainId.MAINNET, tokenAddress);
+  logger.info(`decimals ${decimals}`);
   const token = new Token(ChainId.MAINNET, tokenAddress, decimals);
 
   const amountInWei = ethers.parseEther(amountInETH);
@@ -190,12 +201,88 @@ function getEthBalance() {
   return constants.provider.getBalance(constants.wallet.address);
 }
 
-function main() {
-  buyTokenMainnet("0xb60fdf036f2ad584f79525b5da76c5c531283a1b", "0.001");
-  sellTokenMainnet("0xb60fdf036f2ad584f79525b5da76c5c531283a1b");
+/*
+ * @param token0 - token we want
+ * @param token1 - token we have
+ * @param amount - the amount we want
+ */
+async function swapTokens(
+  token0: typeof Token,
+  token1: typeof Token,
+  amount: number,
+  slippage = "50"
+) {
+  try {
+    const pair = await Fetcher.fetchPairData(
+      token0,
+      token1,
+      constants.provider
+    ); //creating instances of a pair
+    // const route = new Route([pair], token, WETH9[token.chainId]);
+    const route = await new Route([pair], token1); // a fully specified path from input token to output token
+    let amountIn = ethers.parseEther(amount.toString()); //helper function to convert ETH to Wei
+    amountIn = amountIn.toString();
+
+    const slippageTolerance = new Percent(slippage, "10000"); // 50 bips, or 0.50% - Slippage tolerance
+
+    const trade = new Trade( //information necessary to create a swap transaction.
+      route,
+      new TokenAmount(token1, amountIn),
+      TradeType.EXACT_INPUT
+    );
+
+    const amountOutMin = trade.minimumAmountOut(slippageTolerance).raw; // needs to be converted to e.g. hex
+    const amountOutMinHex = ethers.BigNumber.from(
+      amountOutMin.toString()
+    ).toHexString();
+    const path = [token1.address, token0.address]; //An array of token addresses
+    const to = constants.wallet.address; // should be a checksummed recipient address
+    const deadline = Math.floor(Date.now() / 1000) + 60 * 20; // 20 minutes from the current Unix time
+    const value = trade.inputAmount.raw; // // needs to be converted to e.g. hex
+    const valueHex = await ethers.BigNumber.from(
+      value.toString()
+    ).toHexString(); //convert to hex string
+
+    //Return a copy of transactionRequest, The default implementation calls checkTransaction and resolves to if it is an ENS name, adds gasPrice, nonce, gasLimit and chainId based on the related operations on Signer.
+    const rawTxn = await constants.UNISWAP_ROUTER_CONTRACT.getFunction(
+      "swapExactETHForTokens"
+    ).call(amountOutMinHex, path, to, deadline, {
+      value: valueHex,
+    });
+
+    //Returns a Promise which resolves to the transaction.
+    let sendTxn = (await constants.wallet).sendTransaction(rawTxn);
+
+    //Resolves to the TransactionReceipt once the transaction has been included in the chain for x confirms blocks.
+    let reciept = (await sendTxn).wait();
+
+    //Logs the information about the transaction it has been mined.
+    if (reciept) {
+      console.log(
+        " - Transaction is mined - " + "\n" + "Transaction Hash:",
+        (await sendTxn).hash +
+          "\n" +
+          "Block Number: " +
+          (await reciept)?.blockNumber +
+          "\n" +
+          "Navigate to https://etherscan.io/tx/" +
+          (await sendTxn).hash,
+        "to see your transaction"
+      );
+    } else {
+      console.log("Error submitting transaction");
+    }
+  } catch (e) {
+    console.log(e);
+  }
 }
 
-// main();
+function main() {
+  buyTokenMainnet("0xb60fdf036f2ad584f79525b5da76c5c531283a1b", "0.001");
+  // sellTokenMainnet("0xb60fdf036f2ad584f79525b5da76c5c531283a1b");
+}
+
+main();
 
 export default {
   getMidPrice: getMidPrice,
