@@ -7,7 +7,6 @@ const {
   Percent,
 } = require("@uniswap/sdk-core");
 
-const { ethers } = require("ethers");
 const UNISWAP = require("@uniswap/sdk");
 const fs = require("fs");
 const {
@@ -18,6 +17,8 @@ const {
   Trade,
   TokenAmount,
 } = require("@uniswap/v2-sdk");
+
+const { ethers } = require("ethers");
 
 import poolabi from "../abi/uniswap-pool.abi.json";
 import erc20abi from "../abi/erc20.abi.json";
@@ -83,17 +84,38 @@ async function getMidPrice(tokenAddress: string): Promise<[string, string]> {
   ];
 }
 
-// amountInETH = ETH
-async function buyTokenMainnet(tokenAddress: string, amountInETH: string) {
-  const decimals = await getDecimals(ChainId.MAINNET, tokenAddress);
-  logger.info(`decimals ${decimals}`);
-  const token = new Token(ChainId.MAINNET, tokenAddress, decimals);
-
+/**
+ *
+ * @param tokenAddress
+ * @param amountInETH
+ * @returns
+ */
+async function buyTokenMainnet(tokenAddress: string, amountInETH: number) {
   const amountInWei = ethers.parseEther(amountInETH);
   const balanceWei = await getEthBalance();
-  const amountInWeiStr = (
-    balanceWei >= amountInWei ? amountInWei : balanceWei
-  ).toString();
+  if (amountInWei >= balanceWei) {
+    logger.error(
+      `B ETH not enough. Except: ${amountInWei} Have: ${balanceWei}`
+    );
+    return;
+  }
+
+  const decimals = await getDecimals(ChainId.MAINNET, tokenAddress);
+  // logger.info(`decimals ${decimals}`);
+  const token = new Token(ChainId.MAINNET, tokenAddress, decimals);
+
+  swapTokens(token, WETH9[token.chainId], amountInETH).then((txn) => {
+    txn?.wait().then((reciept) => {
+      getErc20Balanceof(tokenAddress).then((balance) => {
+        const amountOut = ethers.formatUnits(balance, decimals);
+        logger.info(
+          ` - Mined : ${txn.hash} Block Number: ${txn.blockNumber} fee ${reciept?.fee} Swap ${amountInETH}ETH for ${amountOut}`
+        );
+      });
+    });
+  });
+
+  /*
   const pair = await createPair(token);
 
   const route = new Route([pair], WETH9[token.chainId], token);
@@ -130,13 +152,34 @@ async function buyTokenMainnet(tokenAddress: string, amountInETH: string) {
         });
       });
     });
+  */
 }
 
 async function sellTokenMainnet(tokenAddress: string) {
   const amountIn = await getErc20Balanceof(tokenAddress);
+  if (amountIn === 0) {
+    logger.error(`S No token in account`);
+    return;
+  }
 
   const decimals = await getDecimals(ChainId.MAINNET, tokenAddress);
   const token = new Token(ChainId.MAINNET, tokenAddress, decimals);
+
+  swapTokens(
+    WETH9[token.chainId],
+    token,
+    ethers.formatUnits(amountIn, decimals)
+  ).then((txn) => {
+    txn?.wait().then((reciept) => {
+      logger.info(
+        ` - Mined : ${txn.hash} Block Number: ${txn.blockNumber} fee ${
+          reciept?.fee
+        } Swap ${ethers.formatUnits(amountIn, decimals)} for ETH`
+      );
+    });
+  });
+
+  /*
 
   // See the Fetching Data guide to learn how to get Pair data
   const pair = await createPair(token);
@@ -175,10 +218,11 @@ async function sellTokenMainnet(tokenAddress: string) {
         );
       });
     });
+  */
 }
 
 async function buyTokenTest(tokenAddress: string, amountIn: string) {}
-async function sellTokenTest(tokenAddress: string, amountIn: string) {}
+async function sellTokenTest(tokenAddress: string) {}
 
 function getErc20Contract(tokenAddress: string) {
   const tokenAbi = fs.readFileSync("src/abi/erc20.abi.json").toString();
@@ -191,17 +235,24 @@ function getErc20Contract(tokenAddress: string) {
   return tokenContract;
 }
 
+/*
+ * @return - wei
+ */
 async function getErc20Balanceof(tokenAddress: string) {
   return getErc20Contract(tokenAddress)
     .getFunction("balanceOf")
     .call(constants.wallet.address);
 }
 
+/*
+ * @return - wei
+ */
 function getEthBalance() {
   return constants.provider.getBalance(constants.wallet.address);
 }
 
-/*
+/**
+ *
  * @param token0 - token we want
  * @param token1 - token we have
  * @param amount - the amount we want
@@ -252,6 +303,7 @@ async function swapTokens(
 
     //Returns a Promise which resolves to the transaction.
     let sendTxn = (await constants.wallet).sendTransaction(rawTxn);
+    return sendTxn;
 
     //Resolves to the TransactionReceipt once the transaction has been included in the chain for x confirms blocks.
     let reciept = (await sendTxn).wait();
@@ -278,8 +330,9 @@ async function swapTokens(
 }
 
 function main() {
-  buyTokenMainnet("0xb60fdf036f2ad584f79525b5da76c5c531283a1b", "0.001");
-  // sellTokenMainnet("0xb60fdf036f2ad584f79525b5da76c5c531283a1b");
+  const tokenAddress = "0xb60fdf036f2ad584f79525b5da76c5c531283a1b";
+  buyTokenMainnet(tokenAddress, 0.001);
+  // sellTokenMainnet(tokenAddress);
 }
 
 main();
