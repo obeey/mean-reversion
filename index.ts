@@ -86,7 +86,7 @@ function main() {
             token.highPrice = NaN;
             helpers.addProfile(returnProfile);
 
-            eth.sellToken(token.address, token.buyAmount.toString());
+            eth.sellToken(token.address);
 
             logger.info(
               `\x1b[32m S ${token.name.padEnd(
