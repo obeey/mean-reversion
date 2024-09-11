@@ -7,7 +7,6 @@ const {
   Percent,
 } = require("@uniswap/sdk-core");
 
-const UNISWAP = require("@uniswap/sdk");
 const fs = require("fs");
 const {
   WETH,
@@ -91,7 +90,7 @@ async function getMidPrice(tokenAddress: string): Promise<[string, string]> {
  * @returns
  */
 async function buyTokenMainnet(tokenAddress: string, amountInETH: number) {
-  const amountInWei = ethers.parseEther(amountInETH);
+  const amountInWei = ethers.parseEther(amountInETH.toString());
   const balanceWei = await getEthBalance();
   if (amountInWei >= balanceWei) {
     logger.error(
