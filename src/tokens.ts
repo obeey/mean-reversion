@@ -157,7 +157,7 @@ let tokens: Token[] = [
     buyTimestamp: NaN,
   },
   {
-    name: "Catalorian",
+    name: "CATALORIAN",
     address: "0x8bAF5d75CaE25c7dF6d1E0d26C52d19Ee848301a",
     historyPrice: [],
     buyPrice: NaN,
