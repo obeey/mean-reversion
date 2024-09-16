@@ -6,6 +6,9 @@ import constants from "./src/constants";
 import { profile } from "console";
 
 function main() {
+  // eth.tradetest();
+  // return;
+
   logger.info("Start profiling...");
 
   setInterval(() => {

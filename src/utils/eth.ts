@@ -1,31 +1,21 @@
-const {
+import fs from "fs";
+import { Pair, Route, Trade } from "@uniswap/v2-sdk";
+import {
   ChainId,
   Token,
   WETH9,
   CurrencyAmount,
   TradeType,
   Percent,
-} = require("@uniswap/sdk-core");
-
-const fs = require("fs");
-const {
-  WETH,
-  Fetcher,
-  Pair,
-  Route,
-  Trade,
-  TokenAmount,
-} = require("@uniswap/v2-sdk");
-
-const { ethers } = require("ethers");
-
+} from "@uniswap/sdk-core";
+import { ethers } from "ethers";
 import poolabi from "../abi/uniswap-pool.abi.json";
 import erc20abi from "../abi/erc20.abi.json";
 import constants from "../constants";
 import logger from "./logger";
 
 async function getDecimals(
-  chainId: typeof ChainId,
+  chainId: ChainId,
   tokenAddress: string
 ): Promise<number> {
   const tokenContract = new ethers.Contract(
@@ -38,7 +28,7 @@ async function getDecimals(
 
 const chainId = ChainId.MAINNET;
 
-async function createPair(token: typeof Token): Promise<typeof Pair> {
+async function createPair(token: Token): Promise<Pair> {
   const pairAddress = Pair.getAddress(token, WETH9[token.chainId]);
 
   // Setup provider, import necessary ABI ...
@@ -89,8 +79,8 @@ async function getMidPrice(tokenAddress: string): Promise<[string, string]> {
  * @param amountInETH
  * @returns
  */
-async function buyTokenMainnet(tokenAddress: string, amountInETH: number) {
-  const amountInWei = ethers.parseEther(amountInETH.toString());
+async function buyTokenMainnet(tokenAddress: string, amountInETH: string) {
+  const amountInWei = ethers.parseEther(amountInETH);
   const balanceWei = await getEthBalance();
   if (amountInWei >= balanceWei) {
     logger.error(
@@ -101,7 +91,8 @@ async function buyTokenMainnet(tokenAddress: string, amountInETH: number) {
 
   const decimals = await getDecimals(ChainId.MAINNET, tokenAddress);
   // logger.info(`decimals ${decimals}`);
-  const token = new Token(ChainId.MAINNET, tokenAddress, decimals);
+  // const token = new Token(ChainId.MAINNET, tokenAddress, decimals);
+  const token = new Token(ChainId.MAINNET, tokenAddress, 9);
 
   swapTokens(token, WETH9[token.chainId], amountInETH).then((txn) => {
     txn?.wait().then((reciept) => {
@@ -156,27 +147,25 @@ async function buyTokenMainnet(tokenAddress: string, amountInETH: number) {
 
 async function sellTokenMainnet(tokenAddress: string) {
   const amountIn = await getErc20Balanceof(tokenAddress);
-  if (amountIn === 0) {
+  if (amountIn === undefined || amountIn === "" || amountIn === "0") {
     logger.error(`S No token in account`);
     return;
   }
 
-  const decimals = await getDecimals(ChainId.MAINNET, tokenAddress);
-  const token = new Token(ChainId.MAINNET, tokenAddress, decimals);
+  // const decimals = await getDecimals(ChainId.MAINNET, tokenAddress);
+  const token = new Token(ChainId.MAINNET, tokenAddress, 9);
 
-  swapTokens(
-    WETH9[token.chainId],
-    token,
-    ethers.formatUnits(amountIn, decimals)
-  ).then((txn) => {
-    txn?.wait().then((reciept) => {
-      logger.info(
-        ` - Mined : ${txn.hash} Block Number: ${txn.blockNumber} fee ${
-          reciept?.fee
-        } Swap ${ethers.formatUnits(amountIn, decimals)} for ETH`
-      );
-    });
-  });
+  swapTokens(WETH9[token.chainId], token, ethers.formatUnits(amountIn, 9)).then(
+    (txn) => {
+      txn?.wait().then((reciept) => {
+        logger.info(
+          ` - Mined : ${txn.hash} Block Number: ${txn.blockNumber} fee ${
+            reciept?.fee
+          } Swap ${ethers.formatUnits(amountIn, 9)} for ETH`
+        );
+      });
+    }
+  );
 
   /*
 
@@ -257,12 +246,13 @@ function getEthBalance() {
  * @param amount - the amount we want
  */
 async function swapTokens(
-  token0: typeof Token,
-  token1: typeof Token,
-  amount: number,
+  token0: Token,
+  token1: Token,
+  amount: string,
   slippage = "50"
 ) {
   try {
+    /*
     const pair = await Fetcher.fetchPairData(
       token0,
       token1,
@@ -280,18 +270,35 @@ async function swapTokens(
       new TokenAmount(token1, amountIn),
       TradeType.EXACT_INPUT
     );
+    */
 
-    const amountOutMin = trade.minimumAmountOut(slippageTolerance).raw; // needs to be converted to e.g. hex
+    const token = token0 == WETH9[ChainId.MAINNET] ? token1 : token0;
+    const pair = await createPair(token);
+
+    const route = new Route([pair], WETH9[token.chainId], token);
+
+    const amountIn = ethers.parseEther(amount.toString()); //helper function to convert ETH to Wei
+    const amountInWeiStr = amountIn.toString();
+
+    const slippageTolerance = new Percent(slippage, "10000"); // 50 bips, or 0.50% - Slippage tolerance
+    const trade = new Trade(
+      route,
+      CurrencyAmount.fromRawAmount(WETH9[token.chainId], amountInWeiStr),
+      TradeType.EXACT_INPUT
+    );
+
+    const amountOutMin = trade.minimumAmountOut(slippageTolerance).quotient; // needs to be converted to e.g. hex
+    const amountOutMinHex = ethers.toBeHex(amountOutMin.toString());
+    /*
     const amountOutMinHex = ethers.BigNumber.from(
       amountOutMin.toString()
     ).toHexString();
+    */
     const path = [token1.address, token0.address]; //An array of token addresses
     const to = constants.wallet.address; // should be a checksummed recipient address
     const deadline = Math.floor(Date.now() / 1000) + 60 * 20; // 20 minutes from the current Unix time
-    const value = trade.inputAmount.raw; // // needs to be converted to e.g. hex
-    const valueHex = await ethers.BigNumber.from(
-      value.toString()
-    ).toHexString(); //convert to hex string
+    const value = trade.inputAmount.quotient; // // needs to be converted to e.g. hex
+    const valueHex = ethers.toBeHex(value.toString());
 
     //Return a copy of transactionRequest, The default implementation calls checkTransaction and resolves to if it is an ENS name, adds gasPrice, nonce, gasLimit and chainId based on the related operations on Signer.
     const rawTxn = await constants.UNISWAP_ROUTER_CONTRACT.getFunction(
@@ -328,16 +335,19 @@ async function swapTokens(
   }
 }
 
-function main() {
-  const tokenAddress = "0xb60fdf036f2ad584f79525b5da76c5c531283a1b";
-  buyTokenMainnet(tokenAddress, 0.001);
+function tradetest() {
+  // const tokenAddress = "0xb60fdf036f2ad584f79525b5da76c5c531283a1b"; // NEMO
+  const tokenAddress = "0x132b96b1152bb6be197501e8220a74d3e63e4682"; // WUKONG
+  // const tokenAddress = "0x1121acc14c63f3c872bfca497d10926a6098aac5"; // DOGE
+  buyTokenMainnet(tokenAddress, "0.001");
   // sellTokenMainnet(tokenAddress);
 }
 
-main();
+tradetest();
 
 export default {
   getMidPrice: getMidPrice,
   buyToken: buyTokenTest,
   sellToken: sellTokenTest,
+  tradetest,
 };
