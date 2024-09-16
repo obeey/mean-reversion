@@ -9,13 +9,13 @@ if (!privateKey) {
   throw new Error("私钥未定义，请在 .env 文件中设置 PRIVATE_KEY");
 }
 
-const HTTP_PROVIDER_LINK = `https://eth-mainnet.g.alchemy.com/v2/HqMqCcOiNeA_LwLQWHo9ZIgU1V1IG8Q3`;
+// const HTTP_PROVIDER_LINK = `https://eth-mainnet.g.alchemy.com/v2/HqMqCcOiNeA_LwLQWHo9ZIgU1V1IG8Q3`;
 // const HTTP_PROVIDER_LINK =
 //   "https://eth-mainnet.g.alchemy.com/v2/HqMqCcOiNeA_LwLQWHo9ZIgU1V1IG8Q3";
 // const HTTP_PROVIDER_LINK =
 //   "https://eth-mainnet.g.alchemy.com/v2/hWT7tiQl88VfR5ob5m3XxYUU8CLaoqp7";
 // const HTTP_PROVIDER_LINK = `https://mainnet.infura.io/v3/73eabea1ee6a42be90b28d1f30d12b97`;
-// const HTTP_PROVIDER_LINK = "https://rpc.mevblocker.io";
+const HTTP_PROVIDER_LINK = "https://rpc.mevblocker.io";
 
 const provider = new ethers.JsonRpcProvider(
   HTTP_PROVIDER_LINK,
@@ -49,5 +49,6 @@ export default {
   INIT_PROFILE,
   TRADE_AMOUNT,
   MAX_TOKEN_HOLD_SECONDS,
+  UNISWAP_ROUTER_ADDRESS,
   UNISWAP_ROUTER_CONTRACT,
 };
