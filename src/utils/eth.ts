@@ -423,5 +423,6 @@ export default {
   getMidPrice: getMidPrice,
   buyToken: buyTokenMainnet,
   sellToken: sellTokenMainnet,
+  getEthBalance,
   tradetest,
 };

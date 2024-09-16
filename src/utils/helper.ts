@@ -2,6 +2,8 @@ import logger from "./logger";
 import tokens from "../tokens";
 import { Token } from "../token";
 import constants from "../constants";
+import eth from "./eth";
+import { ethers } from "ethers";
 
 let profile: number = constants.INIT_PROFILE;
 
@@ -152,12 +154,20 @@ function calculateVariance(numbers: number[]): number {
   return variance;
 }
 
-function getInitProfileTest() {
+async function getInitProfileTest() {
   return constants.INIT_PROFILE;
 }
 
-function getProfileTest() {
+async function getInitProfileMamiNet() {
+  return Number(ethers.formatEther(await eth.getEthBalance()));
+}
+
+async function getProfileTest() {
   return profile;
+}
+
+async function getProfileMainnet() {
+  return Number(ethers.formatEther(await eth.getEthBalance()));
 }
 
 function addProfileTest(delta: number) {
@@ -184,8 +194,8 @@ function main() {
 export default {
   canBuy,
   canSell,
-  getInitProfile: getInitProfileTest,
-  getProfile: getProfileTest,
+  getInitProfile: getInitProfileMamiNet,
+  getProfile: getProfileMainnet,
   addProfile: addProfileTest,
   subProfile: subProfileTest,
 };
