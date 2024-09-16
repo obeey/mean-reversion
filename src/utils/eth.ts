@@ -421,7 +421,7 @@ function tradetest() {
 
 export default {
   getMidPrice: getMidPrice,
-  buyToken: buyTokenTest,
-  sellToken: sellTokenTest,
+  buyToken: buyTokenMainnet,
+  sellToken: sellTokenMainnet,
   tradetest,
 };
