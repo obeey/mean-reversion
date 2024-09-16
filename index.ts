@@ -124,7 +124,7 @@ function main() {
             token.historyPrice.length = 0;
             token.historyPrice.push(curPrice);
 
-            eth.buyToken(token.address, buyNum.toString());
+            eth.buyToken(token.address, buyEth.toString());
 
             logger.info(
               `\x1b[31m B ${token.name.padEnd(
