@@ -10,12 +10,13 @@ if (!privateKey) {
 }
 
 // const HTTP_PROVIDER_LINK = `https://eth-mainnet.g.alchemy.com/v2/HqMqCcOiNeA_LwLQWHo9ZIgU1V1IG8Q3`;
-// const HTTP_PROVIDER_LINK =
-//   "https://eth-mainnet.g.alchemy.com/v2/HqMqCcOiNeA_LwLQWHo9ZIgU1V1IG8Q3";
+// const HTTP_PROVIDER_LINK = "https://eth-mainnet.g.alchemy.com/v2/HqMqCcOiNeA_LwLQWHo9ZIgU1V1IG8Q3";
 // const HTTP_PROVIDER_LINK =
 //   "https://eth-mainnet.g.alchemy.com/v2/hWT7tiQl88VfR5ob5m3XxYUU8CLaoqp7";
 // const HTTP_PROVIDER_LINK = `https://mainnet.infura.io/v3/73eabea1ee6a42be90b28d1f30d12b97`;
-const HTTP_PROVIDER_LINK = "https://rpc.mevblocker.io";
+// const HTTP_PROVIDER_LINK = "https://rpc.mevblocker.io";
+// const HTTP_PROVIDER_LINK = "https://eth.llamarpc.com";
+const HTTP_PROVIDER_LINK = "https://eth-pokt.nodies.app";
 
 const provider = new ethers.JsonRpcProvider(
   HTTP_PROVIDER_LINK,
@@ -27,6 +28,7 @@ const SYMBAL_PAD = 10;
 const PRICE_PAD = 15;
 
 const INIT_PROFILE = 0.03;
+const RESERVE_PROFILE = 0.01;
 const TRADE_AMOUNT = 0.01;
 const MAX_TOKEN_HOLD_SECONDS = 3600;
 
@@ -47,6 +49,7 @@ export default {
   SYMBAL_PAD,
   PRICE_PAD,
   INIT_PROFILE,
+  RESERVE_PROFILE,
   TRADE_AMOUNT,
   MAX_TOKEN_HOLD_SECONDS,
   UNISWAP_ROUTER_ADDRESS,

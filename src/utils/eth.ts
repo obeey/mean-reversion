@@ -285,7 +285,7 @@ async function swapTokens(
 
     const amountIn = ethers.parseEther(amount); //helper function to convert ETH to Wei
     const amountInWeiStr = amountIn.toString();
-    logger.info(`Amount in ${amountInWeiStr} wei`);
+    logger.info(`Amount in ${amount} ETH ${amountInWeiStr} wei`);
 
     const slippageTolerance = new Percent(slippage, "10000"); // 50 bips, or 0.50% - Slippage tolerance
     const trade = new Trade(

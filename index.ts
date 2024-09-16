@@ -102,14 +102,20 @@ function main() {
           }
 
           if (token.buyAmount === 0 && helpers.canBuy(token.historyPrice)) {
+            if (profile < constants.RESERVE_PROFILE) {
+              logger.error(
+                `B Profile too low ${profile} for Buy ${token.name}`
+              );
+            }
+
             const buyEth =
               profile >= constants.TRADE_AMOUNT
                 ? constants.TRADE_AMOUNT
                 : profile;
             const buyNum = Number(tokenPrice) * buyEth;
             if (buyNum <= 0) {
-              logger.info(
-                `No money buy ${token.name.padEnd(
+              logger.error(
+                `B No money buy ${token.name.padEnd(
                   constants.SYMBAL_PAD
                 )} ${profile}`
               );
