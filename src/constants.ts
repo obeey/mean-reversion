@@ -23,7 +23,7 @@ const provider = new ethers.JsonRpcProvider(
 );
 const wallet = new ethers.Wallet(privateKey, provider);
 
-const SYMBAL_PAD = 8;
+const SYMBAL_PAD = 10;
 const PRICE_PAD = 15;
 
 const INIT_PROFILE = 0.03;
