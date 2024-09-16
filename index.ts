@@ -8,8 +8,8 @@ import constants from "./src/constants";
 function main() {
   logger.info("Start profiling...");
 
-  setInterval(() => {
-    const profile = helpers.getProfile();
+  setInterval(async () => {
+    const profile = await helpers.getProfile();
 
     const curProfile =
       tokens.tokens
