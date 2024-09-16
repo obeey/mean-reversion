@@ -106,6 +106,7 @@ function main() {
               logger.error(
                 `B Profile too low ${profile} for Buy ${token.name}`
               );
+              return;
             }
 
             const buyEth =
