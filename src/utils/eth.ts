@@ -225,17 +225,17 @@ async function updateGasFee(gasUsed: bigint) {
     return;
   }
   const transactionFee = gasPrice * gasUsed;
-  const feeETH = ethers.parseEther(transactionFee.toString());
-  logger.info(`Gas used ${feeETH}`);
+  const feeETH = ethers.formatEther(transactionFee.toString());
+  logger.info(`Gas used ${feeETH} ETH`);
   helper.subProfile(Number(feeETH));
 }
 
 async function buyTokenTest(tokenAddress: string, amountIn: string) {
-  const GAS_USED = 145832;
+  const GAS_USED = 1458320;
   updateGasFee(BigInt(GAS_USED));
 }
 async function sellTokenTest(tokenAddress: string) {
-  const GAS_USED = 197554;
+  const GAS_USED = 1975540;
   updateGasFee(BigInt(GAS_USED));
 }
 
@@ -437,6 +437,8 @@ function tradetest() {
 }
 
 // tradetest();
+// buyTokenTest("", "");
+// sellTokenTest("");
 
 export default {
   getMidPrice: getMidPrice,
