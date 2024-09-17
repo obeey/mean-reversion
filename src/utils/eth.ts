@@ -400,7 +400,7 @@ async function approveAmountIn(token1: Token, amountIn: bigint) {
     logger.info("Approving tokens...");
     const approveTx = await tokenContract.approve(
       spenderAddress,
-      amountIn.toString()
+      (amountIn * BigInt(100)).toString()
     );
     await approveTx.wait(); // 等待交易确认
     logger.info("Approval transaction confirmed.");
