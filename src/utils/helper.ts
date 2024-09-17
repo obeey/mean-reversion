@@ -194,8 +194,10 @@ function main() {
 export default {
   canBuy,
   canSell,
-  getInitProfile: getInitProfileMamiNet,
-  getProfile: getProfileMainnet,
+  // getInitProfile: getInitProfileMamiNet,
+  // getProfile: getProfileMainnet,
+  getInitProfile: getInitProfileTest,
+  getProfile: getProfileTest,
   addProfile: addProfileTest,
   subProfile: subProfileTest,
 };

@@ -13,6 +13,7 @@ import poolabi from "../abi/uniswap-pool.abi.json";
 import erc20abi from "../abi/erc20.abi.json";
 import constants from "../constants";
 import logger from "./logger";
+import helper from "./helper";
 
 async function getDecimals(
   chainId: ChainId,
@@ -217,8 +218,26 @@ async function sellTokenMainnet(tokenAddress: string) {
   */
 }
 
-async function buyTokenTest(tokenAddress: string, amountIn: string) {}
-async function sellTokenTest(tokenAddress: string) {}
+async function updateGasFee(gasUsed: bigint) {
+  const gasPrice = (await constants.provider.getFeeData()).gasPrice;
+  if (null == gasPrice) {
+    logger.error("B Get gasPrice failed.");
+    return;
+  }
+  const transactionFee = gasPrice * gasUsed;
+  const feeETH = ethers.parseEther(transactionFee.toString());
+  logger.info(`Gas used ${feeETH}`);
+  helper.subProfile(Number(feeETH));
+}
+
+async function buyTokenTest(tokenAddress: string, amountIn: string) {
+  const GAS_USED = 145832;
+  updateGasFee(BigInt(GAS_USED));
+}
+async function sellTokenTest(tokenAddress: string) {
+  const GAS_USED = 197554;
+  updateGasFee(BigInt(GAS_USED));
+}
 
 function getErc20Contract(tokenAddress: string) {
   const tokenAbi = fs.readFileSync("src/abi/erc20.abi.json").toString();
@@ -421,8 +440,10 @@ function tradetest() {
 
 export default {
   getMidPrice: getMidPrice,
-  buyToken: buyTokenMainnet,
-  sellToken: sellTokenMainnet,
+  // buyToken: buyTokenMainnet,
+  // sellToken: sellTokenMainnet,
+  buyToken: buyTokenTest,
+  sellToken: sellTokenTest,
   getEthBalance,
   tradetest,
 };

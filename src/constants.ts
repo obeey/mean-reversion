@@ -27,9 +27,9 @@ const wallet = new ethers.Wallet(privateKey, provider);
 const SYMBAL_PAD = 10;
 const PRICE_PAD = 15;
 
-const INIT_PROFILE = 0.03;
-const RESERVE_PROFILE = 0.01;
-const TRADE_AMOUNT = 0.01;
+const INIT_PROFILE = 0.6;
+const RESERVE_PROFILE = 0.2;
+const TRADE_AMOUNT = 0.5;
 const MAX_TOKEN_HOLD_SECONDS = 3600;
 
 const UNISWAP_ROUTER_ADDRESS = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D";
