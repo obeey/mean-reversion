@@ -102,7 +102,10 @@ function main() {
           }
 
           if (token.buyAmount === 0 && helpers.canBuy(token.historyPrice)) {
-            if (profile < constants.RESERVE_PROFILE) {
+            if (
+              profile <
+              constants.RESERVE_PROFILE + constants.TRADE_AMOUNT_MIN
+            ) {
               logger.error(
                 `B Profile too low ${profile} for Buy ${token.name}`
               );
@@ -110,9 +113,9 @@ function main() {
             }
 
             const buyEth =
-              profile >= constants.TRADE_AMOUNT
+              profile >= constants.TRADE_AMOUNT + constants.RESERVE_PROFILE
                 ? constants.TRADE_AMOUNT
-                : profile;
+                : constants.TRADE_AMOUNT_MIN;
             const buyNum = Number(tokenPrice) * buyEth;
             if (buyNum <= 0) {
               logger.error(
