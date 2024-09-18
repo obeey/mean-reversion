@@ -231,11 +231,11 @@ async function updateGasFee(gasUsed: bigint) {
 }
 
 async function buyTokenTest(tokenAddress: string, amountIn: string) {
-  const GAS_USED = 1458320;
+  const GAS_USED = 145832;
   updateGasFee(BigInt(GAS_USED));
 }
 async function sellTokenTest(tokenAddress: string) {
-  const GAS_USED = 1975540;
+  const GAS_USED = 197554;
   updateGasFee(BigInt(GAS_USED));
 }
 
