@@ -16,7 +16,11 @@ if (!privateKey) {
 // const HTTP_PROVIDER_LINK = `https://mainnet.infura.io/v3/73eabea1ee6a42be90b28d1f30d12b97`;
 // const HTTP_PROVIDER_LINK = "https://rpc.mevblocker.io";
 // const HTTP_PROVIDER_LINK = "https://eth.llamarpc.com";
-const HTTP_PROVIDER_LINK = "https://eth-pokt.nodies.app";
+// const HTTP_PROVIDER_LINK = "https://eth-pokt.nodies.app";
+// const HTTP_PROVIDER_LINK = "https://ethereum-rpc.publicnode.com";
+// const HTTP_PROVIDER_LINK = "https://eth.merkle.io";
+// const HTTP_PROVIDER_LINK = "https://ethereum.rpc.subquery.network/public";
+const HTTP_PROVIDER_LINK = "https://ethereum-rpc.publicnode.com";
 
 const provider = new ethers.JsonRpcProvider(
   HTTP_PROVIDER_LINK,
