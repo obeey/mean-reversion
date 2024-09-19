@@ -131,12 +131,16 @@ function main() {
               let kelly = helpers.getKelly(b, p);
 
               if (kelly > 0.9) {
-                logger.info(`Kelly too high ${kelly}`);
+                logger.info(
+                  `Kelly too high K ${kelly} b ${b} p ${p} W ${TRADE_WIN} C ${TRADE_COUNT}`
+                );
                 kelly = 0.9;
               }
 
               if (kelly < 0.2) {
-                logger.info(`Kelly too low ${kelly}`);
+                logger.info(
+                  `Kelly too low K ${kelly} b ${b} p ${p} W ${TRADE_WIN} C ${TRADE_COUNT}`
+                );
                 kelly = 0.2;
               }
 
