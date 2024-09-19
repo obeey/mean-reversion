@@ -11,9 +11,7 @@ https://endpoints.omniatech.io/v1/eth/mainnet/public
 https://cloudflare-eth.com
 https://ethereum-rpc.publicnode.com
 https://eth.drpc.org
-https://rpc.flashbots.net
 https://rpc.mevblocker.io
-https://rpc.flashbots.net/fast
 https://api.securerpc.com/v1
 https://rpc.mevblocker.io/fast
 https://rpc.payload.de
