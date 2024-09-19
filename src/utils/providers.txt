@@ -1,6 +1,4 @@
 https://eth-pokt.nodies.app
-https://eth-mainnet.nodereal.io/v1/1659dfb40aa24bbb8153a677b98064d7
-https://rpc.ankr.com/eth
 https://rpc.graffiti.farm
 https://eth.api.onfinality.io/public
 https://api.stateless.solutions/ethereum/v1/demo
