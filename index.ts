@@ -164,7 +164,7 @@ function main() {
             logger.info(
               `\x1b[31m B ${token.name.padEnd(
                 constants.SYMBAL_PAD
-              )} ${buyEth} ${kelly} \x1b[0m`
+              )} ${buyEth} ${kelly} p ${p} \x1b[0m`
             );
           }
         });

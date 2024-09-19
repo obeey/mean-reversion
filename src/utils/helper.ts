@@ -219,7 +219,9 @@ function fetchBestProvider() {
     const newProvider = result.url;
     constants.setProvider(newProvider);
     logger.info(
-      `Set provider to ${constants.HTTP_PROVIDER_LINK} ${result.responseTime}ms`
+      `Set provider to ${
+        constants.HTTP_PROVIDER_LINK
+      } ${result.responseTime.toFixed(2)}ms`
     );
   });
 }
