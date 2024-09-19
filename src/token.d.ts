@@ -5,5 +5,8 @@ export interface Token {
   buyPrice: number;
   highPrice: number;
   buyAmount: number;
+  buyEthCost: number;
+  buyGasUsed: string;
+  sellGasUsed: string;
   buyTimestamp: number;
 }

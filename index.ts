@@ -8,6 +8,9 @@ import constants from "./src/constants";
 function main() {
   logger.info("Start profiling...");
 
+  let TRADE_COUNT = 0;
+  let TRADE_WIN = 0;
+
   setInterval(async () => {
     const profile = await helpers.getProfile();
 
@@ -89,7 +92,19 @@ function main() {
               token.highPrice = NaN;
               helpers.addProfile(returnProfile);
 
-              eth.sellToken(token.address);
+              eth.sellToken(token.address).then((gasUsed) => {
+                token.sellGasUsed = gasUsed;
+                const profit =
+                  returnProfile -
+                  token.buyEthCost -
+                  Number(token.buyGasUsed) -
+                  Number(token.sellGasUsed);
+                if (profit > token.buyEthCost) {
+                  logger.info(`WIN ${profit - token.buyEthCost}`);
+                  TRADE_WIN++;
+                }
+                TRADE_COUNT++;
+              });
 
               logger.info(
                 `\x1b[32m S ${token.name.padEnd(
@@ -112,10 +127,17 @@ function main() {
               return;
             }
 
+            const p = TRADE_COUNT == 0 ? 0.5 : TRADE_WIN / TRADE_COUNT;
+            const b = helpers.getOdds();
+            const kelly = helpers.getKelly(b, p);
+
+            const buyEth = profile * kelly;
+            /*
             const buyEth =
               profile >= constants.TRADE_AMOUNT + constants.RESERVE_PROFILE
                 ? constants.TRADE_AMOUNT
                 : constants.TRADE_AMOUNT_MIN;
+            */
             const buyNum = Number(tokenPrice) * buyEth;
             if (buyNum <= 0) {
               logger.error(
@@ -129,17 +151,20 @@ function main() {
             helpers.subProfile(buyEth);
             token.buyAmount += buyNum;
             token.buyPrice = curPrice;
+            token.buyEthCost = buyEth;
             token.buyTimestamp = Date.now();
             token.highPrice = curPrice;
             token.historyPrice.length = 0;
             token.historyPrice.push(curPrice);
 
-            eth.buyToken(token.address, buyEth.toString());
+            eth.buyToken(token.address, buyEth.toString()).then((gasUsed) => {
+              token.buyGasUsed = gasUsed;
+            });
 
             logger.info(
               `\x1b[31m B ${token.name.padEnd(
                 constants.SYMBAL_PAD
-              )} ${buyNum} ${profile} \x1b[0m`
+              )} ${buyEth} ${kelly} \x1b[0m`
             );
           }
         });

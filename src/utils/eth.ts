@@ -78,82 +78,36 @@ async function getMidPrice(tokenAddress: string): Promise<[string, string]> {
  *
  * @param tokenAddress
  * @param amountInETH
- * @returns
+ * @returns GasUsed
  */
-async function buyTokenMainnet(tokenAddress: string, amountInETH: string) {
+async function buyTokenMainnet(
+  tokenAddress: string,
+  amountInETH: string
+): Promise<string> {
   const amountInWei = ethers.parseEther(amountInETH);
   const balanceWei = await getEthBalance();
   if (amountInWei >= balanceWei) {
     logger.error(
       `B ETH not enough. Except: ${amountInWei} Have: ${balanceWei}`
     );
-    return;
+    return "0";
   }
 
   const decimals = Number(await getDecimals(ChainId.MAINNET, tokenAddress));
-  // logger.info(`decimals ${decimals} ${typeof decimals}`);
   const token = new Token(ChainId.MAINNET, tokenAddress, decimals);
-  // const token = new Token(ChainId.MAINNET, tokenAddress, 9);
 
   swapTokens(token, WETH9[token.chainId], amountInETH).then((txn) => {
-    /*
-    txn?.wait().then((reciept) => {
-      getErc20Balanceof(tokenAddress).then((balance) => {
-        const amountOut = ethers.formatUnits(balance, decimals);
-        logger.info(
-          ` - Mined : ${txn.hash} Block Number: ${txn.blockNumber} fee ${reciept?.fee} Swap ${amountInETH}ETH for ${amountOut}`
-        );
-      });
-    });
-    */
     console.log("Transaction sent:", txn);
+    return txn.gasUsed;
   });
-
-  /*
-  const pair = await createPair(token);
-
-  const route = new Route([pair], WETH9[token.chainId], token);
-
-  const trade = new Trade(
-    route,
-    CurrencyAmount.fromRawAmount(WETH9[token.chainId], amountInWeiStr),
-    TradeType.EXACT_INPUT
-  );
-
-  const slippageTolerance = new Percent("50", "10000"); // 50 bips, or 0.50%
-
-  const amountOutMin = trade.minimumAmountOut(slippageTolerance).toExact(); // needs to be converted to e.g. decimal string
-  const path = [WETH9[token.chainId].address, token.address];
-  const to = constants.wallet.address;
-  const deadline = Math.floor(Date.now() / 1000) + 60 * 10; // 10 minutes from the current Unix time
-  const value = trade.inputAmount.toExact(); // // needs to be converted to e.g. decimal string
-  const valueHex = ethers.toBeHex(value);
-
-  constants.UNISWAP_ROUTER_CONTRACT.getFunction("swapExactETHForTokens")
-    ?.call(amountOutMin, path, to, deadline, {
-      value: valueHex,
-    })
-    .then((rawTxn) => {
-      //Returns a Promise which resolves to the transaction.
-      constants.wallet.sendTransaction(rawTxn).then((trans) => {
-        getErc20Balanceof(tokenAddress).then((balance) => {
-          const amountOut = ethers.formatUnits(balance, decimals);
-          logger.info(
-            ` - Mined : ${trans.hash} Block Number: ${
-              trans.blockNumber
-            } Swap ${ethers.formatEther(amountInWeiStr)}ETH for ${amountOut}`
-          );
-        });
-      });
-    });
-  */
+  return "0";
 }
 
-async function sellTokenMainnet(tokenAddress: string) {
+async function sellTokenMainnet(tokenAddress: string): Promise<string> {
   const amountIn = await getErc20Balanceof(tokenAddress);
   if (amountIn === undefined || amountIn === "" || amountIn === "0") {
     logger.error(`S No token in account`);
-    return;
+    return "0";
   }
 
   const decimals = Number(await getDecimals(ChainId.MAINNET, tokenAddress));
@@ -164,79 +118,37 @@ async function sellTokenMainnet(tokenAddress: string) {
     token,
     ethers.formatUnits(amountIn, decimals)
   ).then((txn) => {
-    /*
-      txn?.wait().then((reciept) => {
-        logger.info(
-          ` - Mined : ${txn.hash} Block Number: ${txn.blockNumber} fee ${
-            reciept?.fee
-          } Swap ${ethers.formatUnits(amountIn, decimals)} for ETH`
-        );
-      });
-      */
     console.log("Transaction sent:", txn);
+    return txn.gasUsed;
   });
 
-  /*
-
-  // See the Fetching Data guide to learn how to get Pair data
-  const pair = await createPair(token);
-
-  const route = new Route([pair], token, WETH9[token.chainId]);
-
-  const trade = new Trade(
-    route,
-    CurrencyAmount.fromRawAmount(token, amountIn),
-    TradeType.EXACT_INPUT
-  );
-
-  const slippageTolerance = new Percent("50", "10000"); // 50 bips, or 0.50%
-
-  const amountOutMin = trade.minimumAmountOut(slippageTolerance).toExact(); // needs to be converted to e.g. decimal string
-  const path = [token.address, WETH9[token.chainId].address];
-  const to = constants.wallet.address;
-  const deadline = Math.floor(Date.now() / 1000) + 60 * 10; // 10 minutes from the current Unix time
-  const value = trade.inputAmount.toExact(); // // needs to be converted to e.g. decimal string
-  const valueHex = ethers.toBeHex(value);
-
-  constants.UNISWAP_ROUTER_CONTRACT.getFunction("swapExactTokensForETH")
-    ?.call(amountOutMin, path, to, deadline, {
-      value: valueHex,
-    })
-    .then((rawTxn) => {
-      //Returns a Promise which resolves to the transaction.
-      constants.wallet.sendTransaction(rawTxn).then((trans) => {
-        logger.info(
-          ` - Mined : ${trans.hash} Block Number: ${
-            trans.blockNumber
-          } Swap ${ethers.formatUnits(
-            amountIn,
-            decimals
-          )} for ${ethers.formatEther(amountOutMin)}ETH`
-        );
-      });
-    });
-  */
+  return "0";
 }
 
-async function updateGasFee(gasUsed: bigint) {
+async function updateGasFee(gasUsed: bigint): Promise<string> {
   const gasPrice = (await constants.provider.getFeeData()).gasPrice;
   if (null == gasPrice) {
     logger.error("B Get gasPrice failed.");
-    return;
+    return "0";
   }
   const transactionFee = gasPrice * gasUsed;
   const feeETH = ethers.formatEther(transactionFee.toString());
   logger.info(`Gas used ${feeETH} ETH`);
   helper.subProfile(Number(feeETH));
+
+  return feeETH;
 }
 
-async function buyTokenTest(tokenAddress: string, amountIn: string) {
+async function buyTokenTest(
+  tokenAddress: string,
+  amountIn: string
+): Promise<string> {
   const GAS_USED = 145832;
-  updateGasFee(BigInt(GAS_USED));
+  return updateGasFee(BigInt(GAS_USED));
 }
-async function sellTokenTest(tokenAddress: string) {
+async function sellTokenTest(tokenAddress: string): Promise<string> {
   const GAS_USED = 197554;
-  updateGasFee(BigInt(GAS_USED));
+  return updateGasFee(BigInt(GAS_USED));
 }
 
 function getErc20Contract(tokenAddress: string) {

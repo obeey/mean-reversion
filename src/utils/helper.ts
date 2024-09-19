@@ -166,6 +166,16 @@ function getOdds() {
   return constants.ODDS;
 }
 
+/**
+ *
+ * @param b - 赔率
+ * @param p - 胜率
+ * @returns
+ */
+function getKelly(b: number, p: number): number {
+  return (b * p - (1 - p)) / b;
+}
+
 async function getInitProfileTest() {
   return constants.INIT_PROFILE;
 }
@@ -319,4 +329,6 @@ export default {
   getProfile: getProfileTest,
   addProfile: addProfileTest,
   subProfile: subProfileTest,
+  getOdds,
+  getKelly,
 };

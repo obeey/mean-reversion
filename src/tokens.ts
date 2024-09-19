@@ -10,6 +10,9 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyEthCost: NaN,
+    buyGasUsed: "",
+    sellGasUsed: "",
     buyTimestamp: NaN,
   },
   {
@@ -19,6 +22,9 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyEthCost: NaN,
+    buyGasUsed: "",
+    sellGasUsed: "",
     buyTimestamp: NaN,
   },
   {
@@ -28,6 +34,9 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyEthCost: NaN,
+    buyGasUsed: "",
+    sellGasUsed: "",
     buyTimestamp: NaN,
   },
   {
@@ -37,6 +46,9 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyEthCost: NaN,
+    buyGasUsed: "",
+    sellGasUsed: "",
     buyTimestamp: NaN,
   },
   {
@@ -46,6 +58,9 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyEthCost: NaN,
+    buyGasUsed: "",
+    sellGasUsed: "",
     buyTimestamp: NaN,
   },
   {
@@ -55,6 +70,9 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyEthCost: NaN,
+    buyGasUsed: "",
+    sellGasUsed: "",
     buyTimestamp: NaN,
   },
   {
@@ -64,6 +82,9 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyEthCost: NaN,
+    buyGasUsed: "",
+    sellGasUsed: "",
     buyTimestamp: NaN,
   },
   {
@@ -73,6 +94,9 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyEthCost: NaN,
+    buyGasUsed: "",
+    sellGasUsed: "",
     buyTimestamp: NaN,
   },
   {
@@ -82,6 +106,9 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyEthCost: NaN,
+    buyGasUsed: "",
+    sellGasUsed: "",
     buyTimestamp: NaN,
   },
   {
@@ -91,6 +118,9 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyEthCost: NaN,
+    buyGasUsed: "",
+    sellGasUsed: "",
     buyTimestamp: NaN,
   },
   {
@@ -100,6 +130,9 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyEthCost: NaN,
+    buyGasUsed: "",
+    sellGasUsed: "",
     buyTimestamp: NaN,
   },
   {
@@ -109,6 +142,9 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyEthCost: NaN,
+    buyGasUsed: "",
+    sellGasUsed: "",
     buyTimestamp: NaN,
   },
   {
@@ -118,6 +154,9 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyEthCost: NaN,
+    buyGasUsed: "",
+    sellGasUsed: "",
     buyTimestamp: NaN,
   },
   {
@@ -127,6 +166,9 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyEthCost: NaN,
+    buyGasUsed: "",
+    sellGasUsed: "",
     buyTimestamp: NaN,
   },
   {
@@ -136,6 +178,9 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyEthCost: NaN,
+    buyGasUsed: "",
+    sellGasUsed: "",
     buyTimestamp: NaN,
   },
   {
@@ -145,6 +190,9 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyEthCost: NaN,
+    buyGasUsed: "",
+    sellGasUsed: "",
     buyTimestamp: NaN,
   },
   {
@@ -154,6 +202,9 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyEthCost: NaN,
+    buyGasUsed: "",
+    sellGasUsed: "",
     buyTimestamp: NaN,
   },
   {
@@ -163,6 +214,9 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyEthCost: NaN,
+    buyGasUsed: "",
+    sellGasUsed: "",
     buyTimestamp: NaN,
   },
   {
@@ -172,6 +226,9 @@ let tokens: Token[] = [
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,
+    buyEthCost: NaN,
+    buyGasUsed: "",
+    sellGasUsed: "",
     buyTimestamp: NaN,
   },
 ];
