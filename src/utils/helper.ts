@@ -197,9 +197,12 @@ function fetchBestProvider() {
       providers.map((url) => sendPostRequestAndMeasureTime(url))
     );
     results.sort((a, b) => a.responseTime - b.responseTime);
-    const newProvider = results[0].url;
+    const result = results[0];
+    const newProvider = result.url;
     constants.setProvider(newProvider);
-    logger.info(`Set provider to ${constants.HTTP_PROVIDER_LINK}`);
+    logger.info(
+      `Set provider to ${constants.HTTP_PROVIDER_LINK} ${result.responseTime}ms`
+    );
   });
 }
 
@@ -265,12 +268,13 @@ async function sendPostRequestAndMeasureTime(
     });
 
     const endTime = performance.now(); // 记录结束时间
-    const responseTime = endTime - startTime; // 计算响应时间
+    let responseTime = endTime - startTime; // 计算响应时间
 
     // const jsonResponse = await response.json(); // 解析响应数据为 JSON
 
     if (!response.ok) {
-      throw new Error(`Request failed with status ${response.status}`);
+      logger.error(`Request failed with status ${response.status} ${url}`);
+      responseTime += 1000;
     }
 
     // console.log("Response data:", jsonResponse); // 打印响应数据
