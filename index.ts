@@ -130,7 +130,7 @@ function main() {
               const b = helpers.getOdds();
               let kelly = helpers.getKelly(b, p);
 
-              if (kelly < 0.1) {
+              if (kelly < 0.2) {
                 logger.info(`Kelly too low ${kelly}`);
                 kelly = 0.2;
               }
