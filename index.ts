@@ -100,14 +100,14 @@ function main() {
                     token.buyEthCost -
                     Number(token.buyGasUsed) -
                     Number(token.sellGasUsed);
-                  if (profit > token.buyEthCost) {
+                  if (profit > 0) {
                     TRADE_WIN++;
                   }
                   TRADE_COUNT++;
                   logger.info(
                     `\x1b[32m S ${token.name.padEnd(
                       constants.SYMBAL_PAD
-                    )} ${returnProfile} ${profit - token.buyEthCost} \x1b[0m`
+                    )} ${returnProfile} ${profit} \x1b[0m`
                   );
                 });
               }
