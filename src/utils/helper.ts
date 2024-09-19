@@ -215,7 +215,11 @@ function fetchBestProvider() {
       providers.map((url) => sendPostRequestAndMeasureTime(url))
     );
     results.sort((a, b) => a.responseTime - b.responseTime);
-    const result = results[0];
+    let result = results[0];
+    // 下次轮到另一个 provider
+    if (result.url === constants.HTTP_PROVIDER_LINK) {
+      result = results[1];
+    }
     const newProvider = result.url;
     constants.setProvider(newProvider);
     logger.info(
@@ -311,7 +315,7 @@ async function sendPostRequestAndMeasureTime(
 
 // fetchBestProvider();
 
-setInterval(() => fetchBestProvider(), 60000);
+setInterval(() => fetchBestProvider(), 600000);
 
 function main() {
   const historyPrice = [
