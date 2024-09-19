@@ -216,16 +216,16 @@ function fetchBestProvider() {
     );
     results.sort((a, b) => a.responseTime - b.responseTime);
     let result = results[0];
+    logger.info(`O ${constants.getRpcProviderLink()} N ${result.url}`);
+
     // 下次轮到另一个 provider
-    if (result.url === constants.HTTP_PROVIDER_LINK) {
+    if (result.url === constants.getRpcProviderLink()) {
       result = results[1];
     }
     const newProvider = result.url;
     constants.setProvider(newProvider);
     logger.info(
-      `Set provider to ${
-        constants.HTTP_PROVIDER_LINK
-      } ${result.responseTime.toFixed(2)}ms`
+      `Set provider to ${newProvider} ${result.responseTime.toFixed(2)}ms`
     );
   });
 }
@@ -306,15 +306,15 @@ async function sendPostRequestAndMeasureTime(
 
     return { url, responseTime };
   } catch (error) {
-    logger.error("Error:", (error as Error).message, url);
+    logger.error(`Provider POST failed. ${url}`);
+
     const responseTime = 10000;
     return { url, responseTime };
     // throw error;
   }
 }
 
-// fetchBestProvider();
-
+fetchBestProvider();
 setInterval(() => fetchBestProvider(), 300000);
 
 function main() {

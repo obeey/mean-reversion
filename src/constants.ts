@@ -17,8 +17,19 @@ let wallet = new ethers.Wallet(privateKey, provider);
 function setProvider(url: string) {
   HTTP_PROVIDER_LINK = url;
 
-  provider = new ethers.JsonRpcProvider(HTTP_PROVIDER_LINK, ChainId.MAINNET);
+  provider = new ethers.JsonRpcProvider(url, ChainId.MAINNET);
   wallet = new ethers.Wallet(privateKey as string, provider);
+}
+
+function getRpcProviderLink() {
+  return HTTP_PROVIDER_LINK;
+}
+
+function getProvider() {
+  return provider;
+}
+function getWallet() {
+  return wallet;
 }
 
 const SYMBAL_PAD = 10;
@@ -44,9 +55,9 @@ const UNISWAP_ROUTER_CONTRACT = new ethers.Contract(
 );
 
 export default {
-  HTTP_PROVIDER_LINK,
-  provider,
-  wallet,
+  getRpcProviderLink,
+  getProvider,
+  getWallet,
   SYMBAL_PAD,
   PRICE_PAD,
   INIT_PROFILE,

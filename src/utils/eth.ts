@@ -22,7 +22,7 @@ async function getDecimals(
   const tokenContract = new ethers.Contract(
     tokenAddress,
     erc20abi,
-    constants.provider
+    constants.getProvider()
   );
   return tokenContract["decimals"]();
 }
@@ -36,7 +36,7 @@ async function createPair(token0: Token, token1: Token): Promise<Pair> {
   const pairContract = new ethers.Contract(
     pairAddress,
     poolabi,
-    constants.provider
+    constants.getProvider()
   );
   const reserves = await pairContract["getReserves"]();
   const [reserve0, reserve1] = reserves;
@@ -126,7 +126,7 @@ async function sellTokenMainnet(tokenAddress: string): Promise<string> {
 }
 
 async function updateGasFee(gasUsed: bigint): Promise<string> {
-  const gasPrice = (await constants.provider.getFeeData()).gasPrice;
+  const gasPrice = (await constants.getProvider().getFeeData()).gasPrice;
   if (null == gasPrice) {
     logger.error("B Get gasPrice failed.");
     return "0";
@@ -156,7 +156,7 @@ function getErc20Contract(tokenAddress: string) {
   const tokenContract = new ethers.Contract(
     tokenAddress,
     tokenAbi,
-    constants.provider
+    constants.getProvider()
   );
 
   return tokenContract;
@@ -166,14 +166,16 @@ function getErc20Contract(tokenAddress: string) {
  * @return - wei
  */
 async function getErc20Balanceof(tokenAddress: string) {
-  return getErc20Contract(tokenAddress).balanceOf(constants.wallet.address);
+  return getErc20Contract(tokenAddress).balanceOf(
+    constants.getWallet().address
+  );
 }
 
 /*
  * @return - wei
  */
 function getEthBalance() {
-  return constants.provider.getBalance(constants.wallet.address);
+  return constants.getProvider().getBalance(constants.getWallet().address);
 }
 
 /**
@@ -193,7 +195,7 @@ async function swapTokens(
     const pair = await Fetcher.fetchPairData(
       token0,
       token1,
-      constants.provider
+      constants.getProvider()
     ); //creating instances of a pair
     // const route = new Route([pair], token, WETH9[token.chainId]);
     const route = await new Route([pair], token1); // a fully specified path from input token to output token
@@ -233,7 +235,7 @@ async function swapTokens(
     ).toHexString();
     */
     const path = [token1.address, token0.address]; //An array of token addresses
-    const to = constants.wallet.address; // should be a checksummed recipient address
+    const to = constants.getWallet().address; // should be a checksummed recipient address
     const deadline = Math.floor(Date.now() / 1000) + 60 * 20; // 20 minutes from the current Unix time
     const value = trade.inputAmount.quotient; // // needs to be converted to e.g. hex
     const valueHex = ethers.toBeHex(value.toString());
@@ -276,7 +278,7 @@ async function swapTokens(
     });
 
     //Returns a Promise which resolves to the transaction.
-    let sendTxn = (await constants.wallet).sendTransaction(rawTxn);
+    let sendTxn = (await constants.getWallet()).sendTransaction(rawTxn);
     return sendTxn;
 
     //Resolves to the TransactionReceipt once the transaction has been included in the chain for x confirms blocks.
@@ -305,12 +307,12 @@ async function swapTokens(
 }
 
 async function approveAmountIn(token1: Token, amountIn: bigint) {
-  const ownerAddress = constants.wallet.address; // 代币拥有者的地址
+  const ownerAddress = constants.getWallet().address; // 代币拥有者的地址
   const spenderAddress = constants.UNISWAP_ROUTER_ADDRESS; // Router 合约地址
   const tokenContract = new ethers.Contract(
     token1.address,
     erc20abi,
-    constants.wallet
+    constants.getWallet()
   );
   // 检查当前的 allowance
   const currentAllowance = await tokenContract.allowance(
