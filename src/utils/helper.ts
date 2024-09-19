@@ -100,7 +100,7 @@ function canSell(token: Token): boolean {
   const newestPrice = historyPrice[historyPrice.length - 1];
 
   const profilePercent = (newestPrice - buyPrice) / buyPrice;
-  if (profilePercent > 0.08) {
+  if (profilePercent > constants.TAKE_PROFIT) {
     logger.info(`S Large return ${(profilePercent * 100).toPrecision(4)}%`);
     return true;
   }
@@ -110,7 +110,7 @@ function canSell(token: Token): boolean {
 
   if (historyPrice.length < tokens.MAX_HISTORY_PRICE_LEN) {
     // Down too much.
-    if (downPercent > 0.03) {
+    if (downPercent > constants.STOP_LOSS) {
       return true;
     }
     return false;
@@ -156,6 +156,14 @@ function calculateVariance(numbers: number[]): number {
     }, 0) / numbers.length;
 
   return variance;
+}
+
+/**
+ *
+ * @returns 赔率
+ */
+function getOdds() {
+  return constants.ODDS;
 }
 
 async function getInitProfileTest() {
@@ -282,8 +290,10 @@ async function sendPostRequestAndMeasureTime(
 
     return { url, responseTime };
   } catch (error) {
-    console.error("Error:", (error as Error).message, url);
-    throw error;
+    logger.error("Error:", (error as Error).message, url);
+    const responseTime = 10000;
+    return { url, responseTime };
+    // throw error;
   }
 }
 
