@@ -52,122 +52,126 @@ function main() {
           .padEnd(constants.PRICE_PAD)} ${token.highPrice} \x1b[0m`
       );
 
-      eth
-        .getMidPrice(token.address)
-        .then(([tokenPrice, ethPrice]: [string, string]) => {
-          const curPrice = Number(ethPrice);
-          if (!Number.isNaN(token.highPrice) && token.highPrice < curPrice) {
-            token.highPrice = curPrice;
-          }
-
-          token.historyPrice.push(curPrice);
-          if (token.historyPrice.length > tokens.MAX_HISTORY_PRICE_LEN) {
-            token.historyPrice.shift();
-          }
-
-          const prevPrice = token.historyPrice[token.historyPrice.length - 2];
-          const downPercent = ((curPrice - prevPrice) / prevPrice) * 100;
-          const tradeProfilePercent =
-            ((curPrice - token.buyPrice) / token.buyPrice) * 100;
-          logger.info(
-            `\x1b[35m ${token.name.padEnd(constants.SYMBAL_PAD)} ${tokenPrice
-              .toString()
-              .padEnd(constants.PRICE_PAD - 4)} ${ethPrice
-              .toString()
-              .padEnd(constants.PRICE_PAD + 4)} ${downPercent
-              .toPrecision(4)
-              .toString()
-              .padStart(constants.PRICE_PAD)}% ${tradeProfilePercent
-              .toPrecision(4)
-              .toString()
-              .padStart(constants.PRICE_PAD)}% \x1b[0m`
-          );
-
-          if (token.buyAmount > 0) {
-            if (helpers.canSell(token)) {
-              const returnProfile = token.buyAmount / Number(tokenPrice);
-              token.buyAmount = 0;
-              token.buyPrice = NaN;
-              token.buyTimestamp = NaN;
-              token.highPrice = NaN;
-              helpers.addProfile(returnProfile);
-
-              eth.sellToken(token.address).then((gasUsed) => {
-                token.sellGasUsed = gasUsed;
-                const profit =
-                  returnProfile -
-                  token.buyEthCost -
-                  Number(token.buyGasUsed) -
-                  Number(token.sellGasUsed);
-                if (profit > token.buyEthCost) {
-                  logger.info(`WIN ${profit - token.buyEthCost}`);
-                  TRADE_WIN++;
-                }
-                TRADE_COUNT++;
-              });
-
-              logger.info(
-                `\x1b[32m S ${token.name.padEnd(
-                  constants.SYMBAL_PAD
-                )} ${returnProfile} ${profile} \x1b[0m`
-              );
+      try {
+        eth
+          .getMidPrice(token.address)
+          .then(([tokenPrice, ethPrice]: [string, string]) => {
+            const curPrice = Number(ethPrice);
+            if (!Number.isNaN(token.highPrice) && token.highPrice < curPrice) {
+              token.highPrice = curPrice;
             }
 
-            return;
-          }
+            token.historyPrice.push(curPrice);
+            if (token.historyPrice.length > tokens.MAX_HISTORY_PRICE_LEN) {
+              token.historyPrice.shift();
+            }
 
-          if (token.buyAmount === 0 && helpers.canBuy(token.historyPrice)) {
-            if (
-              profile <
-              constants.RESERVE_PROFILE + constants.TRADE_AMOUNT_MIN
-            ) {
-              logger.error(
-                `B Profile too low ${profile} for Buy ${token.name}`
-              );
+            const prevPrice = token.historyPrice[token.historyPrice.length - 2];
+            const downPercent = ((curPrice - prevPrice) / prevPrice) * 100;
+            const tradeProfilePercent =
+              ((curPrice - token.buyPrice) / token.buyPrice) * 100;
+            logger.info(
+              `\x1b[35m ${token.name.padEnd(constants.SYMBAL_PAD)} ${tokenPrice
+                .toString()
+                .padEnd(constants.PRICE_PAD - 4)} ${ethPrice
+                .toString()
+                .padEnd(constants.PRICE_PAD + 4)} ${downPercent
+                .toPrecision(4)
+                .toString()
+                .padStart(constants.PRICE_PAD)}% ${tradeProfilePercent
+                .toPrecision(4)
+                .toString()
+                .padStart(constants.PRICE_PAD)}% \x1b[0m`
+            );
+
+            if (token.buyAmount > 0) {
+              if (helpers.canSell(token)) {
+                const returnProfile = token.buyAmount / Number(tokenPrice);
+                token.buyAmount = 0;
+                token.buyPrice = NaN;
+                token.buyTimestamp = NaN;
+                token.highPrice = NaN;
+                helpers.addProfile(returnProfile);
+
+                eth.sellToken(token.address).then((gasUsed) => {
+                  token.sellGasUsed = gasUsed;
+                  const profit =
+                    returnProfile -
+                    token.buyEthCost -
+                    Number(token.buyGasUsed) -
+                    Number(token.sellGasUsed);
+                  if (profit > token.buyEthCost) {
+                    logger.info(`WIN ${profit - token.buyEthCost}`);
+                    TRADE_WIN++;
+                  }
+                  TRADE_COUNT++;
+                });
+
+                logger.info(
+                  `\x1b[32m S ${token.name.padEnd(
+                    constants.SYMBAL_PAD
+                  )} ${returnProfile} ${profile} \x1b[0m`
+                );
+              }
+
               return;
             }
 
-            const p = TRADE_COUNT == 0 ? 0.5 : TRADE_WIN / TRADE_COUNT;
-            const b = helpers.getOdds();
-            const kelly = helpers.getKelly(b, p);
+            if (token.buyAmount === 0 && helpers.canBuy(token.historyPrice)) {
+              if (
+                profile <
+                constants.RESERVE_PROFILE + constants.TRADE_AMOUNT_MIN
+              ) {
+                logger.error(
+                  `B Profile too low ${profile} for Buy ${token.name}`
+                );
+                return;
+              }
 
-            const buyEth = profile * kelly;
-            /*
+              const p = TRADE_COUNT == 0 ? 0.5 : TRADE_WIN / TRADE_COUNT;
+              const b = helpers.getOdds();
+              const kelly = helpers.getKelly(b, p);
+
+              const buyEth = profile * kelly;
+              /*
             const buyEth =
               profile >= constants.TRADE_AMOUNT + constants.RESERVE_PROFILE
                 ? constants.TRADE_AMOUNT
                 : constants.TRADE_AMOUNT_MIN;
             */
-            const buyNum = Number(tokenPrice) * buyEth;
-            if (buyNum <= 0) {
-              logger.error(
-                `B No money buy ${token.name.padEnd(
+              const buyNum = Number(tokenPrice) * buyEth;
+              if (buyNum <= 0) {
+                logger.error(
+                  `B No money buy ${token.name.padEnd(
+                    constants.SYMBAL_PAD
+                  )} ${profile}`
+                );
+                return;
+              }
+
+              helpers.subProfile(buyEth);
+              token.buyAmount += buyNum;
+              token.buyPrice = curPrice;
+              token.buyEthCost = buyEth;
+              token.buyTimestamp = Date.now();
+              token.highPrice = curPrice;
+              token.historyPrice.length = 0;
+              token.historyPrice.push(curPrice);
+
+              eth.buyToken(token.address, buyEth.toString()).then((gasUsed) => {
+                token.buyGasUsed = gasUsed;
+              });
+
+              logger.info(
+                `\x1b[31m B ${token.name.padEnd(
                   constants.SYMBAL_PAD
-                )} ${profile}`
+                )} ${buyEth} ${kelly} p ${p} \x1b[0m`
               );
-              return;
             }
-
-            helpers.subProfile(buyEth);
-            token.buyAmount += buyNum;
-            token.buyPrice = curPrice;
-            token.buyEthCost = buyEth;
-            token.buyTimestamp = Date.now();
-            token.highPrice = curPrice;
-            token.historyPrice.length = 0;
-            token.historyPrice.push(curPrice);
-
-            eth.buyToken(token.address, buyEth.toString()).then((gasUsed) => {
-              token.buyGasUsed = gasUsed;
-            });
-
-            logger.info(
-              `\x1b[31m B ${token.name.padEnd(
-                constants.SYMBAL_PAD
-              )} ${buyEth} ${kelly} p ${p} \x1b[0m`
-            );
-          }
-        });
+          });
+      } catch (error) {
+        logger.error(`Process ${token.name} failed.`);
+      }
     });
   }, 12000);
 }

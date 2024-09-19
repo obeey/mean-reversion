@@ -315,7 +315,7 @@ async function sendPostRequestAndMeasureTime(
 
 // fetchBestProvider();
 
-setInterval(() => fetchBestProvider(), 600000);
+setInterval(() => fetchBestProvider(), 300000);
 
 function main() {
   const historyPrice = [
