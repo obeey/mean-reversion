@@ -128,7 +128,12 @@ function main() {
 
               const p = TRADE_COUNT == 0 ? 0.5 : TRADE_WIN / TRADE_COUNT;
               const b = helpers.getOdds();
-              const kelly = helpers.getKelly(b, p);
+              let kelly = helpers.getKelly(b, p);
+
+              if (kelly < 0.1) {
+                logger.info(`Kelly too low ${kelly}`);
+                kelly = 0.2;
+              }
 
               const buyEth = profile * kelly;
               /*
