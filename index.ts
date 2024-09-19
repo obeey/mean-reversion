@@ -101,17 +101,15 @@ function main() {
                     Number(token.buyGasUsed) -
                     Number(token.sellGasUsed);
                   if (profit > token.buyEthCost) {
-                    logger.info(`WIN ${profit - token.buyEthCost}`);
                     TRADE_WIN++;
                   }
                   TRADE_COUNT++;
+                  logger.info(
+                    `\x1b[32m S ${token.name.padEnd(
+                      constants.SYMBAL_PAD
+                    )} ${returnProfile} ${profit - token.buyEthCost} \x1b[0m`
+                  );
                 });
-
-                logger.info(
-                  `\x1b[32m S ${token.name.padEnd(
-                    constants.SYMBAL_PAD
-                  )} ${returnProfile} ${profile} \x1b[0m`
-                );
               }
 
               return;
