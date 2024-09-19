@@ -9,20 +9,7 @@ if (!privateKey) {
   throw new Error("私钥未定义，请在 .env 文件中设置 PRIVATE_KEY");
 }
 
-// const HTTP_PROVIDER_LINK = `https://eth-mainnet.g.alchemy.com/v2/HqMqCcOiNeA_LwLQWHo9ZIgU1V1IG8Q3`;
-// const HTTP_PROVIDER_LINK = "https://eth-mainnet.g.alchemy.com/v2/HqMqCcOiNeA_LwLQWHo9ZIgU1V1IG8Q3";
-// const HTTP_PROVIDER_LINK =
-//   "https://eth-mainnet.g.alchemy.com/v2/hWT7tiQl88VfR5ob5m3XxYUU8CLaoqp7";
-// const HTTP_PROVIDER_LINK = `https://mainnet.infura.io/v3/73eabea1ee6a42be90b28d1f30d12b97`;
-// const HTTP_PROVIDER_LINK = "https://rpc.mevblocker.io";
-// const HTTP_PROVIDER_LINK = "https://eth.llamarpc.com";
-// const HTTP_PROVIDER_LINK = "https://eth-pokt.nodies.app";
-// const HTTP_PROVIDER_LINK = "https://ethereum-rpc.publicnode.com";
-// const HTTP_PROVIDER_LINK = "https://eth.merkle.io";
-// const HTTP_PROVIDER_LINK = "https://ethereum.rpc.subquery.network/public";
-// const HTTP_PROVIDER_LINK = "https://ethereum-rpc.publicnode.com";
 let HTTP_PROVIDER_LINK = "https://eth-pokt.nodies.app";
-// const HTTP_PROVIDER_LINK = "https://endpoints.omniatech.io/v1/eth/mainnet/public";
 
 let provider = new ethers.JsonRpcProvider(HTTP_PROVIDER_LINK, ChainId.MAINNET);
 let wallet = new ethers.Wallet(privateKey, provider);
