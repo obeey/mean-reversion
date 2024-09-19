@@ -20,13 +20,19 @@ if (!privateKey) {
 // const HTTP_PROVIDER_LINK = "https://ethereum-rpc.publicnode.com";
 // const HTTP_PROVIDER_LINK = "https://eth.merkle.io";
 // const HTTP_PROVIDER_LINK = "https://ethereum.rpc.subquery.network/public";
-const HTTP_PROVIDER_LINK = "https://ethereum-rpc.publicnode.com";
+// const HTTP_PROVIDER_LINK = "https://ethereum-rpc.publicnode.com";
+let HTTP_PROVIDER_LINK = "https://eth-pokt.nodies.app";
+// const HTTP_PROVIDER_LINK = "https://endpoints.omniatech.io/v1/eth/mainnet/public";
 
-const provider = new ethers.JsonRpcProvider(
-  HTTP_PROVIDER_LINK,
-  ChainId.MAINNET
-);
-const wallet = new ethers.Wallet(privateKey, provider);
+let provider = new ethers.JsonRpcProvider(HTTP_PROVIDER_LINK, ChainId.MAINNET);
+let wallet = new ethers.Wallet(privateKey, provider);
+
+function setProvider(url: string) {
+  HTTP_PROVIDER_LINK = url;
+
+  provider = new ethers.JsonRpcProvider(HTTP_PROVIDER_LINK, ChainId.MAINNET);
+  wallet = new ethers.Wallet(privateKey as string, provider);
+}
 
 const SYMBAL_PAD = 10;
 const PRICE_PAD = 15;
@@ -60,4 +66,5 @@ export default {
   MAX_TOKEN_HOLD_SECONDS,
   UNISWAP_ROUTER_ADDRESS,
   UNISWAP_ROUTER_CONTRACT,
+  setProvider,
 };

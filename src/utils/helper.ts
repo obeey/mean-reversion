@@ -1,9 +1,13 @@
+import fs from "fs";
+import readline from "readline";
 import logger from "./logger";
 import tokens from "../tokens";
 import { Token } from "../token";
 import constants from "../constants";
 import eth from "./eth";
 import { ethers } from "ethers";
+import { Readline } from "readline/promises";
+import { promises } from "dns";
 
 let profile: number = constants.INIT_PROFILE;
 
@@ -181,6 +185,107 @@ function subProfileTest(delta: number) {
 function addProfileMainnet(delta: number) {}
 
 function subProfileMainnet(delta: number) {}
+
+interface UrlResponseTime {
+  url: string;
+  responseTime: number;
+}
+
+function fetchBestProvider() {
+  getAllProvider().then(async (providers) => {
+    const results = await Promise.all(
+      providers.map((url) => sendPostRequestAndMeasureTime(url))
+    );
+    results.sort((a, b) => a.responseTime - b.responseTime);
+    const newProvider = results[0].url;
+    constants.setProvider(newProvider);
+    logger.info(`Set provider to ${constants.HTTP_PROVIDER_LINK}`);
+  });
+}
+
+async function getAllProvider(): Promise<string[]> {
+  let providers: string[] = [];
+
+  const fileStream = fs.createReadStream("src/utils/providers.txt");
+
+  const rl = readline.createInterface({
+    input: fileStream,
+    crlfDelay: Infinity,
+  });
+
+  for await (const url of rl) {
+    providers.push(url);
+  }
+
+  return providers;
+}
+
+async function sendOptionsAndMeasureTime(url: string): Promise<number> {
+  const startTime = performance.now(); // 记录开始时间
+
+  try {
+    const response = await fetch(url, {
+      method: "OPTIONS", // 设置请求方法为 OPTIONS
+    });
+
+    const endTime = performance.now(); // 记录结束时间
+    const responseTime = endTime - startTime; // 计算响应时间
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch. Status: ${response.status} ${url}`);
+    }
+
+    // console.log(`Response time: ${responseTime.toFixed(2)} ms`);
+    return responseTime;
+  } catch (error) {
+    // console.error(`Error: ${error}`);
+    throw error;
+  }
+}
+
+async function sendPostRequestAndMeasureTime(
+  url: string
+): Promise<UrlResponseTime> {
+  const requestBody = {
+    jsonrpc: "2.0",
+    method: "eth_getBlockByNumber",
+    params: ["latest", false],
+    id: 1,
+  };
+
+  const startTime = performance.now(); // 记录开始时间
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json", // 设置请求头，声明消息体为 JSON 格式
+      },
+      body: JSON.stringify(requestBody), // 将消息体序列化为 JSON 字符串
+    });
+
+    const endTime = performance.now(); // 记录结束时间
+    const responseTime = endTime - startTime; // 计算响应时间
+
+    // const jsonResponse = await response.json(); // 解析响应数据为 JSON
+
+    if (!response.ok) {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+
+    // console.log("Response data:", jsonResponse); // 打印响应数据
+    // console.log(`Response time: ${responseTime.toFixed(2)} ms`); // 打印响应时间
+
+    return { url, responseTime };
+  } catch (error) {
+    console.error("Error:", (error as Error).message, url);
+    throw error;
+  }
+}
+
+// fetchBestProvider();
+
+setInterval(() => fetchBestProvider(), 60000);
 
 function main() {
   const historyPrice = [
