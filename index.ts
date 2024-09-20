@@ -49,7 +49,7 @@ function main() {
       logger.info(
         `\x1b[34m ${token.name.padEnd(
           constants.SYMBAL_PAD
-        )} ${token.historyPrice.length.toString().padEnd(5)} ${token.buyAmount
+        )} ${token.historyPrice.length.toString().padEnd(5)} ${token.buyEthCost
           .toPrecision(4)
           .toString()
           .padEnd(constants.SYMBAL_PAD + 2)} ${token.buyPrice
