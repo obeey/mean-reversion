@@ -5,6 +5,7 @@ import logger from "./src/utils/logger.js";
 import tokens from "./src/utils/hottokens.js";
 import helpers from "./src/utils/helper.js";
 import constants from "./src/constants.js";
+import { error } from "console";
 
 function main() {
   logger.info("Start profiling...");
@@ -186,6 +187,10 @@ function main() {
                 )} ${buyEth} ${kelly} p ${p} \x1b[0m`
               );
             }
+          })
+          .catch((error) => {
+            logger.error(`Process ${token.name} failed. ${error}`);
+            helpers.fetchBestProvider();
           });
       } catch (error) {
         logger.error(`Process ${token.name} failed.`);
