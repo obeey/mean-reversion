@@ -11,7 +11,8 @@ if (!privateKey) {
   throw new Error("私钥未定义，请在 .env 文件中设置 PRIVATE_KEY");
 }
 
-let HTTP_PROVIDER_LINK = "https://eth-pokt.nodies.app";
+let HTTP_PROVIDER_LINK =
+  "https://go.getblock.io/a35061b4762843e899c5547dc64e890c";
 
 let provider = new ethers.JsonRpcProvider(HTTP_PROVIDER_LINK, ChainId.MAINNET);
 let wallet = new ethers.Wallet(privateKey, provider);
@@ -39,13 +40,13 @@ const PRICE_PAD = 15;
 
 const MAX_HISTORY_PRICE_LEN = 16; // 3min: 15+1. 15*12=180sec
 
-const INIT_PROFILE = 0.6;
+const INIT_PROFILE = 6;
 const RESERVE_PROFILE = 0.05;
 const TRADE_AMOUNT = 0.5;
 const TRADE_AMOUNT_MIN = 0.3;
 const MAX_TOKEN_HOLD_SECONDS = 3600;
-const STOP_LOSS = 0.03;
-const TAKE_PROFIT = 0.08;
+const STOP_LOSS = 0.08;
+const TAKE_PROFIT = 0.04;
 const ODDS = TAKE_PROFIT / STOP_LOSS;
 
 const UNISWAP_ROUTER_ADDRESS = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D";
