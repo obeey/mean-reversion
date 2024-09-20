@@ -75,7 +75,7 @@ function canBuy(historyPrice: number[]): boolean {
     )}% ${variance}`
   );
   if (
-    downPercent > 0.05 &&
+    downPercent > constants.BUY_DOWN_PERCENT &&
     ((lastMa !== undefined && lastMa > 0.005) || variance < 1)
   ) {
     return true;
