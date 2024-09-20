@@ -103,6 +103,11 @@ function canSell(token: Token): boolean {
     return true;
   }
 
+  if (profilePercent + constants.STOP_LOSS < 0) {
+    logger.info(`S Large LOSS ${(profilePercent * 100).toPrecision(4)}%`);
+    return true;
+  }
+
   const deltaPrice = highPrice - newestPrice;
   const downPercent = deltaPrice / highPrice;
 
@@ -115,7 +120,7 @@ function canSell(token: Token): boolean {
   }
 
   logger.debug(`S H ${highPrice} L ${newestPrice} -${downPercent * 100}%`);
-  if (downPercent > 0.01) {
+  if (downPercent > 0.01 && profilePercent > 0) {
     return true;
   }
 
@@ -207,6 +212,7 @@ interface UrlResponseTime {
   responseTime: number;
 }
 
+/*
 function fetchBestProvider() {
   getAllProvider().then(async (providers) => {
     const results = await Promise.all(
@@ -226,6 +232,19 @@ function fetchBestProvider() {
       `Set provider to ${newProvider} ${result.responseTime.toFixed(2)}ms`
     );
   });
+}
+*/
+
+function fetchBestProvider() {
+  getAllProvider().then(async (providers) => {
+    const newProvider = providers[getRandomInt(0, providers.length)];
+    constants.setProvider(newProvider);
+    logger.info(`Set provider to ${newProvider}`);
+  });
+}
+
+function getRandomInt(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min)) + min;
 }
 
 async function getAllProvider(): Promise<string[]> {
@@ -312,7 +331,7 @@ async function sendPostRequestAndMeasureTime(
   }
 }
 
-fetchBestProvider();
+// fetchBestProvider();
 setInterval(() => fetchBestProvider(), 300000);
 
 function main() {
