@@ -38,7 +38,10 @@ function main() {
         .toString()
         .padEnd(
           constants.PRICE_PAD
-        )} ${totalReturn}% \x1b[0m) +++++++++++++++++++++++++++++++`
+        )} ${totalReturn}% W:${TRADE_WIN} C:${TRADE_COUNT} R:${(
+        TRADE_WIN /
+        (TRADE_COUNT + 0.01)
+      ).toFixed(2)}\x1b[0m) +++++++++++++++++++++++++++++++`
     );
 
     tokens.tokens.forEach((token: Token) => {
