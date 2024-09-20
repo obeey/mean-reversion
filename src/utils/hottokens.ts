@@ -2,6 +2,8 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { HttpsProxyAgent } from "https-proxy-agent";
 import { Pools } from "./pools.js";
 import { Token } from "../token.js";
+import logger from "./logger.js";
+import constants from "../constants.js";
 
 const PROXY_URL = "http://127.0.0.1:7890";
 
@@ -32,7 +34,12 @@ function getHotTokens() {
           .split("_")[1]
           .trim();
 
-        console.log(`${symbol} ${address}`);
+        const regex = /[\u4e00-\u9fa5]/; // 汉字的 Unicode 范围
+        if (symbol === "WETH" || regex.test(symbol)) {
+          return;
+        }
+
+        logger.info(`${symbol.padEnd(constants.SYMBAL_PAD)} ${address}`);
 
         if (
           symbol &&
