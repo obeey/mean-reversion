@@ -6,6 +6,7 @@ import { Token } from "../token.js";
 import constants from "../constants.js";
 import eth from "./eth.js";
 import { ethers } from "ethers";
+import { error } from "console";
 
 let profile: number = constants.INIT_PROFILE;
 
@@ -212,7 +213,6 @@ interface UrlResponseTime {
   responseTime: number;
 }
 
-/*
 function fetchBestProvider() {
   getAllProvider().then(async (providers) => {
     const results = await Promise.all(
@@ -233,15 +233,20 @@ function fetchBestProvider() {
     );
   });
 }
-*/
 
+/*
 function fetchBestProvider() {
-  getAllProvider().then(async (providers) => {
-    const newProvider = providers[getRandomInt(0, providers.length)];
-    constants.setProvider(newProvider);
-    logger.info(`Set provider to ${newProvider}`);
-  });
+  getAllProvider()
+    .then(async (providers) => {
+      const newProvider = providers[getRandomInt(0, providers.length)];
+      constants.setProvider(newProvider);
+      logger.info(`Set provider to ${newProvider}`);
+    })
+    .catch((error) => {
+      logger.error(error);
+    });
 }
+*/
 
 function getRandomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min)) + min;
@@ -354,4 +359,5 @@ export default {
   subProfile: subProfileTest,
   getOdds,
   getKelly,
+  fetchBestProvider,
 };
