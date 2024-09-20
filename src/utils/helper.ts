@@ -1,13 +1,11 @@
 import fs from "fs";
 import readline from "readline";
-import logger from "./logger";
-import tokens from "../tokens";
-import { Token } from "../token";
-import constants from "../constants";
-import eth from "./eth";
+import logger from "./logger.js";
+import tokens from "../tokens.js";
+import { Token } from "../token.js";
+import constants from "../constants.js";
+import eth from "./eth.js";
 import { ethers } from "ethers";
-import { Readline } from "readline/promises";
-import { promises } from "dns";
 
 let profile: number = constants.INIT_PROFILE;
 
@@ -108,7 +106,7 @@ function canSell(token: Token): boolean {
   const deltaPrice = highPrice - newestPrice;
   const downPercent = deltaPrice / highPrice;
 
-  if (historyPrice.length < tokens.MAX_HISTORY_PRICE_LEN) {
+  if (historyPrice.length < constants.MAX_HISTORY_PRICE_LEN) {
     // Down too much.
     if (downPercent > constants.STOP_LOSS) {
       return true;

@@ -9,11 +9,11 @@ import {
   Percent,
 } from "@uniswap/sdk-core";
 import { ethers, Wallet } from "ethers";
-import poolabi from "../abi/uniswap-pool.abi.json";
-import erc20abi from "../abi/erc20.abi.json";
-import constants from "../constants";
-import logger from "./logger";
-import helper from "./helper";
+import poolabi from "../abi/uniswap-pool.abi.json" assert { type: "json" };
+import erc20abi from "../abi/erc20.abi.json" assert { type: "json" };
+import constants from "../constants.js";
+import logger from "./logger.js";
+import helper from "./helper.js";
 
 async function getDecimals(
   chainId: ChainId,

@@ -1,5 +1,4 @@
 https://go.getblock.io/a35061b4762843e899c5547dc64e890c
-https://lb.drpc.org/ogrpc?network=ethereum&dkey=AuicILM4UkWSjmVgnNhdpjVntbxgdu4R74-OhlDYfw4q
 https://rpc.graffiti.farm
 https://ethereum-rpc.publicnode.com
 https://ethereum.rpc.subquery.network/public

@@ -1,9 +1,10 @@
-import { Token } from "./src/token";
-import eth from "./src/utils/eth";
-import logger from "./src/utils/logger";
-import tokens from "./src/tokens";
-import helpers from "./src/utils/helper";
-import constants from "./src/constants";
+import { Token } from "./src/token.js";
+import eth from "./src/utils/eth.js";
+import logger from "./src/utils/logger.js";
+// import tokens from "./src/tokens.js";
+import tokens from "./src/utils/hottokens.js";
+import helpers from "./src/utils/helper.js";
+import constants from "./src/constants.js";
 
 function main() {
   logger.info("Start profiling...");
@@ -62,7 +63,7 @@ function main() {
             }
 
             token.historyPrice.push(curPrice);
-            if (token.historyPrice.length > tokens.MAX_HISTORY_PRICE_LEN) {
+            if (token.historyPrice.length > constants.MAX_HISTORY_PRICE_LEN) {
               token.historyPrice.shift();
             }
 
@@ -93,7 +94,7 @@ function main() {
                 token.highPrice = NaN;
                 helpers.addProfile(returnProfile);
 
-                eth.sellToken(token.address).then((gasUsed) => {
+                eth.sellToken(token.address).then((gasUsed: string) => {
                   token.sellGasUsed = gasUsed;
                   const profit =
                     returnProfile -
@@ -170,9 +171,11 @@ function main() {
               token.historyPrice.length = 0;
               token.historyPrice.push(curPrice);
 
-              eth.buyToken(token.address, buyEth.toString()).then((gasUsed) => {
-                token.buyGasUsed = gasUsed;
-              });
+              eth
+                .buyToken(token.address, buyEth.toString())
+                .then((gasUsed: string) => {
+                  token.buyGasUsed = gasUsed;
+                });
 
               logger.info(
                 `\x1b[31m B ${token.name.padEnd(

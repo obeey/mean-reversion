@@ -2,7 +2,9 @@ import * as fs from "fs";
 import { ethers } from "ethers";
 import { ChainId } from "@uniswap/sdk-core";
 
-require("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
+// require("dotenv").config();
 
 const privateKey = process.env.PRIVATE_KEY;
 if (!privateKey) {
@@ -35,6 +37,8 @@ function getWallet() {
 const SYMBAL_PAD = 10;
 const PRICE_PAD = 15;
 
+const MAX_HISTORY_PRICE_LEN = 16; // 3min: 15+1. 15*12=180sec
+
 const INIT_PROFILE = 0.6;
 const RESERVE_PROFILE = 0.05;
 const TRADE_AMOUNT = 0.5;
@@ -60,6 +64,7 @@ export default {
   getWallet,
   SYMBAL_PAD,
   PRICE_PAD,
+  MAX_HISTORY_PRICE_LEN,
   INIT_PROFILE,
   RESERVE_PROFILE,
   TRADE_AMOUNT,

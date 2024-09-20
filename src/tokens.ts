@@ -1,6 +1,4 @@
-import { Token } from "./token.d";
-
-const MAX_HISTORY_PRICE_LEN = 16; // 3min: 15+1. 15*12=180sec
+import { Token } from "./token.d.js";
 
 let tokens: Token[] = [
   {
@@ -233,4 +231,4 @@ let tokens: Token[] = [
   },
 ];
 
-export default { tokens, MAX_HISTORY_PRICE_LEN };
+export default { tokens };
