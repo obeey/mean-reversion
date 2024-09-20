@@ -1,3 +1,4 @@
 https://go.getblock.io/a35061b4762843e899c5547dc64e890c
 https://rpc.graffiti.farm
 https://ethereum-rpc.publicnode.com
+https://eth-pokt.nodies.app
