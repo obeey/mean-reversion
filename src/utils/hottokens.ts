@@ -28,6 +28,9 @@ function getHotTokens() {
 
       hotTokens.filter((token) => token.buyAmount > 0);
 
+      logger.info(
+        "---------------------------- hot tokens ----------------------------"
+      );
       pools.forEach((pool) => {
         const symbol = pool.attributes.name.split(" / ")[0].trim();
         const address = pool.relationships.base_token.data.id
