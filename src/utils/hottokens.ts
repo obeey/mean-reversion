@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { HttpsProxyAgent } from "https-proxy-agent";
-import { Pools } from "./pools.js";
+import { Pools, PoolTokenInfo } from "./pools.js";
 import { Token } from "../token.js";
 import logger from "./logger.js";
 import constants from "../constants.js";
@@ -26,44 +26,55 @@ function getHotTokens() {
       const pools = response.data.data as Pools[];
       // console.log(response.data.data);
 
-      hotTokens.filter((token) => token.buyAmount > 0);
+      let poolTokens: PoolTokenInfo[] = pools
+        .map((pool) => {
+          const symbol = pool.attributes.name.split(" / ")[0].trim();
+          const address = pool.relationships.base_token.data.id
+            .split("_")[1]
+            .trim();
+          return { symbol, address };
+        })
+        .filter(
+          (token) =>
+            token.symbol !== "WETH" &&
+            !/[\u4e00-\u9fa5]/.test(token.symbol) &&
+            token.symbol &&
+            token.address
+        );
+
+      hotTokens.filter(
+        (token) =>
+          token.buyAmount > 0 ||
+          poolTokens.find((pool) => token.name === pool.symbol)
+      );
 
       logger.info(
-        "---------------------------- hot tokens ----------------------------"
+        "------------------------- hot tokens -------------------------"
       );
-      pools.forEach((pool) => {
-        const symbol = pool.attributes.name.split(" / ")[0].trim();
-        const address = pool.relationships.base_token.data.id
-          .split("_")[1]
-          .trim();
-
-        const regex = /[\u4e00-\u9fa5]/; // 汉字的 Unicode 范围
-        if (symbol === "WETH" || regex.test(symbol)) {
+      poolTokens.forEach((pool) => {
+        logger.info(
+          `${pool.symbol.padEnd(constants.SYMBAL_PAD)} ${pool.address}`
+        );
+        if (hotTokens.find((token) => token.name === pool.symbol)) {
           return;
         }
 
-        logger.info(`${symbol.padEnd(constants.SYMBAL_PAD)} ${address}`);
-
-        if (
-          symbol &&
-          address &&
-          !hotTokens.find((token) => token.name === symbol)
-        ) {
-          let token: Token = {
-            name: symbol,
-            address: address,
-            historyPrice: [],
-            buyPrice: NaN,
-            highPrice: NaN,
-            buyAmount: 0,
-            buyEthCost: NaN,
-            buyGasUsed: "",
-            sellGasUsed: "",
-            profit: 0,
-            buyTimestamp: NaN,
-          };
-          hotTokens.push(token);
-        }
+        let token: Token = {
+          name: pool.symbol,
+          buyTimestamp: NaN,
+          address: pool.address,
+          historyPrice: [],
+          buyPrice: NaN,
+          highPrice: NaN,
+          buyAmount: 0,
+          buyEthCost: NaN,
+          buyGasUsed: "",
+          sellGasUsed: "",
+          profit: 0,
+          tradeWin: 0,
+          tradeCount: 0,
+        };
+        hotTokens.push(token);
       });
     })
     .catch(function (error) {
