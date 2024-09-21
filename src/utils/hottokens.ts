@@ -32,12 +32,14 @@ function getHotTokens() {
           const address = pool.relationships.base_token.data.id
             .split("_")[1]
             .trim();
-          return { symbol, address };
+          const reserve_in_usd = pool.attributes.reserve_in_usd;
+          return { symbol, address, reserve_in_usd };
         })
         .filter(
           (token) =>
             token.symbol !== "WETH" &&
             !/[\u4e00-\u9fa5]/.test(token.symbol) &&
+            token.reserve_in_usd > 100000 &&
             token.symbol &&
             token.address
         );
