@@ -123,8 +123,10 @@ function main() {
 
                   if (profit > 0) {
                     TRADE_WIN++;
+                    token.tradeWin++;
                   }
                   TRADE_COUNT++;
+                  token.tradeCount++;
 
                   token.buyEthCost = NaN;
 
