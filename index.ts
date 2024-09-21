@@ -39,9 +39,10 @@ function main() {
         .toString()
         .padEnd(
           constants.PRICE_PAD
-        )} ${totalReturn}% W:${TRADE_WIN} C:${TRADE_COUNT} R:${(
-        TRADE_WIN /
-        (TRADE_COUNT + 0.01)
+        )} ${totalReturn}% W:${TRADE_WIN} C:${TRADE_COUNT} R:${(TRADE_COUNT ===
+      0
+        ? 0
+        : TRADE_WIN / TRADE_COUNT
       ).toFixed(2)}\x1b[0m) +++++++++++++++++++++++++++++++`
     );
 
@@ -49,7 +50,17 @@ function main() {
       logger.info(
         `\x1b[34m ${token.name.padEnd(
           constants.SYMBAL_PAD
-        )} ${token.historyPrice.length.toString().padEnd(5)} ${token.profit
+        )} ${token.historyPrice.length.toString().padEnd(5)} ${token.tradeWin
+          .toString()
+          .padEnd(4)} ${token.tradeCount
+          .toString()
+          .padEnd(4)} ${(token.tradeCount === 0
+          ? 0
+          : token.tradeWin / token.tradeCount
+        )
+          .toFixed(2)
+          .toString()
+          .padEnd(5)} ${token.profit
           .toPrecision(4)
           .toString()
           .padEnd(constants.SYMBAL_PAD + 2)} ${token.buyEthCost
@@ -139,21 +150,21 @@ function main() {
                 return;
               }
 
-              const p = TRADE_COUNT == 0 ? 0.5 : TRADE_WIN / TRADE_COUNT;
+              const pGlobal = TRADE_COUNT == 0 ? 0.5 : TRADE_WIN / TRADE_COUNT;
+              const p =
+                token.tradeCount == 0
+                  ? pGlobal
+                  : token.tradeWin / token.tradeCount;
               const b = helpers.getOdds();
               let kelly = helpers.getKelly(b, p);
 
               if (kelly > 0.9) {
-                logger.info(
-                  `Kelly too high K ${kelly} b ${b} p ${p} W ${TRADE_WIN} C ${TRADE_COUNT}`
-                );
+                logger.info(`Kelly too high K ${kelly} b ${b} p ${p}`);
                 kelly = 0.9;
               }
 
               if (kelly < 0.2) {
-                logger.info(
-                  `Kelly too low K ${kelly} b ${b} p ${p} W ${TRADE_WIN} C ${TRADE_COUNT}`
-                );
+                logger.info(`Kelly too low K ${kelly} b ${b} p ${p}`);
                 kelly = 0.2;
               }
 

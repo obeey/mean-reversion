@@ -1,3 +1,8 @@
+export interface PoolTokenInfo {
+  symbol: string;
+  address: string;
+}
+
 export interface Pools {
   id: string;
   type: string;

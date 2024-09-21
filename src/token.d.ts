@@ -1,5 +1,6 @@
 export interface Token {
   name: string;
+  buyTimestamp: number;
   address: string;
   historyPrice: number[];
   buyPrice: number;
@@ -9,5 +10,6 @@ export interface Token {
   buyGasUsed: string;
   sellGasUsed: string;
   profit: number;
-  buyTimestamp: number;
+  tradeWin: number;
+  tradeCount: number;
 }
