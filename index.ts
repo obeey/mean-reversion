@@ -49,7 +49,10 @@ function main() {
       logger.info(
         `\x1b[34m ${token.name.padEnd(
           constants.SYMBAL_PAD
-        )} ${token.historyPrice.length.toString().padEnd(5)} ${token.buyEthCost
+        )} ${token.historyPrice.length.toString().padEnd(5)} ${token.profit
+          .toPrecision(4)
+          .toString()
+          .padEnd(constants.SYMBAL_PAD + 2)} ${token.buyEthCost
           .toPrecision(4)
           .toString()
           .padEnd(constants.SYMBAL_PAD + 2)} ${token.buyPrice
@@ -94,6 +97,7 @@ function main() {
                 const returnProfile = token.buyAmount / Number(tokenPrice);
                 token.buyAmount = 0;
                 token.buyPrice = NaN;
+                token.buyEthCost = NaN;
                 token.buyTimestamp = NaN;
                 token.highPrice = NaN;
                 helpers.addProfile(returnProfile);
@@ -105,6 +109,8 @@ function main() {
                     token.buyEthCost -
                     Number(token.buyGasUsed) -
                     Number(token.sellGasUsed);
+                  token.profit += profit;
+
                   if (profit > 0) {
                     TRADE_WIN++;
                   }

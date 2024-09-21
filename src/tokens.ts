@@ -1,6 +1,7 @@
 import { Token } from "./token.d.js";
 
 let tokens: Token[] = [
+  /*
   {
     name: "FARM",
     address: "0x6db6fdb5182053eecec778afec95e0814172a474",
@@ -229,6 +230,7 @@ let tokens: Token[] = [
     sellGasUsed: "",
     buyTimestamp: NaN,
   },
+  */
 ];
 
 export default { tokens };

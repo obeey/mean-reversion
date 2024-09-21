@@ -59,6 +59,7 @@ function getHotTokens() {
             buyEthCost: NaN,
             buyGasUsed: "",
             sellGasUsed: "",
+            profit: 0,
             buyTimestamp: NaN,
           };
           hotTokens.push(token);
