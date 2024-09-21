@@ -97,7 +97,6 @@ function main() {
                 const returnProfile = token.buyAmount / Number(tokenPrice);
                 token.buyAmount = 0;
                 token.buyPrice = NaN;
-                token.buyEthCost = NaN;
                 token.buyTimestamp = NaN;
                 token.highPrice = NaN;
                 helpers.addProfile(returnProfile);
@@ -115,6 +114,9 @@ function main() {
                     TRADE_WIN++;
                   }
                   TRADE_COUNT++;
+
+                  token.buyEthCost = NaN;
+
                   logger.info(
                     `\x1b[32m S ${token.name.padEnd(
                       constants.SYMBAL_PAD
