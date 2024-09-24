@@ -114,13 +114,15 @@ function main() {
                 helpers.addProfile(returnProfile);
 
                 eth.sellToken(token.address).then((gasUsed: string) => {
-                  token.sellGasUsed = gasUsed;
+                  const gasUsedNum = Number(gasUsed);
+                  if (!Number.isNaN(gasUsedNum)) token.sellGasUsed = gasUsedNum;
+
                   const profit =
                     returnProfile -
                     token.buyEthCost -
-                    Number(token.buyGasUsed) -
-                    Number(token.sellGasUsed);
-                  token.profit += profit;
+                    token.buyGasUsed -
+                    token.sellGasUsed;
+                  if (!Number.isNaN(profit)) token.profit += profit;
 
                   if (profit > 0) {
                     TRADE_WIN++;
@@ -200,7 +202,9 @@ function main() {
               eth
                 .buyToken(token.address, buyEth.toString())
                 .then((gasUsed: string) => {
-                  token.buyGasUsed = gasUsed;
+                  const buyGasUsedNum = Number(gasUsed);
+                  if (!Number.isNaN(buyGasUsedNum))
+                    token.buyGasUsed = buyGasUsedNum;
                 });
 
               logger.info(

@@ -7,8 +7,8 @@ export interface Token {
   highPrice: number;
   buyAmount: number;
   buyEthCost: number;
-  buyGasUsed: string;
-  sellGasUsed: string;
+  buyGasUsed: number;
+  sellGasUsed: number;
   profit: number;
   tradeWin: number;
   tradeCount: number;
