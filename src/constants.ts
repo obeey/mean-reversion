@@ -40,7 +40,7 @@ const PRICE_PAD = 15;
 
 const MAX_HISTORY_PRICE_LEN = 16; // 3min: 15+1. 15*12=180sec
 
-const INIT_PROFILE = 6;
+const INIT_PROFILE = 2;
 const RESERVE_PROFILE = 0.05;
 const TRADE_AMOUNT = 0.5;
 const TRADE_AMOUNT_MIN = 0.3;

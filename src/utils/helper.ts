@@ -213,7 +213,7 @@ interface UrlResponseTime {
   responseTime: number;
 }
 
-function fetchBestProvider() {
+function fetchBestProviderByDelay() {
   getAllProvider().then(async (providers) => {
     const results = await Promise.all(
       providers.map((url) => sendPostRequestAndMeasureTime(url))
@@ -234,8 +234,7 @@ function fetchBestProvider() {
   });
 }
 
-/*
-function fetchBestProvider() {
+function fetchBestProviderByRandom() {
   getAllProvider()
     .then(async (providers) => {
       const newProvider = providers[getRandomInt(0, providers.length)];
@@ -246,7 +245,6 @@ function fetchBestProvider() {
       logger.error(error);
     });
 }
-*/
 
 function getRandomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min)) + min;
@@ -336,6 +334,7 @@ async function sendPostRequestAndMeasureTime(
   }
 }
 
+const fetchBestProvider = fetchBestProviderByRandom;
 // fetchBestProvider();
 setInterval(() => fetchBestProvider(), 300000);
 

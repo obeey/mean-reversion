@@ -173,13 +173,31 @@ function main() {
                 kelly = 0.2;
               }
 
-              const buyEth = profile * kelly;
+              let buyEth = profile * kelly;
+              if (buyEth < constants.TRADE_AMOUNT_MIN)
+                buyEth = constants.TRADE_AMOUNT_MIN;
+              helpers.getProfile().then((profile) => {
+                if (buyEth > profile - constants.RESERVE_PROFILE) {
+                  /*
+                logger.error(
+                  `B No money buy ${token.name.padEnd(
+                    constants.SYMBAL_PAD
+                  )} Need: ${buyEth} Remain: ${profile}`
+                );
+                */
+                  throw new Error(
+                    `B No money buy ${token.name.padEnd(
+                      constants.SYMBAL_PAD
+                    )} Need: ${buyEth} Remain: ${profile}`
+                  );
+                }
+              });
               /*
-            const buyEth =
-              profile >= constants.TRADE_AMOUNT + constants.RESERVE_PROFILE
-                ? constants.TRADE_AMOUNT
-                : constants.TRADE_AMOUNT_MIN;
-            */
+              buyEth =
+                profile >= buyEth + constants.RESERVE_PROFILE
+                  ? constants.TRADE_AMOUNT
+                  : constants.TRADE_AMOUNT_MIN;
+              */
               const buyNum = Number(tokenPrice) * buyEth;
               if (buyNum <= 0) {
                 logger.error(
@@ -216,7 +234,7 @@ function main() {
           })
           .catch((error) => {
             logger.error(`Process ${token.name} failed. ${error}`);
-            helpers.fetchBestProvider();
+            // helpers.fetchBestProvider();
           });
       } catch (error) {
         logger.error(`Process ${token.name} failed.`);
