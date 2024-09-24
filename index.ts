@@ -77,7 +77,7 @@ function main() {
       try {
         eth
           .getMidPrice(token.address)
-          .then(([tokenPrice, ethPrice]: [string, string]) => {
+          .then(async ([tokenPrice, ethPrice]: [string, string]) => {
             const curPrice = Number(ethPrice);
             if (!Number.isNaN(token.highPrice) && token.highPrice < curPrice) {
               token.highPrice = curPrice;
@@ -178,22 +178,23 @@ function main() {
               let buyEth = profile * kelly;
               if (buyEth < constants.TRADE_AMOUNT_MIN)
                 buyEth = constants.TRADE_AMOUNT_MIN;
-              helpers.getProfile().then((profile) => {
-                if (buyEth > profile - constants.RESERVE_PROFILE) {
-                  /*
+              const nowProfile = await helpers.getProfile();
+              if (buyEth > nowProfile - constants.RESERVE_PROFILE) {
                 logger.error(
                   `B No money buy ${token.name.padEnd(
                     constants.SYMBAL_PAD
                   )} Need: ${buyEth} Remain: ${profile}`
                 );
-                */
+                return;
+                /*
                   throw new Error(
                     `B No money buy ${token.name.padEnd(
                       constants.SYMBAL_PAD
                     )} Need: ${buyEth} Remain: ${profile}`
                   );
-                }
-              });
+                */
+              }
+
               /*
               buyEth =
                 profile >= buyEth + constants.RESERVE_PROFILE
