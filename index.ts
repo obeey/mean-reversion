@@ -35,15 +35,16 @@ function main() {
     ).toPrecision(2);
 
     logger.info(
-      `+++++++++++++++++++++++++++++++ PROFILING(\x1b[33m ${profile
+      `++++++++++++++++++++++++++ PROFILING(\x1b[33m ${profile
+        .toFixed(5)
         .toString()
         .padEnd(
-          constants.PRICE_PAD
+          constants.SYMBAL_PAD
         )} ${totalReturn}% W:${TRADE_WIN} C:${TRADE_COUNT} R:${(TRADE_COUNT ===
       0
         ? 0
         : TRADE_WIN / TRADE_COUNT
-      ).toFixed(2)}\x1b[0m) +++++++++++++++++++++++++++++++`
+      ).toFixed(2)}\x1b[0m) ++++++++++++++++++++++++++`
     );
 
     tokens.tokens.forEach((token: Token) => {
