@@ -44,7 +44,7 @@ function main() {
       0
         ? 0
         : TRADE_WIN / TRADE_COUNT
-      ).toFixed(2)}\x1b[0m) ++++++++++++++++++++++++++`
+      ).toFixed(2)} \x1b[0m) ++++++++++++++++++++++++++`
     );
 
     tokens.tokens.forEach((token: Token) => {
@@ -69,7 +69,9 @@ function main() {
           .toString()
           .padEnd(constants.SYMBAL_PAD + 2)} ${token.buyPrice
           .toString()
-          .padEnd(constants.PRICE_PAD)} ${token.highPrice} \x1b[0m`
+          .padEnd(constants.PRICE_PAD)} ${token.highPrice} ${
+          token.address
+        } \x1b[0m`
       );
 
       try {
