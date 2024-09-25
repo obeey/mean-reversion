@@ -64,14 +64,12 @@ function main() {
           .padEnd(5)} ${token.profit
           .toPrecision(4)
           .toString()
-          .padEnd(constants.SYMBAL_PAD + 2)} ${token.buyEthCost
+          .padEnd(constants.SYMBAL_PAD + 2)} ${token.address} ${token.buyEthCost
           .toPrecision(4)
           .toString()
           .padEnd(constants.SYMBAL_PAD + 2)} ${token.buyPrice
           .toString()
-          .padEnd(constants.PRICE_PAD)} ${token.highPrice} ${
-          token.address
-        } \x1b[0m`
+          .padEnd(constants.PRICE_PAD)} ${token.highPrice} \x1b[0m`
       );
 
       try {
