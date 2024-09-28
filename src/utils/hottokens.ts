@@ -4,6 +4,8 @@ import { Pools, PoolTokenInfo } from "./pools.js";
 import { Token } from "../token.js";
 import logger from "./logger.js";
 import constants from "../constants.js";
+import eth from "./eth.js";
+import { ethers } from "ethers";
 
 const PROXY_URL = "http://127.0.0.1:7890";
 
@@ -37,13 +39,48 @@ function getHotTokens() {
         })
         .filter(
           (token) =>
-            token.symbol !== "WETH" &&
-            !/[\u4e00-\u9fa5]/.test(token.symbol) &&
-            token.reserve_in_usd > 100000 &&
             token.symbol &&
-            token.address
+            token.address &&
+            token.symbol !== "WETH" &&
+            !/[\u4e00-\u9fa5]/.test(token.symbol)
         );
 
+      // let poolTokens: PoolTokenInfo[] = [];
+      poolTokens.forEach((pool) => {
+        eth.getPoolEth(pool.address).then((ethAmount) => {
+          if (ethAmount.valueOf() > constants.POOL_ETH_MIN) {
+            // poolTokens.push(pool);
+            logger.info(
+              `${pool.symbol.padEnd(constants.SYMBAL_PAD + 8)} ${
+                pool.address
+              } ${ethAmount}`
+            );
+
+            if (hotTokens.find((token) => token.name === pool.symbol)) {
+              return;
+            }
+
+            let token: Token = {
+              name: pool.symbol,
+              buyTimestamp: NaN,
+              address: pool.address,
+              historyPrice: [],
+              buyPrice: NaN,
+              highPrice: NaN,
+              buyAmount: 0,
+              buyEthCost: NaN,
+              buyGasUsed: 0,
+              sellGasUsed: 0,
+              profit: 0,
+              tradeWin: 0,
+              tradeCount: 0,
+            };
+            hotTokens.push(token);
+          }
+        });
+      });
+
+      /*
       hotTokens.filter(
         (token) =>
           token.buyAmount > 0 ||
@@ -51,11 +88,11 @@ function getHotTokens() {
       );
 
       logger.info(
-        "------------------------- hot tokens -------------------------"
+        "------------------------------------ hot tokens ------------------------------------"
       );
       poolTokens.forEach((pool) => {
         logger.info(
-          `${pool.symbol.padEnd(constants.SYMBAL_PAD)} ${pool.address}`
+          `${pool.symbol.padEnd(constants.SYMBAL_PAD + 8)} ${pool.address}`
         );
         if (hotTokens.find((token) => token.name === pool.symbol)) {
           return;
@@ -78,6 +115,7 @@ function getHotTokens() {
         };
         hotTokens.push(token);
       });
+      */
     })
     .catch(function (error) {
       console.error(error);

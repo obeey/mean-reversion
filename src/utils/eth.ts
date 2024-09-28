@@ -56,21 +56,34 @@ async function createPair(token0: Token, token1: Token): Promise<Pair> {
   return pair;
 }
 
-async function getMaxTradeEth(tokenAddress: string): Promise<string> {
+async function getPoolEthWei(tokenAddress: string): Promise<bigint> {
   const token0 = WETH9[ChainId.MAINNET];
   const decimals = Number(await getDecimals(ChainId.MAINNET, tokenAddress));
   const token1 = new Token(ChainId.MAINNET, tokenAddress, decimals);
 
+  // console.log(`getMaxTradeEth ${token0.symbol} ${tokenAddress}`);
   const [reserve0, reserve1]: [bigint, bigint] = await getReserves(
     token0,
     token1
   );
 
   const reserve = token0.sortsBefore(token1) ? reserve0 : reserve1;
+  return reserve;
+}
+
+async function getPoolEth(tokenAddress: string): Promise<Number> {
+  const wei = BigInt(await getPoolEthWei(tokenAddress));
+  const ethStr = ethers.formatEther(wei);
+  const ethAmount = Number(ethStr);
+  return ethAmount;
+}
+
+async function getMaxTradeEth(tokenAddress: string): Promise<string> {
+  const reserve = await getPoolEthWei(tokenAddress);
 
   const wei = reserve / BigInt(constants.TRADE_RAISE_PERCENT_DIVISOR);
   const eth = ethers.formatEther(wei);
-  console.log(`wei ${wei} eth ${eth}`);
+  // console.log(`wei ${wei} eth ${eth}`);
 
   return eth;
 }
@@ -383,6 +396,8 @@ export default {
   buyToken: buyTokenTest,
   sellToken: sellTokenTest,
   getEthBalance,
+  getPoolEthWei,
+  getPoolEth,
   getMaxTradeEth,
   tradetest,
 };
