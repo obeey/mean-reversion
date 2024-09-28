@@ -8,7 +8,7 @@ import {
   TradeType,
   Percent,
 } from "@uniswap/sdk-core";
-import { ethers, Wallet } from "ethers";
+import { ethers } from "ethers";
 import poolabi from "../abi/uniswap-pool.abi.json" assert { type: "json" };
 import erc20abi from "../abi/erc20.abi.json" assert { type: "json" };
 import constants from "../constants.js";
@@ -54,6 +54,25 @@ async function createPair(token0: Token, token1: Token): Promise<Pair> {
     CurrencyAmount.fromRawAmount(t1, reserve1.toString())
   );
   return pair;
+}
+
+async function getMaxTradeEth(tokenAddress: string): Promise<string> {
+  const token0 = WETH9[ChainId.MAINNET];
+  const decimals = Number(await getDecimals(ChainId.MAINNET, tokenAddress));
+  const token1 = new Token(ChainId.MAINNET, tokenAddress, decimals);
+
+  const [reserve0, reserve1]: [bigint, bigint] = await getReserves(
+    token0,
+    token1
+  );
+
+  const reserve = token0.sortsBefore(token1) ? reserve0 : reserve1;
+
+  const wei = reserve / BigInt(constants.TRADE_RAISE_PERCENT_DIVISOR);
+  const eth = ethers.formatEther(wei);
+  console.log(`wei ${wei} eth ${eth}`);
+
+  return eth;
 }
 
 async function getMidPrice(tokenAddress: string): Promise<[string, string]> {
