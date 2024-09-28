@@ -29,17 +29,20 @@ async function getDecimals(
 
 const chainId = ChainId.MAINNET;
 
-async function createPair(token0: Token, token1: Token): Promise<Pair> {
+async function getReserves(token0: Token, token1: Token) {
   const pairAddress = Pair.getAddress(token0, token1);
 
-  // Setup provider, import necessary ABI ...
   const pairContract = new ethers.Contract(
     pairAddress,
     poolabi,
     constants.getProvider()
   );
-  const reserves = await pairContract["getReserves"]();
-  const [reserve0, reserve1] = reserves;
+
+  return pairContract["getReserves"]();
+}
+
+async function createPair(token0: Token, token1: Token): Promise<Pair> {
+  const [reserve0, reserve1] = await getReserves(token0, token1);
 
   const tokens = [token0, token1];
   const [t0, t1] = tokens[0].sortsBefore(tokens[1])
