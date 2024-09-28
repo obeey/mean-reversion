@@ -184,13 +184,18 @@ function main() {
                   )} Need: ${buyEth} Remain: ${profile}`
                 );
                 return;
-                /*
-                  throw new Error(
-                    `B No money buy ${token.name.padEnd(
-                      constants.SYMBAL_PAD
-                    )} Need: ${buyEth} Remain: ${profile}`
-                  );
-                */
+              }
+
+              const maxEthBuy = Number(await eth.getMaxTradeEth(token.address));
+              if (maxEthBuy < constants.TRADE_AMOUNT_MIN) {
+                logger.error(
+                  `B ${token.name} Max ETH to buy ${maxEthBuy} less then MIN ${constants.TRADE_AMOUNT_MIN}`
+                );
+                return;
+              }
+
+              if (buyEth > maxEthBuy) {
+                buyEth = maxEthBuy;
               }
 
               /*

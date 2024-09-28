@@ -383,5 +383,6 @@ export default {
   buyToken: buyTokenTest,
   sellToken: sellTokenTest,
   getEthBalance,
+  getMaxTradeEth,
   tradetest,
 };
