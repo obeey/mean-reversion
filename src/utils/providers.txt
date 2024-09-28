@@ -1,9 +1,3 @@
-https://go.getblock.io/72712a94408b4ee2bd4a313ffc2c3370
-https://go.getblock.io/b502ecc10e49457bbf33049d83c70813
-https://go.getblock.io/da4c88547b8f46e4acd77df6de1d1963
-https://go.getblock.io/b0747b6733ba484d96375b8c54b1c4ef
-https://go.getblock.io/1b41101bd2854c8b8b3107097c5ba389
-https://go.getblock.io/a35061b4762843e899c5547dc64e890c
 https://mainnet.chainnodes.org/8e5877bf-2365-4b87-84ac-82b094b3a39f
 https://mainnet.chainnodes.org/4017f6c2-e620-41ab-b0b1-1e5e1cccf965
 https://mainnet.chainnodes.org/2b17ea54-fae9-4f3c-92c8-f45750bc2cb3
