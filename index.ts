@@ -49,9 +49,9 @@ function main() {
 
     tokens.tokens.forEach((token: Token) => {
       logger.info(
-        `\x1b[34m ${token.name.padEnd(
-          constants.SYMBAL_PAD + 8
-        )} ${token.historyPrice.length.toString().padEnd(5)} ${token.tradeWin
+        `\x1b[34m ${token.name.padEnd(constants.SYMBAL_PAD + 8)} ${
+          token.address
+        } ${token.historyPrice.length.toString().padEnd(5)} ${token.tradeWin
           .toString()
           .padEnd(4)} ${token.tradeCount
           .toString()
@@ -64,7 +64,7 @@ function main() {
           .padEnd(5)} ${token.profit
           .toPrecision(4)
           .toString()
-          .padEnd(constants.SYMBAL_PAD + 2)} ${token.address} ${token.buyEthCost
+          .padEnd(constants.SYMBAL_PAD + 2)} ${token.buyEthCost
           .toPrecision(4)
           .toString()
           .padEnd(constants.SYMBAL_PAD + 2)} ${token.buyPrice

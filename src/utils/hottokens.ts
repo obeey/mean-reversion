@@ -5,11 +5,12 @@ import { Token } from "../token.js";
 import logger from "./logger.js";
 import constants from "../constants.js";
 import eth from "./eth.js";
-import { ethers } from "ethers";
+import tokens from "../tokens.js";
 
 const PROXY_URL = "http://127.0.0.1:7890";
 
-let hotTokens: Token[] = [];
+// let hotTokens: Token[] = [];
+let hotTokens: Token[] = tokens.tokens;
 
 function getHotTokens() {
   const options: AxiosRequestConfig = {
