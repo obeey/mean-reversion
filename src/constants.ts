@@ -41,7 +41,7 @@ const PRICE_PAD = 15;
 const MAX_HISTORY_PRICE_LEN = 16; // 3min: 15+1. 15*12=180sec
 
 const POOL_ETH_MIN = 50;
-const INIT_PROFILE = 2;
+const INIT_PROFILE = 1;
 const RESERVE_PROFILE = 0.05;
 const TRADE_RAISE_PERCENT_DIVISOR = 100; // 百分比的倒数,比如 1% 就是 100
 const TRADE_AMOUNT_MIN = 0.5;
