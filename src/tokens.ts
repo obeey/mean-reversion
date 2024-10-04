@@ -1,6 +1,7 @@
 import { Token } from "./token.d.js";
 
 let tokens: Token[] = [
+  /*
   {
     name: "3AC",
     address: "0x2de1218c31a04e1040fc5501b89e3a58793b3ddf",
@@ -91,6 +92,7 @@ let tokens: Token[] = [
     tradeWin: 0,
     tradeCount: 0,
   },
+  */
   {
     name: "INCEPT",
     address: "0x1c43cd666f22878ee902769fccda61f401814efb",
@@ -151,6 +153,7 @@ let tokens: Token[] = [
     tradeWin: 10,
     tradeCount: 10,
   },
+  /*
   {
     name: "Neiro",
     address: "0x812ba41e071c7b7fa4ebcfb62df5f45f6fa853ee",
@@ -271,6 +274,7 @@ let tokens: Token[] = [
     tradeWin: 0,
     tradeCount: 0,
   },
+  */
   {
     name: "ESTEE",
     address: "0x4298e4ad48be89bf63a6fdc470a4b4fe9ce633b1",
