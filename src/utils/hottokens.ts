@@ -124,7 +124,7 @@ function getHotTokens() {
 }
 
 getHotTokens();
-setInterval(() => getHotTokens(), 3600000);
+setInterval(() => getHotTokens(), 3600000 * 4);
 
 export default {
   tokens: hotTokens,
