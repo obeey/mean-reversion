@@ -13,6 +13,9 @@ const PROXY_URL = "http://127.0.0.1:7890";
 let hotTokens: Token[] = tokens.tokens;
 
 function getHotTokens() {
+  // 更新周期里面一次交易机会都没有的不参与后续跟踪
+  hotTokens.filter((token) => token.tradeCount > 0);
+
   const options: AxiosRequestConfig = {
     method: "GET",
     url: "https://api.geckoterminal.com/api/v2/networks/eth/dexes/uniswap_v2/pools?page=1",
