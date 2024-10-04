@@ -118,8 +118,8 @@ let tokens: Token[] = [
     buyGasUsed: 0,
     sellGasUsed: 0,
     profit: 0,
-    tradeWin: 12,
-    tradeCount: 15,
+    tradeWin: 20,
+    tradeCount: 25,
   },
   {
     name: "EDOGE",
@@ -133,8 +133,8 @@ let tokens: Token[] = [
     buyGasUsed: 0,
     sellGasUsed: 0,
     profit: 0,
-    tradeWin: 0,
-    tradeCount: 0,
+    tradeWin: 7,
+    tradeCount: 9,
   },
   {
     name: "MOODENG",
@@ -148,8 +148,8 @@ let tokens: Token[] = [
     buyGasUsed: 0,
     sellGasUsed: 0,
     profit: 0,
-    tradeWin: 9,
-    tradeCount: 9,
+    tradeWin: 10,
+    tradeCount: 10,
   },
   {
     name: "Neiro",
@@ -283,8 +283,8 @@ let tokens: Token[] = [
     buyGasUsed: 0,
     sellGasUsed: 0,
     profit: 0,
-    tradeWin: 0,
-    tradeCount: 0,
+    tradeWin: 6,
+    tradeCount: 11,
   },
   /*
   {
