@@ -12,6 +12,7 @@ function main() {
 
   let TRADE_COUNT = 0;
   let TRADE_WIN = 0;
+  let totalProfit = 0;
 
   setInterval(async () => {
     const profile = await helpers.getProfile();
@@ -35,7 +36,7 @@ function main() {
     ).toPrecision(2);
 
     logger.info(
-      `+++++++++++++++++++++++++++++++++++++++++++ PROFILING(\x1b[33m ${profile
+      `+++++++++++++++++++++++++++++++++++++++++++ PROFILING(\x1b[33m ${totalProfit
         .toFixed(5)
         .toString()
         .padEnd(
@@ -122,7 +123,10 @@ function main() {
                     token.buyEthCost -
                     token.buyGasUsed -
                     token.sellGasUsed;
-                  if (!Number.isNaN(profit)) token.profit += profit;
+                  if (!Number.isNaN(profit)) {
+                    token.profit += profit;
+                    totalProfit += profit;
+                  }
 
                   if (profit > 0) {
                     TRADE_WIN++;
