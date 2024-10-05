@@ -197,11 +197,15 @@ async function getProfileMainnet() {
 }
 
 function addProfileTest(delta: number) {
-  profile += delta;
+  if (!Number.isNaN(delta)) {
+    profile += delta;
+  }
 }
 
 function subProfileTest(delta: number) {
-  profile -= delta;
+  if (!Number.isNaN(delta)) {
+    profile -= delta;
+  }
 }
 
 function addProfileMainnet(delta: number) {}

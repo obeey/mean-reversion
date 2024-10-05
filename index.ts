@@ -17,6 +17,7 @@ function main() {
   setInterval(async () => {
     const profile = await helpers.getProfile();
 
+    /*
     const curProfile =
       tokens.tokens
         .filter((token: Token) => token.buyAmount > 0)
@@ -34,9 +35,17 @@ function main() {
       ((curProfile - constants.INIT_PROFILE) / constants.INIT_PROFILE) *
       100
     ).toPrecision(2);
+    */
+    const totalReturn = (
+      (totalProfit / constants.INIT_PROFILE) *
+      100
+    ).toPrecision(2);
 
     logger.info(
       `+++++++++++++++++++++++++++++++++++++++++++ PROFILING(\x1b[33m ${totalProfit
+        .toFixed(5)
+        .toString()
+        .padEnd(constants.SYMBAL_PAD)} ${profile
         .toFixed(5)
         .toString()
         .padEnd(
@@ -112,7 +121,6 @@ function main() {
                 token.buyPrice = NaN;
                 token.buyTimestamp = NaN;
                 token.highPrice = NaN;
-                helpers.addProfile(returnProfile);
 
                 eth.sellToken(token.address).then((gasUsed: string) => {
                   const gasUsedNum = Number(gasUsed);
@@ -124,8 +132,11 @@ function main() {
                     token.buyGasUsed -
                     token.sellGasUsed;
                   if (!Number.isNaN(profit)) {
+                    helpers.addProfile(returnProfile - gasUsedNum);
                     token.profit += profit;
                     totalProfit += profit;
+                  } else {
+                    helpers.addProfile(returnProfile);
                   }
 
                   if (profit > 0) {
@@ -218,7 +229,6 @@ function main() {
                 return;
               }
 
-              helpers.subProfile(buyEth);
               token.buyAmount += buyNum;
               token.buyPrice = curPrice;
               token.buyEthCost = buyEth;
@@ -231,8 +241,12 @@ function main() {
                 .buyToken(token.address, buyEth.toString())
                 .then((gasUsed: string) => {
                   const buyGasUsedNum = Number(gasUsed);
-                  if (!Number.isNaN(buyGasUsedNum))
+                  if (!Number.isNaN(buyGasUsedNum)) {
+                    helpers.subProfile(buyEth - buyGasUsedNum);
                     token.buyGasUsed = buyGasUsedNum;
+                  } else {
+                    helpers.subProfile(buyEth);
+                  }
                 });
 
               logger.info(
