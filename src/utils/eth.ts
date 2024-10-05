@@ -132,18 +132,15 @@ async function buyTokenMainnet(
   const decimals = Number(await getDecimals(ChainId.MAINNET, tokenAddress));
   const token = new Token(ChainId.MAINNET, tokenAddress, decimals);
 
-  let done = false;
-  while (!done) {
-    swapTokens(token, WETH9[token.chainId], amountInETH)
-      .then((txn) => {
-        console.log("Buy Transaction sent:", txn);
-        done = true;
-        return txn.gasUsed;
-      })
-      .catch((error) => {
-        logger.error(error);
-      });
-  }
+  swapTokens(token, WETH9[token.chainId], amountInETH)
+    .then((txn) => {
+      console.log("Buy Transaction sent:", txn);
+      return txn.gasUsed;
+    })
+    .catch((error) => {
+      logger.error(error);
+      buyTokenMainnet(tokenAddress, amountInETH);
+    });
   return "0";
 }
 
@@ -157,22 +154,20 @@ async function sellTokenMainnet(tokenAddress: string): Promise<string> {
   const decimals = Number(await getDecimals(ChainId.MAINNET, tokenAddress));
   const token = new Token(ChainId.MAINNET, tokenAddress, decimals);
 
-  let done = false;
-  while (!done) {
-    swapTokens(
-      WETH9[token.chainId],
-      token,
-      ethers.formatUnits(amountIn, decimals)
-    )
-      .then((txn) => {
-        console.log("Sell Transaction sent:", txn);
-        done = true;
-        return txn.gasUsed;
-      })
-      .catch((error) => {
-        logger.error(error);
-      });
-  }
+  swapTokens(
+    WETH9[token.chainId],
+    token,
+    ethers.formatUnits(amountIn, decimals)
+  )
+    .then((txn) => {
+      console.log("Sell Transaction sent:", txn);
+      return txn.gasUsed;
+    })
+    .catch((error) => {
+      logger.error(error);
+      sellTokenMainnet(tokenAddress);
+    });
+
   return "0";
 }
 
