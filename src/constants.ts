@@ -12,7 +12,7 @@ if (!privateKey) {
 }
 
 let HTTP_PROVIDER_LINK =
-  "https://go.getblock.io/a35061b4762843e899c5547dc64e890c";
+  "https://eth-mainnet.g.alchemy.com/v2/HqMqCcOiNeA_LwLQWHo9ZIgU1V1IG8Q3";
 
 let provider = new ethers.JsonRpcProvider(HTTP_PROVIDER_LINK, ChainId.MAINNET);
 let wallet = new ethers.Wallet(privateKey, provider);
