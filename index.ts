@@ -242,7 +242,7 @@ function main() {
                 .then((gasUsed: string) => {
                   const buyGasUsedNum = Number(gasUsed);
                   if (!Number.isNaN(buyGasUsedNum)) {
-                    helpers.subProfile(buyEth - buyGasUsedNum);
+                    helpers.subProfile(buyEth + buyGasUsedNum);
                     token.buyGasUsed = buyGasUsedNum;
                   } else {
                     helpers.subProfile(buyEth);
