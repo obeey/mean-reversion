@@ -1,26 +1,50 @@
 import * as fs from "fs";
 import { ethers } from "ethers";
-import { ChainId } from "@uniswap/sdk-core";
+import { ChainId, Token, WETH9 } from "@uniswap/sdk-core";
 
 import dotenv from "dotenv";
 dotenv.config();
 // require("dotenv").config();
+
+const chainId = ChainId.MAINNET;
+let HTTP_PROVIDER_LINK =
+  "https://eth-mainnet.g.alchemy.com/v2/HqMqCcOiNeA_LwLQWHo9ZIgU1V1IG8Q3";
+const UNISWAP_ROUTER_ADDRESS = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D";
+
+/*
+const chainId = ChainId.SEPOLIA;
+let HTTP_PROVIDER_LINK =
+  "https://eth-sepolia.g.alchemy.com/v2/HqMqCcOiNeA_LwLQWHo9ZIgU1V1IG8Q3";
+const UNISWAP_ROUTER_ADDRESS = "0xC532a74256D3Db42D0Bf7a0400fEFDbad7694008";
+*/
+
+function getWETH9(chainId: ChainId): Token {
+  const weth9 = WETH9[chainId];
+  if (weth9) {
+    return weth9;
+  }
+
+  if (chainId === ChainId.SEPOLIA) {
+    return new Token(chainId, "0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9", 18);
+  }
+
+  return WETH9[ChainId.MAINNET];
+}
+
+const WETH = getWETH9(chainId);
 
 const privateKey = process.env.PRIVATE_KEY;
 if (!privateKey) {
   throw new Error("私钥未定义，请在 .env 文件中设置 PRIVATE_KEY");
 }
 
-let HTTP_PROVIDER_LINK =
-  "https://eth-mainnet.g.alchemy.com/v2/HqMqCcOiNeA_LwLQWHo9ZIgU1V1IG8Q3";
-
-let provider = new ethers.JsonRpcProvider(HTTP_PROVIDER_LINK, ChainId.MAINNET);
+let provider = new ethers.JsonRpcProvider(HTTP_PROVIDER_LINK, chainId);
 let wallet = new ethers.Wallet(privateKey, provider);
 
 function setProvider(url: string) {
   HTTP_PROVIDER_LINK = url;
 
-  provider = new ethers.JsonRpcProvider(url, ChainId.MAINNET);
+  provider = new ethers.JsonRpcProvider(url, chainId);
   wallet = new ethers.Wallet(privateKey as string, provider);
 }
 
@@ -51,7 +75,6 @@ const TAKE_PROFIT = 0.05;
 const ODDS = TAKE_PROFIT / STOP_LOSS;
 const BUY_DOWN_PERCENT = 0.1;
 
-const UNISWAP_ROUTER_ADDRESS = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D";
 const UNISWAP_ROUTER_ABI = fs
   .readFileSync("src/abi/uniswap-router.abi.json")
   .toString();
@@ -81,4 +104,6 @@ export default {
   UNISWAP_ROUTER_ADDRESS,
   UNISWAP_ROUTER_CONTRACT,
   setProvider,
+  chainId,
+  WETH,
 };

@@ -3,7 +3,6 @@ import { Pair, Route, Trade } from "@uniswap/v2-sdk";
 import {
   ChainId,
   Token,
-  WETH9,
   CurrencyAmount,
   TradeType,
   Percent,
@@ -14,7 +13,6 @@ import erc20abi from "../abi/erc20.abi.json" assert { type: "json" };
 import constants from "../constants.js";
 import logger from "./logger.js";
 import helper from "./helper.js";
-import { error } from "console";
 
 async function getDecimals(
   chainId: ChainId,
@@ -27,8 +25,6 @@ async function getDecimals(
   );
   return tokenContract["decimals"]();
 }
-
-const chainId = ChainId.MAINNET;
 
 async function getReserves(token0: Token, token1: Token) {
   const pairAddress = Pair.getAddress(token0, token1);
@@ -58,9 +54,9 @@ async function createPair(token0: Token, token1: Token): Promise<Pair> {
 }
 
 async function getPoolEthWei(tokenAddress: string): Promise<bigint> {
-  const token0 = WETH9[ChainId.MAINNET];
-  const decimals = Number(await getDecimals(ChainId.MAINNET, tokenAddress));
-  const token1 = new Token(ChainId.MAINNET, tokenAddress, decimals);
+  const token0 = constants.WETH;
+  const decimals = Number(await getDecimals(constants.chainId, tokenAddress));
+  const token1 = new Token(constants.chainId, tokenAddress, decimals);
 
   // console.log(`getMaxTradeEth ${token0.symbol} ${tokenAddress}`);
   const [reserve0, reserve1]: [bigint, bigint] = await getReserves(
@@ -90,14 +86,14 @@ async function getMaxTradeEth(tokenAddress: string): Promise<string> {
 }
 
 async function getMidPrice(tokenAddress: string): Promise<[string, string]> {
-  const decimals = Number(await getDecimals(ChainId.MAINNET, tokenAddress));
+  const decimals = Number(await getDecimals(constants.chainId, tokenAddress));
   // console.log(`decimals ${decimals} ${typeof(decimals)}`)
 
-  const token = new Token(chainId, tokenAddress, decimals);
+  const token = new Token(constants.chainId, tokenAddress, decimals);
 
-  const pair = await createPair(token, WETH9[ChainId.MAINNET]);
+  const pair = await createPair(token, constants.WETH);
 
-  const route = new Route([pair], WETH9[token.chainId], token);
+  const route = new Route([pair], constants.WETH, token);
 
   /*
   console.log(route.midPrice.toSignificant(6)) // 1901.08
@@ -129,17 +125,17 @@ async function buyTokenMainnet(
     return "0";
   }
 
-  const decimals = Number(await getDecimals(ChainId.MAINNET, tokenAddress));
-  const token = new Token(ChainId.MAINNET, tokenAddress, decimals);
+  const decimals = Number(await getDecimals(constants.chainId, tokenAddress));
+  const token = new Token(constants.chainId, tokenAddress, decimals);
 
-  swapTokens(token, WETH9[token.chainId], amountInETH)
+  swapTokens(token, constants.WETH, amountInETH)
     .then((txn) => {
       console.log("Buy Transaction sent:", txn);
       return txn.gasUsed;
     })
     .catch((error) => {
       logger.error(error);
-      buyTokenMainnet(tokenAddress, amountInETH);
+      // buyTokenMainnet(tokenAddress, amountInETH);
     });
   return "0";
 }
@@ -151,20 +147,16 @@ async function sellTokenMainnet(tokenAddress: string): Promise<string> {
     return "0";
   }
 
-  const decimals = Number(await getDecimals(ChainId.MAINNET, tokenAddress));
-  const token = new Token(ChainId.MAINNET, tokenAddress, decimals);
+  const decimals = Number(await getDecimals(constants.chainId, tokenAddress));
+  const token = new Token(constants.chainId, tokenAddress, decimals);
 
-  swapTokens(
-    WETH9[token.chainId],
-    token,
-    ethers.formatUnits(amountIn, decimals)
-  )
+  swapTokens(constants.WETH, token, ethers.formatUnits(amountIn, decimals))
     .then((txn) => {
       console.log("Sell Transaction sent:", txn);
       return txn.gasUsed;
     })
     .catch((error) => {
-      logger.error(error);
+      logger.error(`S: ${error}`);
       sellTokenMainnet(tokenAddress);
     });
 
@@ -243,7 +235,7 @@ async function swapTokens(
       token1,
       constants.getProvider()
     ); //creating instances of a pair
-    // const route = new Route([pair], token, WETH9[token.chainId]);
+    // const route = new Route([pair], token, WETH9[ChainId.MAINNET]);
     const route = await new Route([pair], token1); // a fully specified path from input token to output token
     let amountIn = ethers.parseEther(amount.toString()); //helper function to convert ETH to Wei
     amountIn = amountIn.toString();
@@ -258,6 +250,7 @@ async function swapTokens(
     */
 
     // const token = token0 == WETH9[ChainId.MAINNET] ? token1 : token0;
+    // console.log(`T0: ${token0} T1: ${token1}`);
     const pair = await createPair(token0, token1);
 
     const route = new Route([pair], token1, token0);
@@ -287,17 +280,24 @@ async function swapTokens(
     const valueHex = ethers.toBeHex(value.toString());
 
     let ret;
-    if (token0 === WETH9[chainId]) {
+    if (token0 === constants.WETH) {
       logger.info(`swapExactTokensForETH`);
 
       await approveAmountIn(token1, amountIn);
+
+      const gasLimit = ethers.hexlify(new Uint8Array([0x41, 0xeb, 0])); // 设定 gas 限制
+      const gasPrice = (await constants.getProvider().getFeeData()).gasPrice; // wei
 
       ret = constants.UNISWAP_ROUTER_CONTRACT.swapExactTokensForETH(
         valueHex,
         amountOutMinHex,
         path,
         to,
-        deadline
+        deadline,
+        {
+          gasLimit: gasLimit,
+          gasPrice: gasPrice,
+        }
       );
     } else {
       logger.info(`swapExactETHForTokens`);
@@ -366,7 +366,7 @@ async function approveAmountIn(token1: Token, amountIn: bigint) {
     spenderAddress
   );
 
-  const decimals = Number(await getDecimals(chainId, token1.address));
+  const decimals = Number(await getDecimals(constants.chainId, token1.address));
   logger.info(
     `Current Allowance: ${ethers.formatUnits(
       currentAllowance,
@@ -376,10 +376,12 @@ async function approveAmountIn(token1: Token, amountIn: bigint) {
 
   // 如果当前的 allowance 小于要批准的数量，则进行批准
   if (currentAllowance < amountIn) {
-    logger.info("Approving tokens...");
+    logger.info(
+      `Approving tokens... Current Allowance ${currentAllowance} AmountIn ${amountIn}`
+    );
     const approveTx = await tokenContract.approve(
       spenderAddress,
-      (amountIn * BigInt(100)).toString()
+      (amountIn * BigInt(10000)).toString()
     );
     await approveTx.wait(); // 等待交易确认
     logger.info("Approval transaction confirmed.");
@@ -388,12 +390,22 @@ async function approveAmountIn(token1: Token, amountIn: bigint) {
   }
 }
 
-function tradetest() {
-  // const tokenAddress = "0xb60fdf036f2ad584f79525b5da76c5c531283a1b"; // NEMO
-  // const tokenAddress = "0x132b96b1152bb6be197501e8220a74d3e63e4682"; // WUKONG
-  const tokenAddress = "0x1121acc14c63f3c872bfca497d10926a6098aac5"; // DOGE
-  // buyTokenMainnet(tokenAddress, "0.001");
-  sellTokenMainnet(tokenAddress);
+async function tradetest() {
+  const tokenAddress = "0x28561b8a2360f463011c16b6cc0b0cbef8dbbcad"; // MOODENG
+  buyTokenMainnet(tokenAddress, "0.001")
+    .then((buyGasUsed) => {
+      console.log(`Buy gas ${buyGasUsed}`);
+    })
+    .catch((err) => {
+      console.error(`Buy ${err}`);
+    });
+  // sellTokenMainnet(tokenAddress)
+  //   .then((sellGasUsed) => {
+  //     console.log(`Sell gas ${sellGasUsed}`);
+  //   })
+  //   .catch((err) => {
+  //     console.error(`Sell ${err}`);
+  //   });
 }
 
 // tradetest();
