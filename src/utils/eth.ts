@@ -285,8 +285,9 @@ async function swapTokens(
 
       await approveAmountIn(token1, amountIn);
 
-      const gasLimit = ethers.hexlify(new Uint8Array([0x41, 0xeb, 0])); // 设定 gas 限制
-      const gasPrice = (await constants.getProvider().getFeeData()).gasPrice; // wei
+      const gasLimit = ethers.hexlify(new Uint8Array([0x4, 0x1e, 0xb0])); // 设定 gas 限制
+      let gasPrice = (await constants.getProvider().getFeeData()).gasPrice;
+      if (gasPrice) gasPrice += BigInt(500000000); // wei
 
       ret = constants.UNISWAP_ROUTER_CONTRACT.swapExactTokensForETH(
         valueHex,
@@ -391,6 +392,7 @@ async function approveAmountIn(token1: Token, amountIn: bigint) {
 }
 
 async function tradetest() {
+  /*
   const tokenAddress = "0x28561b8a2360f463011c16b6cc0b0cbef8dbbcad"; // MOODENG
   buyTokenMainnet(tokenAddress, "0.001")
     .then((buyGasUsed) => {
@@ -399,6 +401,7 @@ async function tradetest() {
     .catch((err) => {
       console.error(`Buy ${err}`);
     });
+  */
   // sellTokenMainnet(tokenAddress)
   //   .then((sellGasUsed) => {
   //     console.log(`Sell gas ${sellGasUsed}`);
