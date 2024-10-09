@@ -11,8 +11,6 @@ const PROXY_URL = "http://127.0.0.1:7890";
 
 // let hotTokens: Token[] = [];
 let hotTokens: Token[] = tokens.tokens;
-hotTokens = hotTokens.filter((token) => token.tradeCount > 15);
-hotTokens.forEach((token) => console.log(token.name));
 
 function getHotTokens() {
   const options: AxiosRequestConfig = {
