@@ -126,17 +126,16 @@ function main() {
                   const gasUsedNum = Number(gasUsed);
                   if (!Number.isNaN(gasUsedNum)) token.sellGasUsed = gasUsedNum;
 
+                  helpers.addProfile(returnProfile);
                   const profit =
                     returnProfile -
                     token.buyEthCost -
                     token.buyGasUsed -
                     token.sellGasUsed;
                   if (!Number.isNaN(profit)) {
-                    helpers.addProfile(profit);
                     token.profit += profit;
                     totalProfit += profit;
                   } else {
-                    helpers.addProfile(returnProfile);
                     logger.error("Sell Profit not add.");
                   }
 
@@ -245,7 +244,7 @@ function main() {
                   if (!Number.isNaN(buyGasUsedNum)) {
                     token.buyGasUsed = buyGasUsedNum;
                   }
-                  // helpers.subProfile(buyEth + token.buyGasUsed);
+                  helpers.subProfile(buyEth);
                 });
 
               logger.info(
