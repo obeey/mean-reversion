@@ -13,8 +13,8 @@ let tokens: Token[] = [
     buyGasUsed: 0,
     sellGasUsed: 0,
     profit: 0,
-    tradeWin: 21,
-    tradeCount: 26,
+    tradeWin: 28,
+    tradeCount: 33,
   },
   {
     name: "MOODENG",
@@ -28,12 +28,12 @@ let tokens: Token[] = [
     buyGasUsed: 0,
     sellGasUsed: 0,
     profit: 0,
-    tradeWin: 10,
-    tradeCount: 10,
+    tradeWin: 12,
+    tradeCount: 15,
   },
   {
-    name: "ESTEE",
-    address: "0x4298e4ad48be89bf63a6fdc470a4b4fe9ce633b1",
+    name: "CSI",
+    address: "0x888c1a341ce9d9ae9c2d2a75a72a7f0d2551a2dc",
     buyTimestamp: NaN,
     historyPrice: [],
     buyPrice: NaN,
@@ -43,8 +43,8 @@ let tokens: Token[] = [
     buyGasUsed: 0,
     sellGasUsed: 0,
     profit: 0,
-    tradeWin: 6,
-    tradeCount: 11,
+    tradeWin: 15,
+    tradeCount: 26,
   },
 ];
 
