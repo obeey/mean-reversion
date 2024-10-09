@@ -11,11 +11,10 @@ const PROXY_URL = "http://127.0.0.1:7890";
 
 // let hotTokens: Token[] = [];
 let hotTokens: Token[] = tokens.tokens;
+hotTokens = hotTokens.filter((token) => token.tradeCount > 15);
+hotTokens.forEach((token) => console.log(token.name));
 
 function getHotTokens() {
-  // 更新周期里面一次交易机会都没有的不参与后续跟踪
-  hotTokens.filter((token) => token.tradeCount > 0);
-
   const options: AxiosRequestConfig = {
     method: "GET",
     url: "https://api.geckoterminal.com/api/v2/networks/eth/dexes/uniswap_v2/pools?page=1",
@@ -50,6 +49,9 @@ function getHotTokens() {
         );
 
       // let poolTokens: PoolTokenInfo[] = [];
+      logger.info(
+        "------------------------------------ hot tokens ------------------------------------"
+      );
       poolTokens.forEach((pool) => {
         eth.getPoolEth(pool.address).then((ethAmount) => {
           if (ethAmount.valueOf() > constants.POOL_ETH_MIN) {
@@ -84,6 +86,11 @@ function getHotTokens() {
         });
       });
 
+      // 更新周期里面一次交易机会都没有的不参与后续跟踪
+      hotTokens = hotTokens.filter(
+        (token) => token.tradeCount > 0 && token.profit < -0.1
+      );
+
       /*
       hotTokens.filter(
         (token) =>
@@ -91,9 +98,6 @@ function getHotTokens() {
           poolTokens.find((pool) => token.name === pool.symbol)
       );
 
-      logger.info(
-        "------------------------------------ hot tokens ------------------------------------"
-      );
       poolTokens.forEach((pool) => {
         logger.info(
           `${pool.symbol.padEnd(constants.SYMBAL_PAD + 8)} ${pool.address}`
