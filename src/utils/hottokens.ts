@@ -28,7 +28,7 @@ function getHotTokens() {
 
   axios
     .request(options)
-    .then(function (response: AxiosResponse) {
+    .then(async function (response: AxiosResponse) {
       const pools = response.data.data as Pools[];
       // console.log(response.data.data);
 
@@ -53,42 +53,42 @@ function getHotTokens() {
       logger.info(
         "------------------------------------ hot tokens ------------------------------------"
       );
-      poolTokens.forEach((pool) => {
-        eth.getPoolEth(pool.address).then((ethAmount) => {
-          if (ethAmount.valueOf() > constants.POOL_ETH_MIN) {
-            // poolTokens.push(pool);
-            logger.info(
-              `${pool.symbol.padEnd(constants.SYMBAL_PAD + 8)} ${
-                pool.address
-              } ${ethAmount}`
-            );
-
-            if (hotTokens.find((token) => token.name === pool.symbol)) {
-              return;
-            }
-
-            let token: Token = {
-              name: pool.symbol,
-              buyTimestamp: NaN,
-              address: pool.address,
-              historyPrice: [],
-              buyPrice: NaN,
-              highPrice: NaN,
-              buyAmount: 0,
-              buyEthCost: NaN,
-              buyGasUsed: 0,
-              sellGasUsed: 0,
-              profit: 0,
-              tradeWin: 0,
-              tradeCount: 0,
-            };
-            hotTokens.push(token);
+      const promises = poolTokens.map(async (pool) => {
+        const ethAmount = await eth.getPoolEth(pool.address);
+        if (ethAmount.valueOf() > constants.POOL_ETH_MIN) {
+          if (hotTokens.find((token) => token.name === pool.symbol)) {
+            return;
           }
-        });
+
+          let token: Token = {
+            name: pool.symbol,
+            buyTimestamp: NaN,
+            address: pool.address,
+            historyPrice: [],
+            buyPrice: NaN,
+            highPrice: NaN,
+            buyAmount: 0,
+            buyEthCost: NaN,
+            buyGasUsed: 0,
+            sellGasUsed: 0,
+            profit: 0,
+            tradeWin: 0,
+            tradeCount: 0,
+          };
+          hotTokens.push(token);
+
+          logger.info(
+            `${pool.symbol.padEnd(constants.SYMBAL_PAD + 8)} ${
+              pool.address
+            } ${ethAmount}`
+          );
+        }
       });
 
+      await Promise.all(promises);
+
       // 亏损太多的暂时删除
-      hotTokens = hotTokens.filter((token) => token.profit < -0.1);
+      hotTokens = hotTokens.filter((token) => token.profit > -0.1);
 
       /*
       hotTokens.filter(
