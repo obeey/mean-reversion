@@ -130,8 +130,12 @@ async function buyTokenMainnet(
 
   swapTokens(token, constants.WETH, amountInETH)
     .then((txn) => {
-      console.log("Buy Transaction sent:", txn);
-      return txn.gasUsed;
+      const reciept = txn.wait();
+      const gasUsed = reciept.gasUsed;
+      console.log(
+        `Buy Transaction sent: ${reciept.hash} BN: ${reciept.blockNumber}`
+      );
+      return gasUsed;
     })
     .catch((error) => {
       logger.error(error);
@@ -152,8 +156,12 @@ async function sellTokenMainnet(tokenAddress: string): Promise<string> {
 
   swapTokens(constants.WETH, token, ethers.formatUnits(amountIn, decimals))
     .then((txn) => {
-      console.log("Sell Transaction sent:", txn);
-      return txn.gasUsed;
+      const reciept = txn.wait();
+      const gasUsed = reciept.gasUsed;
+      console.log(
+        `Sell Transaction sent: ${reciept.hash} BN: ${reciept.blockNumber}`
+      );
+      return gasUsed;
     })
     .catch((error) => {
       logger.error(`S: ${error}`);
