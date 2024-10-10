@@ -122,38 +122,42 @@ function main() {
                 token.buyTimestamp = NaN;
                 token.highPrice = NaN;
 
-                eth.sellToken(token.address).then((gasUsed: string) => {
-                  const gasUsedNum = Number(gasUsed);
-                  if (!Number.isNaN(gasUsedNum)) token.sellGasUsed = gasUsedNum;
+                eth
+                  .sellToken(token.address)
+                  .then((gasUsed: string) => {
+                    const gasUsedNum = Number(gasUsed);
+                    if (!Number.isNaN(gasUsedNum))
+                      token.sellGasUsed = gasUsedNum;
 
-                  helpers.addProfile(returnProfile);
-                  const profit =
-                    returnProfile -
-                    token.buyEthCost -
-                    token.buyGasUsed -
-                    token.sellGasUsed;
-                  if (!Number.isNaN(profit)) {
-                    token.profit += profit;
-                    totalProfit += profit;
-                  } else {
-                    logger.error("Sell Profit not add.");
-                  }
+                    helpers.addProfile(returnProfile);
+                    const profit =
+                      returnProfile -
+                      token.buyEthCost -
+                      token.buyGasUsed -
+                      token.sellGasUsed;
+                    if (!Number.isNaN(profit)) {
+                      token.profit += profit;
+                      totalProfit += profit;
+                    } else {
+                      logger.error("Sell Profit not add.");
+                    }
 
-                  if (profit > 0) {
-                    TRADE_WIN++;
-                    token.tradeWin++;
-                  }
-                  TRADE_COUNT++;
-                  token.tradeCount++;
+                    if (profit > 0) {
+                      TRADE_WIN++;
+                      token.tradeWin++;
+                    }
+                    TRADE_COUNT++;
+                    token.tradeCount++;
 
-                  token.buyEthCost = NaN;
+                    token.buyEthCost = NaN;
 
-                  logger.info(
-                    `\x1b[32m S ${token.name.padEnd(
-                      constants.SYMBAL_PAD
-                    )} ${returnProfile} ${profit} \x1b[0m`
-                  );
-                });
+                    logger.info(
+                      `\x1b[32m S ${token.name.padEnd(
+                        constants.SYMBAL_PAD
+                      )} ${returnProfile} ${profit} \x1b[0m`
+                    );
+                  })
+                  .catch(logger.error);
               }
 
               return;
@@ -245,7 +249,8 @@ function main() {
                     token.buyGasUsed = buyGasUsedNum;
                   }
                   helpers.subProfile(buyEth);
-                });
+                })
+                .catch(logger.error);
 
               logger.info(
                 `\x1b[31m B ${token.name.padEnd(

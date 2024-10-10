@@ -128,20 +128,18 @@ async function buyTokenMainnet(
   const decimals = Number(await getDecimals(constants.chainId, tokenAddress));
   const token = new Token(constants.chainId, tokenAddress, decimals);
 
-  swapTokens(token, constants.WETH, amountInETH)
-    .then((txn) => {
-      const reciept = txn.wait();
-      const gasUsed = reciept.gasUsed;
-      console.log(
-        `Buy Transaction sent: ${reciept.hash} BN: ${reciept.blockNumber}`
-      );
-      return gasUsed;
-    })
-    .catch((error) => {
-      logger.error(error);
-      // buyTokenMainnet(tokenAddress, amountInETH);
-    });
-  return "0";
+  try {
+    const txn = await swapTokens(token, constants.WETH, amountInETH);
+    const reciept = txn.wait();
+    const gasUsed = reciept.gasUsed;
+    console.log(
+      `Buy Transaction sent: ${reciept.hash} BN: ${reciept.blockNumber}`
+    );
+    return gasUsed;
+  } catch (error) {
+    logger.error(`B ${error}`);
+    return buyTokenMainnet(tokenAddress, amountInETH);
+  }
 }
 
 async function sellTokenMainnet(tokenAddress: string): Promise<string> {
@@ -154,19 +152,22 @@ async function sellTokenMainnet(tokenAddress: string): Promise<string> {
   const decimals = Number(await getDecimals(constants.chainId, tokenAddress));
   const token = new Token(constants.chainId, tokenAddress, decimals);
 
-  swapTokens(constants.WETH, token, ethers.formatUnits(amountIn, decimals))
-    .then((txn) => {
-      const reciept = txn.wait();
-      const gasUsed = reciept.gasUsed;
-      console.log(
-        `Sell Transaction sent: ${reciept.hash} BN: ${reciept.blockNumber}`
-      );
-      return gasUsed;
-    })
-    .catch((error) => {
-      logger.error(`S: ${error}`);
-      sellTokenMainnet(tokenAddress);
-    });
+  try {
+    const txn = await swapTokens(
+      constants.WETH,
+      token,
+      ethers.formatUnits(amountIn, decimals)
+    );
+    const reciept = txn.wait();
+    const gasUsed = reciept.gasUsed;
+    console.log(
+      `Sell Transaction sent: ${reciept.hash} BN: ${reciept.blockNumber}`
+    );
+    return gasUsed;
+  } catch (error) {
+    logger.error(`S: ${error}`);
+    return sellTokenMainnet(tokenAddress);
+  }
 
   return "0";
 }
