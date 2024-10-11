@@ -152,9 +152,9 @@ function main() {
                     token.buyEthCost = NaN;
 
                     logger.info(
-                      `\x1b[32m S ${token.name.padEnd(
-                        constants.SYMBAL_PAD
-                      )} ${returnProfile} ${profit} \x1b[0m`
+                      `\x1b[32m S ${token.name.padEnd(constants.SYMBAL_PAD)} ${
+                        token.address
+                      } ${returnProfile} ${profit} \x1b[0m`
                     );
                   })
                   .catch(logger.error);
@@ -253,9 +253,9 @@ function main() {
                 .catch(logger.error);
 
               logger.info(
-                `\x1b[31m B ${token.name.padEnd(
-                  constants.SYMBAL_PAD
-                )} ${buyEth} ${kelly} p ${p} \x1b[0m`
+                `\x1b[31m B ${token.name.padEnd(constants.SYMBAL_PAD)} ${
+                  token.address
+                } ${buyEth} k ${kelly} p ${p} \x1b[0m`
               );
             }
           })
