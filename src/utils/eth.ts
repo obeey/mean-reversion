@@ -173,7 +173,8 @@ async function sellTokenMainnet(tokenAddress: string): Promise<string> {
 }
 
 async function updateGasFee(gasUsed: bigint): Promise<string> {
-  const gasPrice = (await constants.getProvider().getFeeData()).gasPrice;
+  const gasPrice = (await constants.getProvider().getFeeData().catch())
+    .gasPrice;
   if (null == gasPrice) {
     logger.error("B Get gasPrice failed.");
     return "0";
@@ -222,7 +223,10 @@ async function getErc20Balanceof(tokenAddress: string) {
  * @return - wei
  */
 function getEthBalance() {
-  return constants.getProvider().getBalance(constants.getWallet().address);
+  return constants
+    .getProvider()
+    .getBalance(constants.getWallet().address)
+    .catch();
 }
 
 /**
