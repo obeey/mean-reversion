@@ -149,7 +149,7 @@ function main() {
                     TRADE_COUNT++;
                     token.tradeCount++;
 
-                    token.buyEthCost = NaN;
+                    token.buyEthCost = 0;
 
                     logger.info(
                       `\x1b[32m S ${token.name.padEnd(constants.SYMBAL_PAD)} ${
@@ -235,7 +235,7 @@ function main() {
 
               token.buyAmount += buyNum;
               token.buyPrice = curPrice;
-              token.buyEthCost = buyEth;
+              token.buyEthCost += buyEth;
               token.buyTimestamp = Date.now();
               token.highPrice = curPrice;
               token.historyPrice.length = 0;

@@ -68,7 +68,7 @@ function getHotTokens() {
             buyPrice: NaN,
             highPrice: NaN,
             buyAmount: 0,
-            buyEthCost: NaN,
+            buyEthCost: 0,
             buyGasUsed: 0,
             sellGasUsed: 0,
             profit: 0,
