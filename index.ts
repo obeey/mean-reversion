@@ -37,7 +37,7 @@ function main() {
     ).toPrecision(2);
     */
     const totalReturn = (
-      (totalProfit / constants.INIT_PROFILE) *
+      ((profile - constants.INIT_PROFILE) / constants.INIT_PROFILE) *
       100
     ).toPrecision(2);
 
