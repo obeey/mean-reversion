@@ -75,6 +75,8 @@ const TAKE_PROFIT = 0.05;
 const ODDS = TAKE_PROFIT / STOP_LOSS;
 const BUY_DOWN_PERCENT = 0.1;
 
+const MAX_TRACE_TOKENS = 20;
+
 const UNISWAP_ROUTER_ABI = fs
   .readFileSync("src/abi/uniswap-router.abi.json")
   .toString();
@@ -100,6 +102,7 @@ export default {
   TAKE_PROFIT,
   ODDS,
   BUY_DOWN_PERCENT,
+  MAX_TRACE_TOKENS,
   MAX_TOKEN_HOLD_SECONDS,
   UNISWAP_ROUTER_ADDRESS,
   UNISWAP_ROUTER_CONTRACT,

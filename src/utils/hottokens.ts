@@ -14,7 +14,7 @@ let hotTokens: Token[] = tokens.tokens;
 
 function getHotTokens() {
   // 更新周期里面一次交易机会都没有的不参与后续跟踪
-  hotTokens = hotTokens.filter((token) => token.tradeCount > 0);
+  // hotTokens = hotTokens.filter((token) => token.tradeCount > 0);
 
   const options: AxiosRequestConfig = {
     method: "GET",
@@ -88,7 +88,12 @@ function getHotTokens() {
       await Promise.all(promises);
 
       // 亏损太多的暂时删除
-      hotTokens = hotTokens.filter((token) => token.profit > -0.1);
+      // hotTokens = hotTokens.filter((token) => token.profit > -0.1);
+      if (hotTokens.length > constants.MAX_TRACE_TOKENS) {
+        hotTokens = hotTokens
+          .sort((a, b) => a.profit - b.profit)
+          .slice(0, constants.MAX_TRACE_TOKENS);
+      }
 
       /*
       hotTokens.filter(
