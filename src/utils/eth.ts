@@ -288,7 +288,7 @@ async function swapTokens(
     */
     const path = [token1.address, token0.address]; //An array of token addresses
     const to = constants.getWallet().address; // should be a checksummed recipient address
-    const deadline = Math.floor(Date.now() / 1000) + 60 * 20; // 20 minutes from the current Unix time
+    const deadline = Math.floor(Date.now() / 1000) + 60 * 2; // 2 minutes from the current Unix time
     const value = trade.inputAmount.quotient; // // needs to be converted to e.g. hex
     const valueHex = ethers.toBeHex(value.toString());
 
@@ -300,7 +300,7 @@ async function swapTokens(
 
       const gasLimit = ethers.hexlify(new Uint8Array([0x4, 0x1e, 0xb0])); // 设定 gas 限制
       let gasPrice = (await constants.getProvider().getFeeData()).gasPrice;
-      if (gasPrice) gasPrice += BigInt(500000000); // wei
+      if (gasPrice) gasPrice += BigInt(100000000); // wei
 
       ret = constants.UNISWAP_ROUTER_CONTRACT.swapExactTokensForETH(
         valueHex,
@@ -406,22 +406,22 @@ async function approveAmountIn(token1: Token, amountIn: bigint) {
 
 async function tradetest() {
   /*
+   */
   const tokenAddress = "0x28561b8a2360f463011c16b6cc0b0cbef8dbbcad"; // MOODENG
   buyTokenMainnet(tokenAddress, "0.001")
     .then((buyGasUsed) => {
       console.log(`Buy gas ${buyGasUsed}`);
+      sellTokenMainnet(tokenAddress)
+        .then((sellGasUsed) => {
+          console.log(`Sell gas ${sellGasUsed}`);
+        })
+        .catch((err) => {
+          console.error(`Sell ${err}`);
+        });
     })
     .catch((err) => {
       console.error(`Buy ${err}`);
     });
-  */
-  // sellTokenMainnet(tokenAddress)
-  //   .then((sellGasUsed) => {
-  //     console.log(`Sell gas ${sellGasUsed}`);
-  //   })
-  //   .catch((err) => {
-  //     console.error(`Sell ${err}`);
-  //   });
 }
 
 // tradetest();
