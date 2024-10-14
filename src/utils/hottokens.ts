@@ -107,16 +107,18 @@ function getHotTokens() {
           .map(({ poolEthValue, ...token }) => token);
       }
 
-      logger.info(
-        "----------------------------- large loss tokens ----------------------------"
-      );
-      largeLossTokens.forEach((token) =>
+      if (largeLossTokens.length > 0) {
         logger.info(
-          `${token.name.padEnd(constants.SYMBAL_PAD + 8)} ${token.address} ${
-            token.profit
-          }`
-        )
-      );
+          "----------------------------- large loss tokens ----------------------------"
+        );
+        largeLossTokens.forEach((token) =>
+          logger.info(
+            `${token.name.padEnd(constants.SYMBAL_PAD + 8)} ${token.address} ${
+              token.profit
+            }`
+          )
+        );
+      }
 
       /*
       hotTokens.filter(
