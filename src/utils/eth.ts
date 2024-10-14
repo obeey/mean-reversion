@@ -178,13 +178,13 @@ async function buyTokenMainnet(
     }
   );
 
-  console.log(`Buy transaction hash: ${tx.hash}`);
-  // await tx.wait();
+  logger.info(`Buy transaction hash: ${tx.hash}`);
+
   const reciept = await tx.wait();
   const gasUsed = ethers.getBigInt(reciept.gasUsed);
-  const gasPrice = ethers.getBigInt(tx.gasPrice);
+  const gasPrice = ethers.getBigInt(reciept.gasPrice);
   const transactionFee = ethers.formatUnits(gasUsed * gasPrice); // ETH string
-  console.log(`Buy confirmed! Fee ${transactionFee}`);
+  logger.info(`Buy confirmed! Fee ${transactionFee}`);
 
   return transactionFee;
 }
@@ -196,7 +196,8 @@ async function sellTokenMainnet(
   const wallet = constants.getWallet();
 
   const amountIn = await getErc20Balanceof(tokenAddress);
-  if (amountIn === undefined || amountIn === "" || amountIn === "0") {
+  // console.log(`typeof balanceOf return ${typeof amountIn}`);
+  if (amountIn === undefined || amountIn === ethers.getBigInt(0)) {
     logger.error(`S No token in account`);
     return "0";
   }
@@ -244,13 +245,14 @@ async function sellTokenMainnet(
     }
   );
 
-  console.log(`Sell transaction hash: ${tx.hash}`);
-  // await tx.wait();
+  logger.info(`Sell transaction hash: ${tx.hash}`);
+
   const reciept = await tx.wait();
+  logger.info(`gasUsed ${reciept.gasUsed} gasPrice ${reciept.gasPrice}`);
   const gasUsed = ethers.getBigInt(reciept.gasUsed);
-  const gasPrice = ethers.getBigInt(tx.gasPrice);
+  const gasPrice = ethers.getBigInt(reciept.gasPrice);
   const transactionFee = ethers.formatUnits(gasUsed * gasPrice); // ETH string
-  console.log(`Sell confirmed! Fee ${transactionFee}`);
+  logger.info(`Sell confirmed! Fee ${transactionFee}ETH`);
 
   return transactionFee;
 }
@@ -370,7 +372,7 @@ function getErc20Contract(tokenAddress: string) {
 /*
  * @return - wei
  */
-async function getErc20Balanceof(tokenAddress: string) {
+async function getErc20Balanceof(tokenAddress: string): Promise<bigint> {
   return getErc20Contract(tokenAddress).balanceOf(
     constants.getWallet().address
   );
@@ -564,7 +566,6 @@ async function approveAmountIn(token1: Token, amountIn: bigint) {
 async function tradetest() {
   const tokenAddress = "0x28561b8a2360f463011c16b6cc0b0cbef8dbbcad"; // MOODENG
 
-  /*
   buyTokenMainnet(tokenAddress, 0.01)
     .then((buyFeeUsed) => {
       console.log(`Buy gas fee ${buyFeeUsed}`);
@@ -580,7 +581,7 @@ async function tradetest() {
       console.error(`Buy ${err}`);
     });
 
-   */
+  /*
   sellTokenMainnet(tokenAddress)
     .then((sellGasUsed) => {
       console.log(`Sell gas ${sellGasUsed}`);
@@ -588,9 +589,10 @@ async function tradetest() {
     .catch((err) => {
       console.error(`Sell ${err}`);
     });
+   */
 }
 
-tradetest();
+// tradetest();
 // buyTokenTest("", "");
 // sellTokenTest("");
 
