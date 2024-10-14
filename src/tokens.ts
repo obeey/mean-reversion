@@ -28,8 +28,8 @@ let tokens: Token[] = [
     buyGasUsed: 0,
     sellGasUsed: 0,
     profit: 0,
-    tradeWin: 15,
-    tradeCount: 26,
+    tradeWin: 20,
+    tradeCount: 31,
   },
 ];
 
