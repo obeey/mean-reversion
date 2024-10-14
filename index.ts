@@ -57,7 +57,7 @@ function main() {
       ).toFixed(2)} \x1b[0m) ++++++++++++++++++++++++++++++++++++++`
     );
 
-    tokens.tokens.forEach((token: Token) => {
+    tokens.getHotTokens().forEach((token: Token) => {
       logger.info(
         `\x1b[34m ${token.name.padEnd(constants.SYMBAL_PAD + 8)} ${
           token.address

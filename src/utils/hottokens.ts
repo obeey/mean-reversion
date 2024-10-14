@@ -12,7 +12,7 @@ const PROXY_URL = "http://127.0.0.1:7890";
 let largeLossTokens: Token[] = tokens.largeLossTokens;
 let hotTokens: Token[] = tokens.tokens;
 
-function getHotTokens() {
+function updateHotTokens() {
   // 更新周期里面一次交易机会都没有的不参与后续跟踪
   // hotTokens = hotTokens.filter((token) => token.tradeCount > 0);
 
@@ -30,7 +30,12 @@ function getHotTokens() {
     .request(options)
     .then(async function (response: AxiosResponse) {
       // 亏损太多的暂时删除
-      largeLossTokens.concat(hotTokens.filter((token) => token.profit <= -0.1));
+      largeLossTokens = largeLossTokens.concat(
+        hotTokens.filter((token) => token.profit <= constants.TOKEN_LARGE_LOSS)
+      );
+      hotTokens = hotTokens.filter(
+        (token) => token.profit > constants.TOKEN_LARGE_LOSS
+      );
 
       const pools = response.data.data as Pools[];
       // console.log(response.data.data);
@@ -159,10 +164,13 @@ function getHotTokens() {
     });
 }
 
-getHotTokens();
-setInterval(() => getHotTokens(), 3600000 * 4);
+updateHotTokens();
+setInterval(() => updateHotTokens(), 3600000 * 4);
+
+function getHotTokens() {
+  return hotTokens;
+}
 
 export default {
-  tokens: hotTokens,
   getHotTokens,
 };
