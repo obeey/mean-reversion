@@ -242,7 +242,7 @@ function main() {
               token.historyPrice.push(curPrice);
 
               eth
-                .buyToken(token.address, buyEth.toString())
+                .buyToken(token.address, buyEth)
                 .then((gasUsed: string) => {
                   const buyGasUsedNum = Number(gasUsed);
                   if (!Number.isNaN(buyGasUsedNum)) {

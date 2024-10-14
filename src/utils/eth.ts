@@ -348,7 +348,7 @@ async function updateGasFee(gasUsed: bigint): Promise<string> {
 
 async function buyTokenTest(
   tokenAddress: string,
-  amountIn: string
+  amountIn: number
 ): Promise<string> {
   const GAS_USED = 145832;
   return updateGasFee(BigInt(GAS_USED));
@@ -598,10 +598,10 @@ async function tradetest() {
 
 export default {
   getMidPrice: getMidPrice,
-  // buyToken: buyTokenMainnet,
-  // sellToken: sellTokenMainnet,
-  buyToken: buyTokenTest,
-  sellToken: sellTokenTest,
+  buyToken: buyTokenMainnet,
+  sellToken: sellTokenMainnet,
+  // buyToken: buyTokenTest,
+  // sellToken: sellTokenTest,
   getEthBalance,
   getPoolEthWei,
   getPoolEth,
