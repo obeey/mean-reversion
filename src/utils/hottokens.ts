@@ -9,7 +9,7 @@ import tokens from "../tokens.js";
 
 const PROXY_URL = "http://127.0.0.1:7890";
 
-// let hotTokens: Token[] = [];
+let largeLossTokens: Token[] = [];
 let hotTokens: Token[] = tokens.tokens;
 
 function getHotTokens() {
@@ -29,6 +29,9 @@ function getHotTokens() {
   axios
     .request(options)
     .then(async function (response: AxiosResponse) {
+      // 亏损太多的暂时删除
+      largeLossTokens.concat(hotTokens.filter((token) => token.profit <= -0.1));
+
       const pools = response.data.data as Pools[];
       // console.log(response.data.data);
 
@@ -56,7 +59,10 @@ function getHotTokens() {
       const promises = poolTokens.map(async (pool) => {
         const ethAmount = await eth.getPoolEth(pool.address);
         if (ethAmount.valueOf() > constants.POOL_ETH_MIN) {
-          if (hotTokens.find((token) => token.name === pool.symbol)) {
+          if (
+            hotTokens.find((token) => token.name === pool.symbol) ||
+            largeLossTokens.find((token) => token.name === pool.symbol)
+          ) {
             return;
           }
 
@@ -87,13 +93,30 @@ function getHotTokens() {
 
       await Promise.all(promises);
 
-      // 亏损太多的暂时删除
-      // hotTokens = hotTokens.filter((token) => token.profit > -0.1);
       if (hotTokens.length > constants.MAX_TRACE_TOKENS) {
-        hotTokens = hotTokens
-          .sort((a, b) => a.profit - b.profit)
-          .slice(0, constants.MAX_TRACE_TOKENS);
+        const hotTokensTmp = await Promise.all(
+          hotTokens.map(async (token) => {
+            const poolEthValue = await eth.getPoolEth(token.address);
+            return { ...token, poolEthValue: poolEthValue.valueOf() };
+          })
+        );
+
+        hotTokens = hotTokensTmp
+          .sort((a, b) => a.poolEthValue - b.poolEthValue)
+          .slice(0, constants.MAX_TRACE_TOKENS)
+          .map(({ poolEthValue, ...token }) => token);
       }
+
+      logger.info(
+        "----------------------------- large loss tokens ----------------------------"
+      );
+      largeLossTokens.forEach((token) =>
+        logger.info(
+          `${token.name.padEnd(constants.SYMBAL_PAD + 8)} ${token.address} ${
+            token.profit
+          }`
+        )
+      );
 
       /*
       hotTokens.filter(
