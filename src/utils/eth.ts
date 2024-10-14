@@ -106,12 +106,162 @@ async function getMidPrice(tokenAddress: string): Promise<[string, string]> {
   ];
 }
 
+// Uniswap V2 Router 合约地址
+const UNISWAP_V2_ROUTER_ADDRESS = constants.UNISWAP_ROUTER_ADDRESS; // Uniswap V2 Router地址
+const router = new ethers.Contract(
+  UNISWAP_V2_ROUTER_ADDRESS,
+  [
+    "function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline) external payable returns (uint[] memory amounts)",
+    "function swapExactTokensForETH(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline) external returns (uint[] memory amounts)",
+    "function getAmountsOut(uint amountIn, address[] calldata path) external view returns (uint[] memory amounts)",
+    "function WETH() external pure returns (address)",
+  ],
+  constants.getWallet()
+);
+
+async function calculateAmountOutMin(
+  tokenAddress: string,
+  amountInETH: number,
+  slippage: number
+): Promise<ethers.BigNumberish> {
+  // 获取路径
+  const path = [await router.WETH(), tokenAddress];
+
+  // 获取可以得到的代币数量
+  const amountsOut = await router.getAmountsOut(
+    ethers.parseEther(amountInETH.toString()),
+    path
+  );
+
+  // amountsOut[1] 是你能得到的代币数量
+  const amountOut = ethers.getBigInt(amountsOut[1]);
+
+  // 根据滑点计算最小输出数量
+  const slippageAmount =
+    (amountOut * ethers.getBigInt(1000 - slippage * 10)) /
+    ethers.getBigInt(1000);
+  return slippageAmount; // 返回最小输出数量
+}
+
+async function buyTokenMainnet(
+  tokenAddress: string,
+  amountInETH: number,
+  slippage: number = 0.5
+): Promise<string> {
+  const wallet = constants.getWallet();
+
+  const amountInWei = ethers.parseEther(amountInETH.toString());
+  const balanceWei = await getEthBalance();
+  if (amountInWei >= balanceWei) {
+    logger.error(
+      `B ETH not enough. Except: ${amountInWei} Have: ${balanceWei}`
+    );
+    return "0";
+  }
+
+  const amountOutMin = await calculateAmountOutMin(
+    tokenAddress,
+    amountInETH,
+    slippage
+  );
+  const path = [await router.WETH(), tokenAddress]; // ETH -> 代币
+  const deadline = Math.floor(Date.now() / 1000) + 60 * 20; // 截止时间为20分钟后
+
+  const tx = await router.swapExactETHForTokens(
+    amountOutMin,
+    path,
+    wallet.address,
+    deadline,
+    {
+      value: ethers.parseEther(amountInETH.toString()),
+      gasLimit: 178775,
+    }
+  );
+
+  console.log(`Buy transaction hash: ${tx.hash}`);
+  // await tx.wait();
+  const reciept = await tx.wait();
+  const gasUsed = ethers.getBigInt(reciept.gasUsed);
+  const gasPrice = ethers.getBigInt(tx.gasPrice);
+  const transactionFee = ethers.formatUnits(gasUsed * gasPrice); // ETH string
+  console.log(`Buy confirmed! Fee ${transactionFee}`);
+
+  return transactionFee;
+}
+
+async function sellTokenMainnet(
+  tokenAddress: string,
+  slippage: number = 0.5
+): Promise<string> {
+  const wallet = constants.getWallet();
+
+  const amountIn = await getErc20Balanceof(tokenAddress);
+  if (amountIn === undefined || amountIn === "" || amountIn === "0") {
+    logger.error(`S No token in account`);
+    return "0";
+  }
+
+  const path = [tokenAddress, await router.WETH()]; // 代币 -> ETH
+  const deadline = Math.floor(Date.now() / 1000) + 60 * 20; // 截止时间为20分钟后
+
+  // 获取可以得到的 ETH 数量
+  const amountsOut = await router.getAmountsOut(amountIn, path);
+  const amountOut = ethers.getBigInt(amountsOut[1]);
+
+  // 根据滑点计算最小输出数量
+  const slippageAmount =
+    (amountOut * ethers.getBigInt(1000 - slippage * 10)) /
+    ethers.getBigInt(1000);
+
+  // 先授权 Uniswap Router 合约
+  /*
+  const tokenContract = new ethers.Contract(
+    tokenAddress,
+    ["function approve(address spender, uint256 amount) public returns (bool)"],
+    wallet
+  );
+
+  const approvalTx = await tokenContract.approve(
+    UNISWAP_V2_ROUTER_ADDRESS,
+    amountIn
+  );
+  await approvalTx.wait();
+  */
+
+  const decimals = Number(await getDecimals(constants.chainId, tokenAddress));
+  const token = new Token(constants.chainId, tokenAddress, decimals);
+  await approveAmountIn(token, amountIn);
+
+  // 执行卖出交易
+  const tx = await router.swapExactTokensForETH(
+    amountIn,
+    slippageAmount,
+    path,
+    wallet.address,
+    deadline,
+    {
+      gasLimit: 200000, // 根据需要设置
+    }
+  );
+
+  console.log(`Sell transaction hash: ${tx.hash}`);
+  // await tx.wait();
+  const reciept = await tx.wait();
+  const gasUsed = ethers.getBigInt(reciept.gasUsed);
+  const gasPrice = ethers.getBigInt(tx.gasPrice);
+  const transactionFee = ethers.formatUnits(gasUsed * gasPrice); // ETH string
+  console.log(`Sell confirmed! Fee ${transactionFee}`);
+
+  return transactionFee;
+}
+
 /**
  *
  * @param tokenAddress
  * @param amountInETH
  * @returns GasUsed
  */
+/*
 async function buyTokenMainnet(
   tokenAddress: string,
   amountInETH: string
@@ -130,12 +280,15 @@ async function buyTokenMainnet(
 
   try {
     const txn = await swapTokens(token, constants.WETH, amountInETH);
-    const reciept = txn.wait();
-    const gasUsed = reciept.gasUsed;
+    const reciept = await txn.wait();
+    const gasUsed = ethers.getBigInt(reciept.gasUsed);
+    const gasPrice = ethers.getBigInt(txn.gasPrice);
+    const transactionFee = ethers.formatUnits(gasUsed * gasPrice); // ETH string
+
     console.log(
-      `Buy Transaction sent: ${reciept.hash} BN: ${reciept.blockNumber}`
+      `Buy Transaction sent: hash: ${reciept.hash} BN: ${reciept.blockNumber} transactionFee: ${transactionFee}`
     );
-    return gasUsed;
+    return transactionFee;
   } catch (error) {
     logger.error(`B ${error}`);
     return buyTokenMainnet(tokenAddress, amountInETH);
@@ -158,19 +311,23 @@ async function sellTokenMainnet(tokenAddress: string): Promise<string> {
       token,
       ethers.formatUnits(amountIn, decimals)
     );
-    const reciept = txn.wait();
-    const gasUsed = reciept.gasUsed;
+    const reciept = await txn.wait();
+    const gasUsed = ethers.getBigInt(reciept.gasUsed);
+    const gasPrice = ethers.getBigInt(txn.gasPrice);
+    const transactionFee = ethers.formatUnits(gasUsed * gasPrice); // ETH string
+
     console.log(
-      `Sell Transaction sent: ${reciept.hash} BN: ${reciept.blockNumber}`
+      `Sell Transaction sent: ${reciept.hash} BN: ${reciept.blockNumber} transactionFee: ${transactionFee}`
     );
-    return gasUsed;
+    return transactionFee;
   } catch (error) {
     logger.error(`S: ${error}`);
-    return sellTokenMainnet(tokenAddress);
+    // return sellTokenMainnet(tokenAddress);
   }
 
   return "0";
 }
+*/
 
 async function updateGasFee(gasUsed: bigint): Promise<string> {
   const gasPrice = (await constants.getProvider().getFeeData().catch())
@@ -288,7 +445,7 @@ async function swapTokens(
     */
     const path = [token1.address, token0.address]; //An array of token addresses
     const to = constants.getWallet().address; // should be a checksummed recipient address
-    const deadline = Math.floor(Date.now() / 1000) + 60 * 2; // 2 minutes from the current Unix time
+    const deadline = Math.floor(Date.now() / 1000) + 60 * 10; // 10 minutes from the current Unix time
     const value = trade.inputAmount.quotient; // // needs to be converted to e.g. hex
     const valueHex = ethers.toBeHex(value.toString());
 
@@ -298,9 +455,9 @@ async function swapTokens(
 
       await approveAmountIn(token1, amountIn);
 
-      const gasLimit = ethers.hexlify(new Uint8Array([0x4, 0x1e, 0xb0])); // 设定 gas 限制
+      const gasLimit = ethers.hexlify(new Uint8Array([0x3, 0x96, 0x4c])); // 设定 gas 限制
       let gasPrice = (await constants.getProvider().getFeeData()).gasPrice;
-      if (gasPrice) gasPrice += BigInt(100000000); // wei
+      if (gasPrice) gasPrice += BigInt(300000000); // wei(0.1GWEI)
 
       ret = constants.UNISWAP_ROUTER_CONTRACT.swapExactTokensForETH(
         valueHex,
@@ -405,15 +562,15 @@ async function approveAmountIn(token1: Token, amountIn: bigint) {
 }
 
 async function tradetest() {
-  /*
-   */
   const tokenAddress = "0x28561b8a2360f463011c16b6cc0b0cbef8dbbcad"; // MOODENG
-  buyTokenMainnet(tokenAddress, "0.001")
-    .then((buyGasUsed) => {
-      console.log(`Buy gas ${buyGasUsed}`);
+
+  /*
+  buyTokenMainnet(tokenAddress, 0.01)
+    .then((buyFeeUsed) => {
+      console.log(`Buy gas fee ${buyFeeUsed}`);
       sellTokenMainnet(tokenAddress)
-        .then((sellGasUsed) => {
-          console.log(`Sell gas ${sellGasUsed}`);
+        .then((sellFeeUsed) => {
+          console.log(`Sell gas fee ${sellFeeUsed}`);
         })
         .catch((err) => {
           console.error(`Sell ${err}`);
@@ -422,9 +579,18 @@ async function tradetest() {
     .catch((err) => {
       console.error(`Buy ${err}`);
     });
+
+   */
+  sellTokenMainnet(tokenAddress)
+    .then((sellGasUsed) => {
+      console.log(`Sell gas ${sellGasUsed}`);
+    })
+    .catch((err) => {
+      console.error(`Sell ${err}`);
+    });
 }
 
-// tradetest();
+tradetest();
 // buyTokenTest("", "");
 // sellTokenTest("");
 
