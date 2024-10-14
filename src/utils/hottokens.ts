@@ -9,7 +9,7 @@ import tokens from "../tokens.js";
 
 const PROXY_URL = "http://127.0.0.1:7890";
 
-let largeLossTokens: Token[] = [];
+let largeLossTokens: Token[] = tokens.largeLossTokens;
 let hotTokens: Token[] = tokens.tokens;
 
 function getHotTokens() {

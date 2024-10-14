@@ -33,4 +33,21 @@ let tokens: Token[] = [
   },
 ];
 
-export default { tokens };
+let largeLossTokens: Token[] = [
+  {
+    name: "CSI",
+    address: "0x888c1a341ce9d9ae9c2d2a75a72a7f0d2551a2dc",
+    buyTimestamp: NaN,
+    historyPrice: [],
+    buyPrice: NaN,
+    highPrice: NaN,
+    buyAmount: 0,
+    buyEthCost: 0,
+    buyGasUsed: 0,
+    sellGasUsed: 0,
+    profit: 0,
+    tradeWin: 0,
+    tradeCount: 0,
+  },
+];
+export default { tokens, largeLossTokens };
