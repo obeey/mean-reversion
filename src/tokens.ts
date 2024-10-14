@@ -35,8 +35,8 @@ let tokens: Token[] = [
 
 let largeLossTokens: Token[] = [
   {
-    name: "CSI",
-    address: "0x888c1a341ce9d9ae9c2d2a75a72a7f0d2551a2dc",
+    name: "CULT",
+    address: "0x3d2c4f3789010a8c8d4b5bb566e5d0a91ffb8c3d",
     buyTimestamp: NaN,
     historyPrice: [],
     buyPrice: NaN,
