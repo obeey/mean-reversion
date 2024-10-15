@@ -85,7 +85,36 @@ async function getMaxTradeEth(tokenAddress: string): Promise<string> {
   return eth;
 }
 
-async function getMidPrice(tokenAddress: string): Promise<[string, string]> {
+/**
+ *  只能以 ETH 的价格表示，否则涨跌的方向是反的
+ * @param tokenAddress token's address
+ * @returns ETH price
+ */
+async function getRealPrice(tokenAddress: string): Promise<number> {
+  const token0 = constants.WETH;
+  const decimals = Number(await getDecimals(constants.chainId, tokenAddress));
+  const token1 = new Token(constants.chainId, tokenAddress, decimals);
+
+  const [reserve0, reserve1]: [bigint, bigint] = await getReserves(
+    token0,
+    token1
+  );
+
+  const [reserveETH, reserveToken] = token0.sortsBefore(token1)
+    ? [reserve0, reserve1]
+    : [reserve1, reserve0];
+
+  const eth = (reserveETH * constants.BIGINT_PRECISION) / 10n ** 18n;
+  const token =
+    (reserveToken * constants.BIGINT_PRECISION) /
+    10n ** ethers.getBigInt(decimals);
+
+  // console.log( `${tokenAddress} ETH: ${eth} token: ${token} decimal: ${decimals}`);
+
+  return Number((eth * constants.BIGINT_PRECISION) / token);
+}
+
+async function getMidPrice(tokenAddress: string): Promise<number> {
   const decimals = Number(await getDecimals(constants.chainId, tokenAddress));
   // console.log(`decimals ${decimals} ${typeof(decimals)}`)
 
@@ -95,15 +124,10 @@ async function getMidPrice(tokenAddress: string): Promise<[string, string]> {
 
   const route = new Route([pair], constants.WETH, token);
 
-  /*
-  console.log(route.midPrice.toSignificant(6)) // 1901.08
-  console.log(route.midPrice.invert().toSignificant(6))
-  */
-
-  return [
-    route.midPrice.toSignificant(6),
-    route.midPrice.invert().toSignificant(6),
-  ];
+  return (
+    Number(route.midPrice.invert().toSignificant(6)) *
+    Number(constants.BIGINT_PRECISION)
+  );
 }
 
 // Uniswap V2 Router 合约地址
@@ -597,7 +621,7 @@ async function tradetest() {
 // sellTokenTest("");
 
 export default {
-  getMidPrice: getMidPrice,
+  getPrice: getRealPrice,
   buyToken: buyTokenMainnet,
   sellToken: sellTokenMainnet,
   // buyToken: buyTokenTest,
@@ -607,5 +631,4 @@ export default {
   getPoolEthWei,
   getPoolEth,
   getMaxTradeEth,
-  tradetest,
 };

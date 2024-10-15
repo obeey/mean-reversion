@@ -84,9 +84,9 @@ function main() {
 
       try {
         eth
-          .getMidPrice(token.address)
-          .then(async ([tokenPrice, ethPrice]: [string, string]) => {
-            const curPrice = Number(ethPrice);
+          .getPrice(token.address)
+          .then(async (ethPrice: number) => {
+            const curPrice = ethPrice;
             if (!Number.isNaN(token.highPrice) && token.highPrice < curPrice) {
               token.highPrice = curPrice;
             }
@@ -97,15 +97,15 @@ function main() {
             }
 
             const prevPrice = token.historyPrice[token.historyPrice.length - 2];
-            const downPercent = ((curPrice - prevPrice) / prevPrice) * 100;
-            const tradeProfilePercent =
+            const downPercent: number =
+              ((curPrice - prevPrice) / prevPrice) * 100;
+            const tradeProfilePercent: Number =
               ((curPrice - token.buyPrice) / token.buyPrice) * 100;
+
             logger.info(
-              `\x1b[35m ${token.name.padEnd(constants.SYMBAL_PAD)} ${tokenPrice
+              `\x1b[35m ${token.name.padEnd(constants.SYMBAL_PAD)} ${ethPrice
                 .toString()
-                .padEnd(constants.PRICE_PAD - 4)} ${ethPrice
-                .toString()
-                .padEnd(constants.PRICE_PAD + 4)} ${downPercent
+                .padEnd(constants.PRICE_PAD)} ${downPercent
                 .toPrecision(4)
                 .toString()
                 .padStart(constants.PRICE_PAD)}% ${tradeProfilePercent
@@ -124,10 +124,10 @@ function main() {
                     if (!Number.isNaN(gasUsedNum))
                       token.sellGasUsed = gasUsedNum;
 
-                    const returnProfile = token.buyAmount / Number(tokenPrice);
+                    const returnProfile = token.buyAmount / Number(ethPrice);
+                    token.buyTimestamp = NaN;
                     token.buyAmount = 0;
                     token.buyPrice = NaN;
-                    token.buyTimestamp = NaN;
                     token.highPrice = NaN;
 
                     helpers.addProfile(returnProfile);
@@ -224,7 +224,7 @@ function main() {
                   ? constants.TRADE_AMOUNT
                   : constants.TRADE_AMOUNT_MIN;
               */
-              const buyNum = Number(tokenPrice) * buyEth;
+              const buyNum = Number(ethPrice) * buyEth;
               if (buyNum <= 0) {
                 logger.error(
                   `B No money buy ${token.name.padEnd(
