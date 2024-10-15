@@ -66,9 +66,9 @@ const MAX_HISTORY_PRICE_LEN = 16; // 3min: 15+1. 15*12=180sec
 
 const POOL_ETH_MIN = 50;
 const INIT_PROFILE = 0.5;
-const RESERVE_PROFILE = 0.05;
+const RESERVE_PROFILE = 0.01;
 const TRADE_RAISE_PERCENT_DIVISOR = 100; // 百分比的倒数,比如 1% 就是 100
-const TRADE_AMOUNT_MIN = 0.35;
+const TRADE_AMOUNT_MIN = 0.45;
 const MAX_TOKEN_HOLD_SECONDS = 3600;
 const STOP_LOSS = 0.03;
 const TAKE_PROFIT = 0.05;
