@@ -117,18 +117,18 @@ function main() {
             const buyAmount = await helpers.getBuyAmount(token);
             if (buyAmount > 0) {
               if (helpers.canSell(token)) {
-                const returnProfile = token.buyAmount / Number(tokenPrice);
-                token.buyAmount = 0;
-                token.buyPrice = NaN;
-                token.buyTimestamp = NaN;
-                token.highPrice = NaN;
-
                 eth
                   .sellToken(token.address)
                   .then((gasUsed: string) => {
                     const gasUsedNum = Number(gasUsed);
                     if (!Number.isNaN(gasUsedNum))
                       token.sellGasUsed = gasUsedNum;
+
+                    const returnProfile = token.buyAmount / Number(tokenPrice);
+                    token.buyAmount = 0;
+                    token.buyPrice = NaN;
+                    token.buyTimestamp = NaN;
+                    token.highPrice = NaN;
 
                     helpers.addProfile(returnProfile);
                     const profit =
