@@ -102,6 +102,8 @@ function main() {
             const tradeProfilePercent: Number =
               ((curPrice - token.buyPrice) / token.buyPrice) * 100;
 
+            const buyAmount = await helpers.getBuyAmount(token);
+
             logger.info(
               `\x1b[35m ${token.name.padEnd(constants.SYMBAL_PAD)} ${ethPrice
                 .toString()
@@ -114,7 +116,6 @@ function main() {
                 .padStart(constants.PRICE_PAD)}% \x1b[0m`
             );
 
-            const buyAmount = await helpers.getBuyAmount(token);
             if (buyAmount > 0) {
               if (helpers.canSell(token)) {
                 eth
