@@ -82,6 +82,8 @@ function updateHotTokens() {
             buyEthCost: 0,
             buyGasUsed: 0,
             sellGasUsed: 0,
+            sellPending: false,
+            buyPending: false,
             profit: 0,
             tradeWin: 0,
             tradeCount: 0,

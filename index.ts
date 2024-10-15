@@ -113,14 +113,20 @@ function main() {
                 .padStart(constants.PRICE_PAD)}% ${tradeProfilePercent
                 .toPrecision(4)
                 .toString()
-                .padStart(constants.PRICE_PAD)}% \x1b[0m`
+                .padStart(constants.PRICE_PAD)}% \t ${token.buyPending} \t ${
+                token.sellPending
+              } \x1b[0m`
             );
 
-            if (buyAmount > 0) {
+            if (!token.sellPending && buyAmount > 0) {
               if (helpers.canSell(token)) {
+                token.sellPending = true;
+
                 eth
                   .sellToken(token.address)
                   .then((gasUsed: string) => {
+                    token.sellPending = false;
+
                     const gasUsedNum = Number(gasUsed);
                     if (!Number.isNaN(gasUsedNum))
                       token.sellGasUsed = gasUsedNum;
@@ -159,13 +165,20 @@ function main() {
                       } ${returnProfile} ${profit} \x1b[0m`
                     );
                   })
-                  .catch(logger.error);
+                  .catch((error) => {
+                    token.sellPending = false;
+                    logger.error(error);
+                  });
               }
 
               return;
             }
 
-            if (buyAmount === 0n && helpers.canBuy(token.historyPrice)) {
+            if (
+              !token.buyPending &&
+              buyAmount === 0n &&
+              helpers.canBuy(token.historyPrice)
+            ) {
               if (
                 profile <
                 constants.RESERVE_PROFILE + constants.TRADE_AMOUNT_MIN
@@ -242,17 +255,23 @@ function main() {
               token.highPrice = curPrice;
               token.historyPrice.length = 0;
               token.historyPrice.push(curPrice);
+              token.buyPending = true;
 
               eth
                 .buyToken(token.address, buyEth)
                 .then((gasUsed: string) => {
+                  token.buyPending = false;
+
                   const buyGasUsedNum = Number(gasUsed);
                   if (!Number.isNaN(buyGasUsedNum)) {
                     token.buyGasUsed = buyGasUsedNum;
                   }
                   helpers.subProfile(buyEth);
                 })
-                .catch(logger.error);
+                .catch((error) => {
+                  token.buyPending = false;
+                  logger.error(error);
+                });
 
               logger.info(
                 `\x1b[31m B ${token.name.padEnd(constants.SYMBAL_PAD)} ${

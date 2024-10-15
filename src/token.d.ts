@@ -9,6 +9,8 @@ export interface Token {
   buyEthCost: number;
   buyGasUsed: number;
   sellGasUsed: number;
+  sellPending: boolean;
+  buyPending: boolean;
   profit: number;
   tradeWin: number;
   tradeCount: number;
