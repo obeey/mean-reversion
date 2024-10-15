@@ -124,7 +124,7 @@ function main() {
                     if (!Number.isNaN(gasUsedNum))
                       token.sellGasUsed = gasUsedNum;
 
-                    const returnProfile = token.buyAmount / Number(ethPrice);
+                    const returnProfile = token.buyAmount * ethPrice;
                     token.buyTimestamp = NaN;
                     token.buyAmount = 0;
                     token.buyPrice = NaN;
@@ -164,7 +164,7 @@ function main() {
               return;
             }
 
-            if (token.buyAmount === 0 && helpers.canBuy(token.historyPrice)) {
+            if (buyAmount === 0n && helpers.canBuy(token.historyPrice)) {
               if (
                 profile <
                 constants.RESERVE_PROFILE + constants.TRADE_AMOUNT_MIN
@@ -224,7 +224,7 @@ function main() {
                   ? constants.TRADE_AMOUNT
                   : constants.TRADE_AMOUNT_MIN;
               */
-              const buyNum = Number(ethPrice) * buyEth;
+              const buyNum = buyEth / ethPrice;
               if (buyNum <= 0) {
                 logger.error(
                   `B No money buy ${token.name.padEnd(

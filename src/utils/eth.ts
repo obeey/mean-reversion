@@ -111,7 +111,10 @@ async function getRealPrice(tokenAddress: string): Promise<number> {
 
   // console.log( `${tokenAddress} ETH: ${eth} token: ${token} decimal: ${decimals}`);
 
-  return Number((eth * constants.BIGINT_PRECISION) / token);
+  return (
+    Number((eth * constants.BIGINT_PRECISION) / token) /
+    Number(constants.BIGINT_PRECISION)
+  );
 }
 
 async function getMidPrice(tokenAddress: string): Promise<number> {
@@ -124,10 +127,7 @@ async function getMidPrice(tokenAddress: string): Promise<number> {
 
   const route = new Route([pair], constants.WETH, token);
 
-  return (
-    Number(route.midPrice.invert().toSignificant(6)) *
-    Number(constants.BIGINT_PRECISION)
-  );
+  return Number(route.midPrice.invert().toSignificant(6));
 }
 
 // Uniswap V2 Router 合约地址
