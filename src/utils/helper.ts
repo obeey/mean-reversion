@@ -212,6 +212,14 @@ function addProfileMainnet(delta: number) {}
 
 function subProfileMainnet(delta: number) {}
 
+async function getBuyAmountTest(token: Token): Promise<bigint> {
+  return ethers.getBigInt(token.buyAmount);
+}
+
+async function getBuyAmountMainnet(token: Token): Promise<bigint> {
+  return eth.getErc20Balanceof(token.address);
+}
+
 interface UrlResponseTime {
   url: string;
   responseTime: number;
@@ -356,6 +364,7 @@ export default {
   canSell,
   getInitProfile: getInitProfileMamiNet,
   getProfile: getProfileMainnet,
+  getBuyAmount: getBuyAmountMainnet,
   // getInitProfile: getInitProfileTest,
   // getProfile: getProfileTest,
   addProfile: addProfileTest,

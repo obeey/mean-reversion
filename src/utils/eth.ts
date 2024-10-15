@@ -603,6 +603,7 @@ export default {
   // buyToken: buyTokenTest,
   // sellToken: sellTokenTest,
   getEthBalance,
+  getErc20Balanceof,
   getPoolEthWei,
   getPoolEth,
   getMaxTradeEth,

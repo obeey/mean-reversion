@@ -114,7 +114,8 @@ function main() {
                 .padStart(constants.PRICE_PAD)}% \x1b[0m`
             );
 
-            if (token.buyAmount > 0) {
+            const buyAmount = await helpers.getBuyAmount(token);
+            if (buyAmount > 0) {
               if (helpers.canSell(token)) {
                 const returnProfile = token.buyAmount / Number(tokenPrice);
                 token.buyAmount = 0;
