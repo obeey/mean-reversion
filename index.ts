@@ -133,7 +133,7 @@ function main() {
 
                     const returnProfile = Number(token.buyAmount) * ethPrice;
                     token.buyTimestamp = NaN;
-                    token.buyAmount = 0n;
+                    token.buyAmount = 0;
                     token.buyPrice = NaN;
                     token.highPrice = NaN;
 
