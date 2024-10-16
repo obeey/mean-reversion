@@ -5,7 +5,7 @@ export interface Token {
   historyPrice: number[];
   buyPrice: number;
   highPrice: number;
-  buyAmount: bigint;
+  buyAmount: number;
   buyEthCost: number;
   buyGasUsed: number;
   sellGasUsed: number;

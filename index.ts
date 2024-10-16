@@ -255,8 +255,8 @@ function main() {
                 .then(async (gasUsed: string) => {
                   token.buyPending = false;
 
-                  token.buyAmount = await eth.getErc20Balanceof(token.address);
-                  token.buyPrice = buyEth / Number(token.buyAmount);
+                  token.buyAmount = buyNum;
+                  token.buyPrice = curPrice;
                   token.buyEthCost = buyEth;
                   token.buyTimestamp = Date.now();
                   token.highPrice = curPrice;
