@@ -107,7 +107,7 @@ function main() {
             logger.info(
               `\x1b[35m ${token.name.padEnd(constants.SYMBAL_PAD)} ${ethPrice
                 .toString()
-                .padEnd(constants.PRICE_PAD)} ${downPercent
+                .padEnd(constants.PRICE_PAD + 3)} ${downPercent
                 .toPrecision(4)
                 .toString()
                 .padStart(constants.PRICE_PAD)}% ${tradeProfilePercent
