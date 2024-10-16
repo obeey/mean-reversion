@@ -131,9 +131,9 @@ function main() {
                     if (!Number.isNaN(gasUsedNum))
                       token.sellGasUsed = gasUsedNum;
 
-                    const returnProfile = token.buyAmount * ethPrice;
+                    const returnProfile = Number(token.buyAmount) * ethPrice;
                     token.buyTimestamp = NaN;
-                    token.buyAmount = 0;
+                    token.buyAmount = 0n;
                     token.buyPrice = NaN;
                     token.highPrice = NaN;
 
@@ -248,19 +248,24 @@ function main() {
                 return;
               }
 
-              token.buyAmount += buyNum;
-              token.buyPrice = curPrice;
-              token.buyEthCost += buyEth;
-              token.buyTimestamp = Date.now();
-              token.highPrice = curPrice;
-              token.historyPrice.length = 0;
-              token.historyPrice.push(curPrice);
               token.buyPending = true;
 
               eth
                 .buyToken(token.address, buyEth)
-                .then((gasUsed: string) => {
+                .then(async (gasUsed: string) => {
                   token.buyPending = false;
+
+                  token.buyAmount = await eth.getErc20Balanceof(token.address);
+                  token.buyPrice = buyEth / Number(token.buyAmount);
+                  token.buyEthCost = buyEth;
+                  token.buyTimestamp = Date.now();
+                  token.highPrice = curPrice;
+                  token.historyPrice.length = 0;
+                  token.historyPrice.push(curPrice);
+
+                  logger.info(
+                    `B ${token.name} ${buyEth}ETH for price ${token.buyPrice} gas ${gasUsed}`
+                  );
 
                   const buyGasUsedNum = Number(gasUsed);
                   if (!Number.isNaN(buyGasUsedNum)) {

@@ -78,7 +78,7 @@ function updateHotTokens() {
             historyPrice: [],
             buyPrice: NaN,
             highPrice: NaN,
-            buyAmount: 0,
+            buyAmount: 0n,
             buyEthCost: 0,
             buyGasUsed: 0,
             sellGasUsed: 0,
