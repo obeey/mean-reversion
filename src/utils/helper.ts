@@ -19,6 +19,13 @@ function canBuy(historyPrice: number[]): boolean {
     return false;
   }
 
+  const newestPrice = historyPrice[historyPrice.length - 1];
+  if (1000 > newestPrice * Number(constants.BIGINT_PRECISION)) {
+    logger.debug("B price too low");
+
+    return false;
+  }
+
   const priceDifferencesPercent = historyPrice
     .map((price, index, array) => {
       if (index === 0) return null; // 第一个元素没有前一个元素
