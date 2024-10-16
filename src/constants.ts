@@ -78,7 +78,7 @@ const TOKEN_LARGE_LOSS = -0.1;
 
 const MAX_TRACE_TOKENS = 20;
 
-const BIGINT_PRECISION = 1000000000000n; // bigint division point precision.
+const BIGINT_PRECISION = 1000000000000000n; // bigint division point precision.
 
 const UNISWAP_ROUTER_ABI = fs
   .readFileSync("src/abi/uniswap-router.abi.json")
