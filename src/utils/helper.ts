@@ -20,7 +20,7 @@ function canBuy(historyPrice: number[]): boolean {
   }
 
   const newestPrice = historyPrice[historyPrice.length - 1];
-  if (1000 > newestPrice * Number(constants.BIGINT_PRECISION)) {
+  if (0.000000000001 > newestPrice) {
     logger.debug("B price too low");
 
     return false;
