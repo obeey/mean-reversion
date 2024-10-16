@@ -162,7 +162,7 @@ function main() {
                     logger.info(
                       `\x1b[32m S ${token.name.padEnd(constants.SYMBAL_PAD)} ${
                         token.address
-                      } ${returnProfile} ${profit} \x1b[0m`
+                      } ${returnProfile} ${profit} ${curPrice} ETH \x1b[0m`
                     );
                   })
                   .catch((error) => {
@@ -281,7 +281,7 @@ function main() {
               logger.info(
                 `\x1b[31m B ${token.name.padEnd(constants.SYMBAL_PAD)} ${
                   token.address
-                } ${buyEth} k ${kelly} p ${p} \x1b[0m`
+                } ${buyEth} k ${kelly} p ${p} ${curPrice} ETH\x1b[0m`
               );
             }
           })
