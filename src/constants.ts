@@ -60,7 +60,7 @@ function getWallet() {
 }
 
 const SYMBAL_PAD = 10;
-const PRICE_PAD = 15;
+const PRICE_PAD = 20;
 
 const MAX_HISTORY_PRICE_LEN = 16; // 3min: 15+1. 15*12=180sec
 
