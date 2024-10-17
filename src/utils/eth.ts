@@ -197,13 +197,15 @@ async function buyTokenMainnet(
     }
   );
 
-  logger.info(`Buy transaction hash: ${tx.hash}`);
+  logger.crit(`Buy tx: ${tx.hash}`);
 
   const reciept = await tx.wait();
   const gasUsed = ethers.getBigInt(reciept.gasUsed);
   const gasPrice = ethers.getBigInt(reciept.gasPrice);
   const transactionFee = ethers.formatUnits(gasUsed * gasPrice); // ETH string
-  logger.info(`Buy confirmed! Fee ${transactionFee}`);
+  logger.crit(
+    `Buy confirmed! Fee ${transactionFee}ETH gasUsed ${reciept.gasUsed} gasPrice ${reciept.gasPrice}`
+  );
 
   return transactionFee;
 }
@@ -264,14 +266,16 @@ async function sellTokenMainnet(
     }
   );
 
-  logger.info(`Sell transaction hash: ${tx.hash}`);
+  logger.crit(`Sell tx: ${tx.hash}`);
 
   const reciept = await tx.wait();
-  logger.info(`gasUsed ${reciept.gasUsed} gasPrice ${reciept.gasPrice}`);
+
   const gasUsed = ethers.getBigInt(reciept.gasUsed);
   const gasPrice = ethers.getBigInt(reciept.gasPrice);
   const transactionFee = ethers.formatUnits(gasUsed * gasPrice); // ETH string
-  logger.info(`Sell confirmed! Fee ${transactionFee}ETH`);
+  logger.info(
+    `Sell confirmed! Fee ${transactionFee}ETH gasUsed ${reciept.gasUsed} gasPrice ${reciept.gasPrice}`
+  );
 
   return transactionFee;
 }

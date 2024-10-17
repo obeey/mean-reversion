@@ -24,7 +24,7 @@ const formattedDate = getCurrentFormattedDate();
 
 // 创建 Logger 实例
 const logger: Logger = createLogger({
-  level: "info",
+  level: "crit",
   format: combine(format.timestamp({ format: "YYYYMMDD-HHmmss" }), myFormat),
   // defaultMeta: { service: 'user-service' }, // 如果需要可以取消注释
   transports: [
