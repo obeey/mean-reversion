@@ -41,7 +41,7 @@ function main() {
       100
     ).toPrecision(2);
 
-    logger.crit(
+    logger.warn(
       `++++++++++++++++++++++++++++++++++++++ PROFILING(\x1b[33m ${totalProfit
         .toFixed(5)
         .toString()
@@ -159,7 +159,7 @@ function main() {
 
                     token.buyEthCost = 0;
 
-                    logger.crit(
+                    logger.warn(
                       `\x1b[32m S ${token.name.padEnd(constants.SYMBAL_PAD)} ${
                         token.address
                       } ${returnProfile} ${profit} ${curPrice} ETH \x1b[0m`
@@ -167,7 +167,7 @@ function main() {
                   })
                   .catch((error) => {
                     token.sellPending = false;
-                    logger.crit(
+                    logger.warn(
                       `\x1b[32m S ${token.name.padEnd(constants.SYMBAL_PAD)} ${
                         token.address
                       } ${curPrice} ETH failed. \x1b[0m`
@@ -268,7 +268,7 @@ function main() {
                   token.historyPrice.length = 0;
                   token.historyPrice.push(curPrice);
 
-                  logger.crit(
+                  logger.warn(
                     `B ${token.name} ${buyEth}ETH for price ${token.buyPrice} gas ${gasUsed}`
                   );
 
@@ -283,7 +283,7 @@ function main() {
                   logger.error(error);
                 });
 
-              logger.crit(
+              logger.warn(
                 `\x1b[31m B ${token.name.padEnd(constants.SYMBAL_PAD)} ${
                   token.address
                 } ${buyEth} k ${kelly} p ${p} ${curPrice} ETH\x1b[0m`
