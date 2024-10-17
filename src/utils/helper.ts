@@ -148,7 +148,7 @@ function canSell(token: Token): boolean {
       4
     )}%`
   );
-  if ((profilePercent > 0.01 && priceVariance < 1) || profilePercent > 0.05) {
+  if ((profilePercent > 0.03 && priceVariance < 1) || profilePercent > 0.05) {
     return true;
   }
 

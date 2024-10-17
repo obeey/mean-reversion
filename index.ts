@@ -260,13 +260,14 @@ function main() {
                 .then(async (gasUsed: string) => {
                   token.buyPending = false;
 
+                  const newPrice = await eth.getPrice(token.address);
                   token.buyAmount = buyNum;
-                  token.buyPrice = curPrice;
+                  token.buyPrice = newPrice;
                   token.buyEthCost = buyEth;
                   token.buyTimestamp = Date.now();
-                  token.highPrice = curPrice;
+                  token.highPrice = newPrice;
                   token.historyPrice.length = 0;
-                  token.historyPrice.push(curPrice);
+                  token.historyPrice.push(newPrice);
 
                   logger.warn(
                     `B ${token.name} ${buyEth}ETH for price ${token.buyPrice} gas ${gasUsed}`
