@@ -19,14 +19,22 @@ function canBuy(historyPrice: number[]): boolean {
     return false;
   }
 
-  /*
-  const newestPrice = historyPrice[historyPrice.length - 1];
-  if (0.000000000001 > newestPrice) {
-    logger.debug("B price too low");
-
-    return false;
+  // 区块连续下跌
+  let idx = historyPrice.length - 1;
+  let newestPrice = historyPrice[idx];
+  let curPrice = newestPrice;
+  let prePrice = historyPrice[idx - 1];
+  while (idx > 1 && prePrice > curPrice) {
+    idx -= 1;
+    curPrice = prePrice;
+    prePrice = historyPrice[idx - 1];
   }
-  */
+
+  const continuseDownPercent = (curPrice - newestPrice) / curPrice;
+  if (continuseDownPercent < constants.BUY_DOWN_PERCENT) {
+    logger.warn(`B continuse down ${continuseDownPercent.toPrecision(4)}`);
+    return true;
+  }
 
   const priceDifferencesPercent = historyPrice
     .map((price, index, array) => {
