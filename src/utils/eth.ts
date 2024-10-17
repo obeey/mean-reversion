@@ -165,7 +165,7 @@ async function calculateAmountOutMin(
 async function buyTokenMainnet(
   tokenAddress: string,
   amountInETH: number,
-  slippage: number = 0.5
+  slippage: number = 0.1
 ): Promise<string> {
   const wallet = constants.getWallet();
 
@@ -212,7 +212,7 @@ async function buyTokenMainnet(
 
 async function sellTokenMainnet(
   tokenAddress: string,
-  slippage: number = 0.5
+  slippage: number = 0.1
 ): Promise<string> {
   const wallet = constants.getWallet();
 
