@@ -186,6 +186,9 @@ async function buyTokenMainnet(
   const path = [await router.WETH(), tokenAddress]; // ETH -> 代币
   const deadline = Math.floor(Date.now() / 1000) + 60 * 20; // 截止时间为20分钟后
 
+  let curGasPrice = (await constants.getProvider().getFeeData()).gasPrice;
+  if (curGasPrice) curGasPrice += 300000000n; // wei(0.3GWEI)
+
   const tx = await router.swapExactETHForTokens(
     amountOutMin,
     path,
@@ -194,6 +197,7 @@ async function buyTokenMainnet(
     {
       value: ethers.parseEther(amountInETH.toString()),
       gasLimit: 178775,
+      gasPrice: curGasPrice,
     }
   );
 
