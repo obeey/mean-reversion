@@ -19,12 +19,14 @@ function canBuy(historyPrice: number[]): boolean {
     return false;
   }
 
+  /*
   const newestPrice = historyPrice[historyPrice.length - 1];
   if (0.000000000001 > newestPrice) {
     logger.debug("B price too low");
 
     return false;
   }
+  */
 
   const priceDifferencesPercent = historyPrice
     .map((price, index, array) => {
