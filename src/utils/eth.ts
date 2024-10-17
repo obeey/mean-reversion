@@ -104,17 +104,12 @@ async function getRealPrice(tokenAddress: string): Promise<number> {
     ? [reserve0, reserve1]
     : [reserve1, reserve0];
 
-  const eth = (reserveETH * constants.BIGINT_PRECISION) / 10n ** 18n;
-  const token =
-    (reserveToken * constants.BIGINT_PRECISION) /
-    10n ** ethers.getBigInt(decimals);
+  const eth = Number(reserveETH) / 10 ** 18;
+  const token = Number(reserveToken) / 10 ** decimals;
 
   // console.log( `${tokenAddress} ETH: ${eth} token: ${token} decimal: ${decimals}`);
 
-  return (
-    Number((eth * constants.BIGINT_PRECISION) / token) /
-    Number(constants.BIGINT_PRECISION)
-  );
+  return eth / token;
 }
 
 async function getMidPrice(tokenAddress: string): Promise<number> {
