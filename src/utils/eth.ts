@@ -187,7 +187,7 @@ async function buyTokenMainnet(
   const deadline = Math.floor(Date.now() / 1000) + 60 * 20; // 截止时间为20分钟后
 
   let curGasPrice = (await constants.getProvider().getFeeData()).gasPrice;
-  if (curGasPrice) curGasPrice += 300000000n; // wei(0.3GWEI)
+  if (curGasPrice) curGasPrice += 1000000000n; // wei(1GWEI)
 
   const tx = await router.swapExactETHForTokens(
     amountOutMin,
