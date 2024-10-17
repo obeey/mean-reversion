@@ -31,7 +31,7 @@ function canBuy(historyPrice: number[]): boolean {
   }
 
   const continuseDownPercent = (curPrice - newestPrice) / curPrice;
-  if (continuseDownPercent < constants.BUY_DOWN_PERCENT) {
+  if (continuseDownPercent > constants.BUY_DOWN_PERCENT) {
     logger.warn(`B continuse down ${continuseDownPercent.toPrecision(4)}`);
     return true;
   }
