@@ -30,11 +30,13 @@ const logger: Logger = createLogger({
   transports: [
     // - Write all logs with importance level of `error` or less to `error.log`
     // - Write all logs with importance level of `info` or less to `combined.log`
+    /*
     new transports.File({
       filename: `log/error_${formattedDate}.log`,
       level: "error",
     }),
-    new transports.File({ filename: `log/combined_${formattedDate}.log` }),
+    */
+    new transports.File({ filename: `log/mr_${formattedDate}.log` }),
     new transports.Console({ level: "debug" }),
   ],
 });
