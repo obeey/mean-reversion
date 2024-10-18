@@ -249,10 +249,7 @@ async function getBuyAmountTest(token: Token): Promise<bigint> {
     const decimals = Number(
       await eth.getDecimals(constants.chainId, token.address)
     );
-    const pow = Math.pow(10, decimals);
-
-    const amountStr = (token.buyAmount * pow).toFixed(0); // 计算并转为整数
-    return BigInt(amountStr); // 转换为 BigInt
+    return ethers.parseUnits(token.buyAmount.toString(), decimals);
   } catch (error) {
     logger.error(`getBuyAmountTest failed: ${error}`);
     return 0n;
