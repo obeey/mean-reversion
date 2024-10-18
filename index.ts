@@ -34,12 +34,12 @@ function main() {
     const totalReturn = (
       ((curProfile - constants.INIT_PROFILE) / constants.INIT_PROFILE) *
       100
-    ).toPrecision(2);
+    ).toFixed(2);
     */
     const totalReturn = (
       ((profile - constants.INIT_PROFILE) / constants.INIT_PROFILE) *
       100
-    ).toPrecision(2);
+    ).toFixed(2);
 
     logger.warn(
       `++++++++++++++++++++++++++++++++++++++ PROFILING(\x1b[33m ${totalProfit
@@ -72,10 +72,10 @@ function main() {
           .toFixed(2)
           .toString()
           .padEnd(5)} ${token.profit
-          .toPrecision(4)
+          .toFixed(4)
           .toString()
           .padEnd(constants.SYMBAL_PAD + 2)} ${token.buyEthCost
-          .toPrecision(4)
+          .toFixed(4)
           .toString()
           .padEnd(constants.SYMBAL_PAD + 2)} ${token.buyPrice
           .toString()
@@ -108,10 +108,10 @@ function main() {
               `\x1b[35m ${token.name.padEnd(constants.SYMBAL_PAD)} ${ethPrice
                 .toString()
                 .padEnd(constants.PRICE_PAD + 3)} ${downPercent
-                .toPrecision(4)
+                .toFixed(4)
                 .toString()
                 .padStart(constants.PRICE_PAD)}% ${tradeProfilePercent
-                .toPrecision(4)
+                .toFixed(4)
                 .toString()
                 .padStart(constants.PRICE_PAD)}% \t ${token.buyPending} \t ${
                 token.sellPending
@@ -131,7 +131,7 @@ function main() {
                     if (!Number.isNaN(gasUsedNum))
                       token.sellGasUsed = gasUsedNum;
 
-                    const returnProfile = Number(token.buyAmount) * ethPrice;
+                    const returnProfile = token.buyAmount * ethPrice;
                     token.buyTimestamp = NaN;
                     token.buyAmount = 0;
                     token.buyPrice = NaN;
@@ -260,7 +260,7 @@ function main() {
                 .then(async (gasUsed: string) => {
                   token.buyPending = false;
 
-                  const newPrice = await eth.getPrice(token.address);
+                  const newPrice = curPrice;
                   token.buyAmount = buyNum;
                   token.buyPrice = newPrice;
                   token.buyEthCost = buyEth;
@@ -270,7 +270,7 @@ function main() {
                   token.historyPrice.push(newPrice);
 
                   logger.warn(
-                    `B ${token.name} ${buyEth}ETH for price ${token.buyPrice} gas ${gasUsed}`
+                    ` B ${token.name} ${buyEth}ETH for price ${token.buyPrice} gas ${gasUsed}`
                   );
 
                   const buyGasUsedNum = Number(gasUsed);

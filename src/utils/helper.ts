@@ -27,7 +27,7 @@ function canBuy(historyPrice: number[]): boolean {
 
   // 单区块下跌
   if (curDownPercent > 0.1) {
-    logger.warn(`B current down ${curDownPercent.toPrecision(4)}`);
+    logger.warn(`B current down ${curDownPercent.toFixed(4)}`);
     return true;
   }
 
@@ -40,7 +40,7 @@ function canBuy(historyPrice: number[]): boolean {
 
   const continuseDownPercent = (curPrice - newestPrice) / curPrice;
   if (continuseDownPercent > 0.18) {
-    logger.warn(`B continuse down ${continuseDownPercent.toPrecision(4)}`);
+    logger.warn(`B continuse down ${continuseDownPercent.toFixed(4)}`);
     return true;
   }
 
@@ -96,7 +96,7 @@ function canBuy(historyPrice: number[]): boolean {
   const variance = calculateVariance(priceDifferencesPercent.slice(-5));
 
   logger.debug(
-    `B H ${highPrice} L ${lowPrice} -${(downPercent * 100).toPrecision(
+    `B H ${highPrice} L ${lowPrice} -${(downPercent * 100).toFixed(
       4
     )}% ${variance}`
   );
@@ -108,7 +108,7 @@ function canBuy(historyPrice: number[]): boolean {
     ((lastMa !== undefined && lastMa > 0.005) || variance < 1)
   ) {
     logger.warn(
-      `B rebound or variance low. down ${downPercent.toPrecision(
+      `B rebound or variance low. down ${downPercent.toFixed(
         4
       )} last MA ${lastMa} variance ${variance}`
     );
@@ -134,12 +134,12 @@ function canSell(token: Token): boolean {
 
   const profilePercent = (newestPrice - buyPrice) / buyPrice;
   if (profilePercent > constants.TAKE_PROFIT) {
-    logger.info(`S Large return ${(profilePercent * 100).toPrecision(4)}%`);
+    logger.info(`S Large return ${(profilePercent * 100).toFixed(4)}%`);
     return true;
   }
 
   if (profilePercent + constants.STOP_LOSS < 0) {
-    logger.info(`S Large LOSS ${(profilePercent * 100).toPrecision(4)}%`);
+    logger.info(`S Large LOSS ${(profilePercent * 100).toFixed(4)}%`);
     return true;
   }
 
@@ -169,9 +169,7 @@ function canSell(token: Token): boolean {
 
   const priceVariance = calculateVariance(priceDifferences);
   logger.debug(
-    `S Price Variance: ${priceVariance} ${(profilePercent * 100).toPrecision(
-      4
-    )}%`
+    `S Price Variance: ${priceVariance} ${(profilePercent * 100).toFixed(4)}%`
   );
   if ((profilePercent > 0.03 && priceVariance < 1) || profilePercent > 0.05) {
     return true;
@@ -247,7 +245,18 @@ function addProfileMainnet(delta: number) {}
 function subProfileMainnet(delta: number) {}
 
 async function getBuyAmountTest(token: Token): Promise<bigint> {
-  return ethers.getBigInt(token.buyAmount);
+  try {
+    const decimals = Number(
+      await eth.getDecimals(constants.chainId, token.address)
+    );
+    const pow = Math.pow(10, decimals);
+
+    const amountStr = (token.buyAmount * pow).toFixed(0); // 计算并转为整数
+    return BigInt(amountStr); // 转换为 BigInt
+  } catch (error) {
+    logger.error(`getBuyAmountTest failed: ${error}`);
+    return 0n;
+  }
 }
 
 async function getBuyAmountMainnet(token: Token): Promise<bigint> {
@@ -396,11 +405,12 @@ function main() {
 export default {
   canBuy,
   canSell,
-  getInitProfile: getInitProfileMamiNet,
-  getProfile: getProfileMainnet,
-  getBuyAmount: getBuyAmountMainnet,
-  // getInitProfile: getInitProfileTest,
-  // getProfile: getProfileTest,
+  // getInitProfile: getInitProfileMamiNet,
+  // getProfile: getProfileMainnet,
+  // getBuyAmount: getBuyAmountMainnet,
+  getInitProfile: getInitProfileTest,
+  getProfile: getProfileTest,
+  getBuyAmount: getBuyAmountTest,
   addProfile: addProfileTest,
   subProfile: subProfileTest,
   getOdds,
