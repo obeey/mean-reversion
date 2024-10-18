@@ -19,11 +19,19 @@ function canBuy(historyPrice: number[]): boolean {
     return false;
   }
 
-  // 区块连续下跌
   let idx = historyPrice.length - 1;
   let newestPrice = historyPrice[idx];
   let curPrice = newestPrice;
   let prePrice = historyPrice[idx - 1];
+  const curDownPercent = (curPrice - newestPrice) / curPrice;
+
+  // 单区块下跌
+  if (curDownPercent > 0.1) {
+    logger.warn(`B current down ${curDownPercent.toPrecision(4)}`);
+    return true;
+  }
+
+  // 区块连续下跌
   while (idx > 1 && prePrice > curPrice) {
     idx -= 1;
     curPrice = prePrice;
@@ -31,7 +39,7 @@ function canBuy(historyPrice: number[]): boolean {
   }
 
   const continuseDownPercent = (curPrice - newestPrice) / curPrice;
-  if (continuseDownPercent > constants.BUY_DOWN_PERCENT) {
+  if (continuseDownPercent > 0.18) {
     logger.warn(`B continuse down ${continuseDownPercent.toPrecision(4)}`);
     return true;
   }
@@ -95,6 +103,11 @@ function canBuy(historyPrice: number[]): boolean {
     downPercent > constants.BUY_DOWN_PERCENT &&
     ((lastMa !== undefined && lastMa > 0.005) || variance < 1)
   ) {
+    logger.warn(
+      `B rebound or variance low. down ${downPercent.toPrecision(
+        4
+      )} last MA ${lastMa} variance ${variance}`
+    );
     return true;
   }
 
