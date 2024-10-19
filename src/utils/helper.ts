@@ -256,6 +256,33 @@ async function getBuyAmountTest(token: Token): Promise<bigint> {
   }
 }
 
+/*
+function buyAmountTest() {
+  const token: Token = {
+    name: "KLAUS",
+    address: "0xb612bfc5ce2fb1337bd29f5af24ca85dbb181ce2",
+    buyTimestamp: NaN,
+    historyPrice: [],
+    buyPrice: NaN,
+    highPrice: NaN,
+    buyAmount: 38255.95608911452,
+    buyEthCost: 0,
+    buyGasUsed: 0,
+    sellGasUsed: 0,
+    sellPending: false,
+    buyPending: false,
+    profit: 0,
+    tradeWin: 28,
+    tradeCount: 33,
+  };
+
+  getBuyAmountTest(token).then((amount) => {
+    console.log(amount);
+  });
+}
+buyAmountTest();
+*/
+
 async function getBuyAmountMainnet(token: Token): Promise<bigint> {
   return eth.getErc20Balanceof(token.address);
 }
