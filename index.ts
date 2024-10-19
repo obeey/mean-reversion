@@ -87,6 +87,9 @@ function main() {
           .getPrice(token.address)
           .then(async (ethPrice: number) => {
             const curPrice = ethPrice;
+            const prevPrice = token.historyPrice[token.historyPrice.length - 1];
+            if (curPrice == prevPrice) return;
+
             if (!Number.isNaN(token.highPrice) && token.highPrice < curPrice) {
               token.highPrice = curPrice;
             }
@@ -96,7 +99,6 @@ function main() {
               token.historyPrice.shift();
             }
 
-            const prevPrice = token.historyPrice[token.historyPrice.length - 2];
             const downPercent: number =
               ((curPrice - prevPrice) / prevPrice) * 100;
             const tradeProfilePercent: Number =
