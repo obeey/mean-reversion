@@ -6,19 +6,22 @@ import logger from "./logger.js";
 import constants from "../constants.js";
 import eth from "./eth.js";
 import tokens from "../tokens.js";
+import { time } from "console";
 
 const PROXY_URL = "http://127.0.0.1:7890";
 
 let largeLossTokens: Token[] = tokens.largeLossTokens;
 let hotTokens: Token[] = tokens.tokens;
 
-function updateHotTokens() {
+function updateHotTokens(page: number = 1) {
   // 更新周期里面一次交易机会都没有的不参与后续跟踪
   // hotTokens = hotTokens.filter((token) => token.tradeCount > 0);
 
   const options: AxiosRequestConfig = {
     method: "GET",
-    url: "https://api.geckoterminal.com/api/v2/networks/eth/dexes/uniswap_v2/pools?page=1",
+    url:
+      "https://api.geckoterminal.com/api/v2/networks/eth/dexes/uniswap_v2/pools?page=" +
+      page,
     headers: {
       accept: "application/json",
     },
@@ -166,8 +169,12 @@ function updateHotTokens() {
     });
 }
 
-updateHotTokens();
-setInterval(() => updateHotTokens(), 3600000 * 4);
+updateHotTokens(1);
+setInterval(() => updateHotTokens(1), 3600000 * 4);
+setTimeout(() => {
+  updateHotTokens(2);
+  setInterval(() => updateHotTokens(2), 3600000 * 4);
+}, 10000);
 
 function getHotTokens() {
   return hotTokens;
