@@ -126,7 +126,7 @@ function canSell(token: Token): boolean {
 
   const diffSeconds = (Date.now() - buyTimestamp) / 1000;
   if (diffSeconds > constants.MAX_TOKEN_HOLD_SECONDS) {
-    logger.info(`S ${token.name} hold to long: ${diffSeconds} seconds`);
+    logger.warn(`S ${token.name} hold to long: ${diffSeconds} seconds`);
     return true;
   }
 
@@ -134,12 +134,12 @@ function canSell(token: Token): boolean {
 
   const profilePercent = (newestPrice - buyPrice) / buyPrice;
   if (profilePercent > constants.TAKE_PROFIT) {
-    logger.info(`S Large return ${(profilePercent * 100).toFixed(4)}%`);
+    logger.warn(`S Large return ${(profilePercent * 100).toFixed(4)}%`);
     return true;
   }
 
   if (profilePercent + constants.STOP_LOSS < 0) {
-    logger.info(`S Large LOSS ${(profilePercent * 100).toFixed(4)}%`);
+    logger.warn(`S Large LOSS ${(profilePercent * 100).toFixed(4)}%`);
     return true;
   }
 
@@ -149,7 +149,7 @@ function canSell(token: Token): boolean {
   if (historyPrice.length < constants.MAX_HISTORY_PRICE_LEN) {
     // Down too much.
     if (downPercent > constants.STOP_LOSS) {
-      logger.info(`S down too much ${(downPercent * 100).toFixed(4)}%`);
+      logger.warn(`S down too much ${(downPercent * 100).toFixed(4)}%`);
       return true;
     }
     return false;
@@ -157,7 +157,7 @@ function canSell(token: Token): boolean {
 
   logger.debug(`S H ${highPrice} L ${newestPrice} -${downPercent * 100}%`);
   if (downPercent > 0.01 && profilePercent > 0) {
-    logger.info(
+    logger.warn(
       `S start down ${(downPercent * 100).toFixed(4)}% and profit positive ${(
         profilePercent * 100
       ).toFixed(4)}%.`
@@ -178,7 +178,7 @@ function canSell(token: Token): boolean {
     `S Price Variance: ${priceVariance} ${(profilePercent * 100).toFixed(4)}%`
   );
   if ((profilePercent > 0.03 && priceVariance < 1) || profilePercent > 0.05) {
-    logger.info(
+    logger.warn(
       `S rebound ${(profilePercent * 100).toFixed(
         4
       )}% or variance ${priceVariance} low.`
