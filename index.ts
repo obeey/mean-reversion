@@ -42,7 +42,7 @@ function main() {
     ).toFixed(2);
 
     logger.warn(
-      `++++++++++++++++++++++++++++++++++++++ PROFILING(\x1b[33m ${totalProfit
+      `+++++++++++++++++++++++++++++++++++++++ PROFILING(\x1b[33m ${totalProfit
         .toFixed(5)
         .toString()
         .padEnd(constants.SYMBAL_PAD)} ${profile
@@ -54,7 +54,7 @@ function main() {
       0
         ? 0
         : TRADE_WIN / TRADE_COUNT
-      ).toFixed(2)} \x1b[0m) ++++++++++++++++++++++++++++++++++++++`
+      ).toFixed(2)} \x1b[0m) +++++++++++++++++++++++++++++++++++++++`
     );
 
     tokens.getHotTokens().forEach((token: Token) => {
