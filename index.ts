@@ -203,7 +203,7 @@ function main() {
 
               const pGlobal = TRADE_COUNT == 0 ? 0.5 : TRADE_WIN / TRADE_COUNT;
               const p =
-                token.tradeCount == 0
+                token.tradeCount < 5
                   ? pGlobal
                   : token.tradeWin / token.tradeCount;
               const b = helpers.getOdds();
