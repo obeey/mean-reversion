@@ -103,7 +103,7 @@ function canBuy(historyPrice: number[]): boolean {
 
   //  1. 当前价格没有上涨太多；2. 价格下降幅度够大；3. 最后价格上涨或者平稳；
   if (
-    curRaisePercent < 0.02 &&
+    curRaisePercent < 0.01 &&
     downPercent > constants.BUY_DOWN_PERCENT &&
     ((lastMa !== undefined && lastMa > 0.005) || variance < 1)
   ) {
