@@ -87,16 +87,9 @@ function main() {
           .getPrice(token.address)
           .then(async (ethPrice: number) => {
             const curPrice = ethPrice;
-            const prevPrice = token.historyPrice[token.historyPrice.length - 1];
-            if (curPrice == prevPrice) return;
-
-            if (!Number.isNaN(token.highPrice) && token.highPrice < curPrice) {
-              token.highPrice = curPrice;
-            }
-
-            token.historyPrice.push(curPrice);
-            if (token.historyPrice.length > constants.MAX_HISTORY_PRICE_LEN) {
-              token.historyPrice.shift();
+            let prevPrice = token.historyPrice[token.historyPrice.length - 1];
+            if (curPrice == prevPrice) {
+              prevPrice = token.historyPrice[token.historyPrice.length - 2];
             }
 
             const downPercent: number =
@@ -119,6 +112,18 @@ function main() {
                 token.sellPending
               } \x1b[0m`
             );
+
+            if (curPrice == token.historyPrice[token.historyPrice.length - 1])
+              return;
+
+            if (!Number.isNaN(token.highPrice) && token.highPrice < curPrice) {
+              token.highPrice = curPrice;
+            }
+
+            token.historyPrice.push(curPrice);
+            if (token.historyPrice.length > constants.MAX_HISTORY_PRICE_LEN) {
+              token.historyPrice.shift();
+            }
 
             if (!token.sellPending && buyAmount > 0) {
               if (helpers.canSell(token)) {
