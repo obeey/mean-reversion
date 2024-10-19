@@ -105,7 +105,7 @@ function canBuy(historyPrice: number[]): boolean {
   if (
     curRaisePercent < 0.01 &&
     downPercent > constants.BUY_DOWN_PERCENT &&
-    ((lastMa !== undefined && lastMa > 0.005) || variance < 1)
+    ((lastMa !== undefined && lastMa > -0.01) || variance < 1)
   ) {
     logger.warn(
       `B rebound or variance low. down ${downPercent.toFixed(
