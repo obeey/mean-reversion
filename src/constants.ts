@@ -72,7 +72,7 @@ const TRADE_AMOUNT_MIN = 0.45;
 const MAX_TOKEN_HOLD_SECONDS = 3600;
 const STOP_LOSS = 0.03;
 const TAKE_PROFIT = 0.15;
-const ODDS = TAKE_PROFIT / STOP_LOSS;
+const ODDS = 1.5;
 const BUY_DOWN_PERCENT = 0.1;
 const TOKEN_LARGE_LOSS = -0.1;
 
