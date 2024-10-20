@@ -150,7 +150,7 @@ function canSell(token: Token): boolean {
   const newestPrice = historyPrice[historyPrice.length - 1];
   const highPriceTotal = Math.max(...historyPrice);
   const lowPriceTotal = Math.min(...historyPrice);
-  const downPercentTotal = highPriceTotal - lowPriceTotal / highPrice;
+  const downPercentTotal = (highPriceTotal - lowPriceTotal) / highPriceTotal;
 
   const profilePercent = (newestPrice - buyPrice) / buyPrice;
   if (profilePercent > downPercentTotal / 2) {
