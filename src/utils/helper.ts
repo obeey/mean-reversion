@@ -78,7 +78,7 @@ function canBuy(token: Token): boolean {
 
   const curDownPercent = token.pricePercent[token.pricePercent.length - 1];
   // 单区块下跌
-  if (curDownPercent > 0.1) {
+  if (curDownPercent < -0.1) {
     logger.warn(`B current down ${curDownPercent.toFixed(4)}`);
     return true;
   }
@@ -89,8 +89,8 @@ function canBuy(token: Token): boolean {
     const continuseDownPercentAvg =
       (highPriceRecent - newestPrice) / newestPrice / downNum;
     if (
-      (continuseDownPercentAvg > 0.01 && downNum > 5) ||
-      (continuseDownPercentAvg > 0.03 && downNum <= 5)
+      (continuseDownPercentAvg > 0.02 && downNum > 5) ||
+      (continuseDownPercentAvg > 0.04 && downNum <= 5)
     ) {
       logger.warn(
         `B continuse down ${(continuseDownPercentAvg * 100).toFixed(
