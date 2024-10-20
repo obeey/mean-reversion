@@ -189,7 +189,7 @@ function main() {
             if (
               !token.buyPending &&
               buyAmount === 0n &&
-              helpers.canBuy(token.historyPrice)
+              helpers.canBuy(token)
             ) {
               if (
                 profile <

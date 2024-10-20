@@ -62,7 +62,9 @@ function getWallet() {
 const SYMBAL_PAD = 10;
 const PRICE_PAD = 20;
 
-const MAX_HISTORY_PRICE_LEN = 16; // 3min: 15+1. 15*12=180sec
+const MAX_HISTORY_PRICE_LEN = 100;
+const RECENT_HISTORY_PRICE_LEN = 16;
+const MA = 5;
 
 const POOL_ETH_MIN = 50;
 const INIT_PROFILE = 0.8;
@@ -71,7 +73,7 @@ const TRADE_RAISE_PERCENT_DIVISOR = 100; // 百分比的倒数,比如 1% 就是 
 const TRADE_AMOUNT_MIN = 0.45;
 const MAX_TOKEN_HOLD_SECONDS = 3600;
 const STOP_LOSS = 0.02;
-const TAKE_PROFIT = 0.15;
+const TAKE_PROFIT = 0.1;
 const ODDS = 1.5;
 const BUY_DOWN_PERCENT = 0.1;
 const TOKEN_LARGE_LOSS = -0.1;
@@ -96,6 +98,8 @@ export default {
   SYMBAL_PAD,
   PRICE_PAD,
   MAX_HISTORY_PRICE_LEN,
+  RECENT_HISTORY_PRICE_LEN,
+  MA,
   POOL_ETH_MIN,
   INIT_PROFILE,
   RESERVE_PROFILE,

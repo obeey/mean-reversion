@@ -8,6 +8,8 @@ let largeLossTokens: Token[] = [
     address: "0x3d2c4f3789010a8c8d4b5bb566e5d0a91ffb8c3d",
     buyTimestamp: NaN,
     historyPrice: [],
+    pricePercent: [],
+    pricePercentMa: [],
     buyPrice: NaN,
     highPrice: NaN,
     buyAmount: 0,

@@ -10,90 +10,73 @@ import { error } from "console";
 
 let profile: number = constants.INIT_PROFILE;
 
-function canBuy(historyPrice: number[]): boolean {
-  const MA = 5;
+function calcPrice(token: Token): boolean {
+  const MA = constants.MA;
+
+  const historyPrice = token.historyPrice;
+
+  if (!historyPrice || historyPrice.length < 2) {
+    token.pricePercent.push(NaN);
+    token.pricePercentMa.push(NaN);
+    return false;
+  }
+
+  const lastIdx = historyPrice.length - 1;
+  const curPrice = historyPrice[lastIdx];
+  const prePrice = historyPrice[lastIdx - 1];
+  const curDownPercent = (curPrice - prePrice) / prePrice;
+  token.pricePercent.push(curDownPercent);
+  if (token.pricePercent.length > constants.MAX_HISTORY_PRICE_LEN) {
+    token.pricePercent.shift();
+  }
 
   if (!historyPrice || historyPrice.length < MA + 2) {
     logger.debug("B history too short");
+    token.pricePercentMa.push(NaN);
 
     return false;
   }
 
-  let idx = historyPrice.length - 1;
-  let newestPrice = historyPrice[idx];
-  let curPrice = newestPrice;
-  let prePrice = historyPrice[idx - 1];
-  const curDownPercent = (curPrice - newestPrice) / curPrice;
+  let sum = 0;
+  let i;
+  const array = token.pricePercent;
+  for (i = 0; i < MA; i++) {
+    sum += array[lastIdx - i];
+  }
+  const curPricePercentMa = sum / MA;
+  token.pricePercentMa.push(curPricePercentMa);
+  if (token.pricePercentMa.length > constants.MAX_HISTORY_PRICE_LEN) {
+    token.pricePercentMa.shift();
+  }
 
+  return true;
+}
+
+function canBuy(token: Token): boolean {
+  const calcPriceOk = calcPrice(token);
+  if (!calcPriceOk) {
+    return false;
+  }
+
+  const curDownPercent = token.pricePercent[token.pricePercent.length - 1];
   // 单区块下跌
   if (curDownPercent > 0.1) {
     logger.warn(`B current down ${curDownPercent.toFixed(4)}`);
     return true;
   }
 
-  // 区块连续下跌
-  while (idx > 1 && prePrice > curPrice) {
-    idx -= 1;
-    curPrice = prePrice;
-    prePrice = historyPrice[idx - 1];
-  }
-
-  const continuseDownPercent = (curPrice - newestPrice) / curPrice;
-  if (continuseDownPercent > 0.18) {
-    logger.warn(`B continuse down ${continuseDownPercent.toFixed(4)}`);
-    return true;
-  }
-
-  const priceDifferencesPercent = historyPrice
-    .map((price, index, array) => {
-      if (index === 0) return null; // 第一个元素没有前一个元素
-      const prevPrice = array[index - 1];
-      return (price - prevPrice) / prevPrice;
-    })
-    .filter((diff) => diff !== null); // 过滤掉 null 值
-
-  /*
-  const newest = priceDifferences.pop();
-  if (newest === undefined || 0 > newest) {
-    logger.debug(`B Continue down ${newest}`);
-    return false;
-  }
-    */
-
-  logger.debug(`B Diff: ${priceDifferencesPercent}`);
-
-  const allLargerOrEqualZero = priceDifferencesPercent.every((num) => num >= 0);
-  if (allLargerOrEqualZero) {
-    return false;
-  }
-
-  const priceMa = priceDifferencesPercent
-    .map((priceDiff, index, array) => {
-      if (index < MA) return null;
-      let sum = 0;
-      let i;
-      for (i = 0; i < MA; i++) {
-        sum += array[index - i];
-      }
-      return sum / MA;
-    })
-    .filter((diff) => diff !== null); // 过滤掉 null 值
-
-  logger.debug(`B MA: ${priceMa}`);
-
-  const allLessThanOrEqualToZero = priceMa.every((num) => num <= 0);
-  if (!allLessThanOrEqualToZero) {
-    return false;
-  }
-
-  const highPrice = Math.max(...historyPrice);
-  const lowPrice = Math.min(...historyPrice);
+  const recentHistoryPrice = token.historyPrice.slice(
+    -constants.RECENT_HISTORY_PRICE_LEN
+  );
+  const highPrice = Math.max(...recentHistoryPrice);
+  const lowPrice = Math.min(...recentHistoryPrice);
   const deltaPrice = highPrice - lowPrice;
   const downPercent = deltaPrice / highPrice;
+  const newestPrice = token.historyPrice[token.historyPrice.length - 1];
   const curRaisePercent = (newestPrice - lowPrice) / lowPrice;
 
-  const lastMa = priceMa.pop();
-  const variance = calculateVariance(priceDifferencesPercent.slice(-5));
+  const lastMa = token.pricePercentMa[token.pricePercentMa.length - 1];
+  const variance = calculateVariance(token.pricePercent.slice(-5));
 
   logger.debug(
     `B H ${highPrice} L ${lowPrice} -${(downPercent * 100).toFixed(
@@ -427,15 +410,6 @@ async function sendPostRequestAndMeasureTime(
 const fetchBestProvider = fetchBestProviderByRandom;
 // fetchBestProvider();
 setInterval(() => fetchBestProvider(), 300000);
-
-function main() {
-  const historyPrice = [
-    100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 35,
-  ];
-  console.log(canBuy(historyPrice));
-}
-
-// main();
 
 export default {
   canBuy,

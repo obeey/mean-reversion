@@ -3,6 +3,8 @@ export interface Token {
   buyTimestamp: number;
   address: string;
   historyPrice: number[];
+  pricePercent: number[];
+  pricePercentMa: number[];
   buyPrice: number;
   highPrice: number;
   buyAmount: number;

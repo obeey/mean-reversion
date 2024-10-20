@@ -79,6 +79,8 @@ function updateHotTokens(page: number = 1) {
             buyTimestamp: NaN,
             address: pool.address,
             historyPrice: [],
+            pricePercent: [],
+            pricePercentMa: [],
             buyPrice: NaN,
             highPrice: NaN,
             buyAmount: 0,
