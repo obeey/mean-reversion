@@ -85,18 +85,20 @@ function canBuy(token: Token): boolean {
 
   const newestPrice = token.historyPrice[token.historyPrice.length - 1];
   const [highPriceRecent, downNum] = getHighPriceAndNum(token);
-  const continuseDownPercentAvg =
-    (highPriceRecent - newestPrice) / newestPrice / downNum;
-  if (
-    (continuseDownPercentAvg > 0.01 && downNum > 5) ||
-    (continuseDownPercentAvg > 0.03 && downNum <= 5)
-  ) {
-    logger.warn(
-      `B continuse down ${continuseDownPercentAvg.toFixed(
-        4
-      )} down number ${downNum}`
-    );
-    return true;
+  if (downNum > 0) {
+    const continuseDownPercentAvg =
+      (highPriceRecent - newestPrice) / newestPrice / downNum;
+    if (
+      (continuseDownPercentAvg > 0.01 && downNum > 5) ||
+      (continuseDownPercentAvg > 0.03 && downNum <= 5)
+    ) {
+      logger.warn(
+        `B continuse down ${(continuseDownPercentAvg * 100).toFixed(
+          4
+        )}% down number ${downNum}`
+      );
+      return true;
+    }
   }
 
   const recentHistoryPrice = token.historyPrice.slice(
