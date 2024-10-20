@@ -124,6 +124,9 @@ function main() {
             if (token.historyPrice.length > constants.MAX_HISTORY_PRICE_LEN) {
               token.historyPrice.shift();
             }
+            if (!helpers.calcPrice(token)) {
+              return;
+            }
 
             if (!token.sellPending && buyAmount > 0) {
               if (helpers.canSell(token)) {

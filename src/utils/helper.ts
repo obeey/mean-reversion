@@ -71,10 +71,12 @@ function getHighPriceAndNum(token: Token): [highPrice: number, num: number] {
 }
 
 function canBuy(token: Token): boolean {
+  /*
   const calcPriceOk = calcPrice(token);
   if (!calcPriceOk) {
     return false;
   }
+  */
 
   const curDownPercent = token.pricePercent[token.pricePercent.length - 1];
   // 单区块下跌
@@ -468,4 +470,5 @@ export default {
   getOdds,
   getKelly,
   fetchBestProvider,
+  calcPrice,
 };
