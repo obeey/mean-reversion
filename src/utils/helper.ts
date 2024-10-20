@@ -52,6 +52,24 @@ function calcPrice(token: Token): boolean {
   return true;
 }
 
+function getHighPriceAndNum(token: Token): [highPrice: number, num: number] {
+  let idx = token.pricePercentMa.length - 1;
+  const lastMa = token.pricePercentMa[idx];
+  let curPriceMa = lastMa;
+  let prePriceMa = token.pricePercentMa[idx - 1];
+  while (idx > 1 && prePriceMa > curPriceMa) {
+    idx -= 1;
+    curPriceMa = prePriceMa;
+    prePriceMa = token.pricePercentMa[idx - 1];
+  }
+  idx = idx >= constants.MA - 1 ? idx - (constants.MA - 1) : 0;
+
+  const downNum = token.historyPrice.length - idx;
+  const highPriceRecent = Math.max(...token.historyPrice.slice(-downNum));
+
+  return [highPriceRecent, downNum];
+}
+
 function canBuy(token: Token): boolean {
   const calcPriceOk = calcPrice(token);
   if (!calcPriceOk) {
@@ -65,6 +83,22 @@ function canBuy(token: Token): boolean {
     return true;
   }
 
+  const newestPrice = token.historyPrice[token.historyPrice.length - 1];
+  const [highPriceRecent, downNum] = getHighPriceAndNum(token);
+  const continuseDownPercentAvg =
+    (highPriceRecent - newestPrice) / newestPrice / downNum;
+  if (
+    (continuseDownPercentAvg > 0.01 && downNum > 5) ||
+    (continuseDownPercentAvg > 0.03 && downNum <= 5)
+  ) {
+    logger.warn(
+      `B continuse down ${continuseDownPercentAvg.toFixed(
+        4
+      )} down number ${downNum}`
+    );
+    return true;
+  }
+
   const recentHistoryPrice = token.historyPrice.slice(
     -constants.RECENT_HISTORY_PRICE_LEN
   );
@@ -72,10 +106,8 @@ function canBuy(token: Token): boolean {
   const lowPrice = Math.min(...recentHistoryPrice);
   const deltaPrice = highPrice - lowPrice;
   const downPercent = deltaPrice / highPrice;
-  const newestPrice = token.historyPrice[token.historyPrice.length - 1];
   const curRaisePercent = (newestPrice - lowPrice) / lowPrice;
 
-  const lastMa = token.pricePercentMa[token.pricePercentMa.length - 1];
   const variance = calculateVariance(token.pricePercent.slice(-5));
 
   logger.debug(
@@ -84,11 +116,13 @@ function canBuy(token: Token): boolean {
     )}% ${variance}`
   );
 
+  const idx = token.pricePercentMa.length - 1;
+  const lastMa = token.pricePercentMa[idx];
   //  1. 当前价格没有上涨太多；2. 价格下降幅度够大；3. 最后价格上涨或者平稳；
   if (
     curRaisePercent < 0.01 &&
     downPercent > constants.BUY_DOWN_PERCENT &&
-    ((lastMa !== undefined && lastMa > -0.01) || variance < 1)
+    ((lastMa !== undefined && lastMa > -0.01) || variance < 0.5)
   ) {
     logger.warn(
       `B rebound or variance low. down ${downPercent.toFixed(
@@ -114,10 +148,17 @@ function canSell(token: Token): boolean {
   }
 
   const newestPrice = historyPrice[historyPrice.length - 1];
+  const highPriceTotal = Math.max(...historyPrice);
+  const lowPriceTotal = Math.min(...historyPrice);
+  const downPercentTotal = highPriceTotal - lowPriceTotal / highPrice;
 
   const profilePercent = (newestPrice - buyPrice) / buyPrice;
-  if (profilePercent > constants.TAKE_PROFIT) {
-    logger.warn(`S Large return ${(profilePercent * 100).toFixed(4)}%`);
+  if (profilePercent > downPercentTotal / 2) {
+    logger.warn(
+      `S Large return ${(profilePercent * 100).toFixed(4)}% Large Down: ${(
+        downPercentTotal * 100
+      ).toFixed(4)}%`
+    );
     return true;
   }
 
