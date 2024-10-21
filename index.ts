@@ -42,7 +42,7 @@ function main() {
     ).toFixed(2);
 
     logger.warn(
-      `+++++++++++++++++++++++++++++++++++++++ PROFILING(\x1b[33m ${totalProfit
+      ` +++++++++++++++++++++++++++++++++++++++ PROFILING(\x1b[33m ${totalProfit
         .toFixed(5)
         .toString()
         .padEnd(constants.SYMBAL_PAD)} ${profile
@@ -79,7 +79,7 @@ function main() {
           .toString()
           .padEnd(constants.SYMBAL_PAD + 2)} ${token.buyPrice
           .toString()
-          .padEnd(constants.PRICE_PAD)} ${token.decimals} \x1b[0m`
+          .padEnd(constants.PRICE_PAD + 2)} ${token.decimals} \x1b[0m`
       );
 
       try {
