@@ -281,8 +281,8 @@ function main() {
                   token.buyEthCost = buyEth;
                   token.buyTimestamp = Date.now();
                   token.highPrice = newPrice;
-                  token.historyPrice.length = 0;
-                  token.historyPrice.push(newPrice);
+                  // token.historyPrice.length = 0;
+                  // token.historyPrice.push(newPrice);
 
                   logger.warn(
                     ` B ${token.name} ${buyEth}ETH for price ${token.buyPrice} gas ${gasUsed}`
