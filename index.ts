@@ -18,7 +18,7 @@ function main() {
   setInterval(async () => {
     const profile = await helpers.getProfile();
 
-    if (runLoops % 6 == 0) {
+    if (runLoops % 12 == 0) {
       const curProfile =
         tokens
           .getHotTokens()
@@ -60,7 +60,7 @@ function main() {
     }
 
     tokens.getHotTokens().forEach((token: Token) => {
-      if (runLoops % 6 == 0) {
+      if (runLoops % 12 == 0) {
         logger.info(
           `\x1b[34m ${token.name.padEnd(constants.SYMBAL_PAD + 8)} ${
             token.address
