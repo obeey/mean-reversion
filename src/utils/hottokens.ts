@@ -179,7 +179,7 @@ setInterval(() => updateHotTokens(1), 3600000 * 4);
 setTimeout(() => {
   updateHotTokens(2);
   setInterval(() => updateHotTokens(2), 3600000 * 4);
-}, 10000);
+}, 60000);
 
 function getHotTokens() {
   return hotTokens;
