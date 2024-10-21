@@ -81,7 +81,7 @@ function canBuy(token: Token): boolean {
   const curDownPercent = token.pricePercent[token.pricePercent.length - 1];
   // 单区块下跌
   if (curDownPercent < -0.1) {
-    logger.warn(`B current down ${curDownPercent.toFixed(4)}`);
+    logger.warn(`B current down ${(curDownPercent * 100).toFixed(4)}%`);
     return true;
   }
 
