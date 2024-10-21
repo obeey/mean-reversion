@@ -129,9 +129,9 @@ function canBuy(token: Token): boolean {
     ((lastMa !== undefined && lastMa > -0.01) || variance < 0.5)
   ) {
     logger.warn(
-      `B rebound or variance low. down ${downPercent.toFixed(
-        4
-      )} last MA ${lastMa} variance ${variance}`
+      `B rebound or variance(${variance}) low. down ${(
+        downPercent * 100
+      ).toFixed(4)}% last MA ${lastMa}`
     );
     return true;
   }
