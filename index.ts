@@ -17,9 +17,9 @@ function main() {
   setInterval(async () => {
     const profile = await helpers.getProfile();
 
-    /*
     const curProfile =
-      tokens.tokens
+      tokens
+        .getHotTokens()
         .filter((token: Token) => token.buyAmount > 0)
         .map(
           (token: Token) =>
@@ -35,14 +35,12 @@ function main() {
       ((curProfile - constants.INIT_PROFILE) / constants.INIT_PROFILE) *
       100
     ).toFixed(2);
-    */
-    const totalReturn = (
-      ((profile - constants.INIT_PROFILE) / constants.INIT_PROFILE) *
-      100
-    ).toFixed(2);
 
     logger.warn(
-      ` +++++++++++++++++++++++++++++++++++++++ PROFILING(\x1b[33m ${totalProfit
+      ` +++++++++++++++++++++++++++++++++++ PROFILING(\x1b[33m ${totalProfit
+        .toFixed(5)
+        .toString()
+        .padEnd(constants.SYMBAL_PAD)} ${curProfile
         .toFixed(5)
         .toString()
         .padEnd(constants.SYMBAL_PAD)} ${profile
@@ -54,7 +52,7 @@ function main() {
       0
         ? 0
         : TRADE_WIN / TRADE_COUNT
-      ).toFixed(2)} \x1b[0m) +++++++++++++++++++++++++++++++++++++++`
+      ).toFixed(2)} \x1b[0m) +++++++++++++++++++++++++++++++++++`
     );
 
     tokens.getHotTokens().forEach((token: Token) => {
