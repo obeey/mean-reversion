@@ -14,77 +14,87 @@ function main() {
   let TRADE_WIN = 0;
   let totalProfit = 0;
 
+  let runLoops = 0;
   setInterval(async () => {
     const profile = await helpers.getProfile();
 
-    const curProfile =
-      tokens
-        .getHotTokens()
-        .filter((token: Token) => token.buyAmount > 0)
-        .map(
-          (token: Token) =>
-            token.buyAmount * token.historyPrice[token.historyPrice.length - 1]
-        )
-        .reduce(
-          (previousValue: any, currentValue: any) =>
-            previousValue + currentValue,
-          0
-        ) + profile;
+    if (runLoops % 6 == 0) {
+      const curProfile =
+        tokens
+          .getHotTokens()
+          .filter((token: Token) => token.buyAmount > 0)
+          .map(
+            (token: Token) =>
+              token.buyAmount *
+              token.historyPrice[token.historyPrice.length - 1]
+          )
+          .reduce(
+            (previousValue: any, currentValue: any) =>
+              previousValue + currentValue,
+            0
+          ) + profile;
 
-    const totalReturn = (
-      ((curProfile - constants.INIT_PROFILE) / constants.INIT_PROFILE) *
-      100
-    ).toFixed(2);
+      const totalReturn = (
+        ((curProfile - constants.INIT_PROFILE) / constants.INIT_PROFILE) *
+        100
+      ).toFixed(2);
 
-    logger.warn(
-      ` +++++++++++++++++++++++++++++++++++ PROFILING(\x1b[33m ${totalProfit
-        .toFixed(5)
-        .toString()
-        .padEnd(constants.SYMBAL_PAD)} ${curProfile
-        .toFixed(5)
-        .toString()
-        .padEnd(constants.SYMBAL_PAD)} ${profile
-        .toFixed(5)
-        .toString()
-        .padEnd(
-          constants.SYMBAL_PAD
-        )} ${totalReturn}% W:${TRADE_WIN} C:${TRADE_COUNT} R:${(TRADE_COUNT ===
-      0
-        ? 0
-        : TRADE_WIN / TRADE_COUNT
-      ).toFixed(2)} \x1b[0m) +++++++++++++++++++++++++++++++++++`
-    );
+      logger.warn(
+        ` +++++++++++++++++++++++++++++++++++ PROFILING(\x1b[33m ${totalProfit
+          .toFixed(5)
+          .toString()
+          .padEnd(constants.SYMBAL_PAD)} ${curProfile
+          .toFixed(5)
+          .toString()
+          .padEnd(constants.SYMBAL_PAD)} ${profile
+          .toFixed(5)
+          .toString()
+          .padEnd(
+            constants.SYMBAL_PAD
+          )} ${totalReturn}% W:${TRADE_WIN} C:${TRADE_COUNT} R:${(TRADE_COUNT ===
+        0
+          ? 0
+          : TRADE_WIN / TRADE_COUNT
+        ).toFixed(2)} \x1b[0m) +++++++++++++++++++++++++++++++++++`
+      );
+    }
 
     tokens.getHotTokens().forEach((token: Token) => {
-      logger.info(
-        `\x1b[34m ${token.name.padEnd(constants.SYMBAL_PAD + 8)} ${
-          token.address
-        } ${token.historyPrice.length.toString().padEnd(5)} ${token.tradeWin
-          .toString()
-          .padEnd(4)} ${token.tradeCount
-          .toString()
-          .padEnd(4)} ${(token.tradeCount === 0
-          ? 0
-          : token.tradeWin / token.tradeCount
-        )
-          .toFixed(2)
-          .toString()
-          .padEnd(5)} ${token.profit
-          .toFixed(4)
-          .toString()
-          .padEnd(constants.SYMBAL_PAD + 2)} ${token.buyEthCost
-          .toFixed(4)
-          .toString()
-          .padEnd(constants.SYMBAL_PAD + 2)} ${token.buyPrice
-          .toString()
-          .padEnd(constants.PRICE_PAD + 2)} ${token.decimals} \x1b[0m`
-      );
+      if (runLoops % 6 == 0) {
+        logger.info(
+          `\x1b[34m ${token.name.padEnd(constants.SYMBAL_PAD + 8)} ${
+            token.address
+          } ${token.historyPrice.length.toString().padEnd(5)} ${token.tradeWin
+            .toString()
+            .padEnd(4)} ${token.tradeCount
+            .toString()
+            .padEnd(4)} ${(token.tradeCount === 0
+            ? 0
+            : token.tradeWin / token.tradeCount
+          )
+            .toFixed(2)
+            .toString()
+            .padEnd(5)} ${token.profit
+            .toFixed(4)
+            .toString()
+            .padEnd(constants.SYMBAL_PAD + 2)} ${token.buyEthCost
+            .toFixed(4)
+            .toString()
+            .padEnd(constants.SYMBAL_PAD + 2)} ${token.buyPrice
+            .toString()
+            .padEnd(constants.PRICE_PAD + 2)} ${token.decimals} \x1b[0m`
+        );
+      }
 
       try {
         eth
           .getPrice(token.address, token.decimals)
           .then(async (ethPrice: number) => {
             const curPrice = ethPrice;
+
+            if (curPrice == token.historyPrice[token.historyPrice.length - 1])
+              return;
+
             let prevPrice = token.historyPrice[token.historyPrice.length - 1];
             if (curPrice == prevPrice) {
               prevPrice = token.historyPrice[token.historyPrice.length - 2];
@@ -110,9 +120,6 @@ function main() {
                 token.sellPending
               } \x1b[0m`
             );
-
-            if (curPrice == token.historyPrice[token.historyPrice.length - 1])
-              return;
 
             if (!Number.isNaN(token.highPrice) && token.highPrice < curPrice) {
               token.highPrice = curPrice;
@@ -307,7 +314,9 @@ function main() {
         logger.error(`Process ${token.name} failed.`);
       }
     });
-  }, 12000);
+
+    runLoops++;
+  }, 1000);
 }
 
 main();
