@@ -90,9 +90,12 @@ async function getMaxTradeEth(tokenAddress: string): Promise<string> {
  * @param tokenAddress token's address
  * @returns ETH price
  */
-async function getRealPrice(tokenAddress: string): Promise<number> {
+async function getRealPrice(
+  tokenAddress: string,
+  decimals: number
+): Promise<number> {
   const token0 = constants.WETH;
-  const decimals = Number(await getDecimals(constants.chainId, tokenAddress));
+  // const decimals = Number(await getDecimals(constants.chainId, tokenAddress));
   const token1 = new Token(constants.chainId, tokenAddress, decimals);
 
   const [reserve0, reserve1]: [bigint, bigint] = await getReserves(
@@ -112,8 +115,11 @@ async function getRealPrice(tokenAddress: string): Promise<number> {
   return eth / token;
 }
 
-async function getMidPrice(tokenAddress: string): Promise<number> {
-  const decimals = Number(await getDecimals(constants.chainId, tokenAddress));
+async function getMidPrice(
+  tokenAddress: string,
+  decimals: number
+): Promise<number> {
+  // const decimals = Number(await getDecimals(constants.chainId, tokenAddress));
   // console.log(`decimals ${decimals} ${typeof(decimals)}`)
 
   const token = new Token(constants.chainId, tokenAddress, decimals);
@@ -216,6 +222,7 @@ async function buyTokenMainnet(
 
 async function sellTokenMainnet(
   tokenAddress: string,
+  decimals: number,
   slippage: number = 0.1
 ): Promise<string> {
   const wallet = constants.getWallet();
@@ -254,9 +261,9 @@ async function sellTokenMainnet(
   await approvalTx.wait();
   */
 
-  const decimals = Number(await getDecimals(constants.chainId, tokenAddress));
+  // const decimals = Number(await getDecimals(constants.chainId, tokenAddress));
   const token = new Token(constants.chainId, tokenAddress, decimals);
-  await approveAmountIn(token, amountIn);
+  await approveAmountIn(token, decimals, amountIn);
 
   // 执行卖出交易
   const tx = await router.swapExactTokensForETH(
@@ -365,7 +372,8 @@ async function updateGasFee(gasUsed: bigint): Promise<string> {
     logger.error("B Get gasPrice failed.");
     return "0";
   }
-  const transactionFee = gasPrice * gasUsed;
+
+  const transactionFee = (gasPrice + 3000000000n) * gasUsed;
   const feeETH = ethers.formatEther(transactionFee.toString());
   logger.info(`Gas used ${feeETH} ETH`);
   helper.subProfile(Number(feeETH));
@@ -380,7 +388,10 @@ async function buyTokenTest(
   const GAS_USED = 145832;
   return updateGasFee(BigInt(GAS_USED));
 }
-async function sellTokenTest(tokenAddress: string): Promise<string> {
+async function sellTokenTest(
+  tokenAddress: string,
+  decimals: number
+): Promise<string> {
   const GAS_USED = 197554;
   return updateGasFee(BigInt(GAS_USED));
 }
@@ -421,6 +432,7 @@ function getEthBalance() {
  * @param token1 - token we have
  * @param amount - the amount we want
  */
+/*
 async function swapTokens(
   token0: Token,
   token1: Token,
@@ -428,28 +440,6 @@ async function swapTokens(
   slippage = "50"
 ) {
   try {
-    /*
-    const pair = await Fetcher.fetchPairData(
-      token0,
-      token1,
-      constants.getProvider()
-    ); //creating instances of a pair
-    // const route = new Route([pair], token, WETH9[ChainId.MAINNET]);
-    const route = await new Route([pair], token1); // a fully specified path from input token to output token
-    let amountIn = ethers.parseEther(amount.toString()); //helper function to convert ETH to Wei
-    amountIn = amountIn.toString();
-
-    const slippageTolerance = new Percent(slippage, "10000"); // 50 bips, or 0.50% - Slippage tolerance
-
-    const trade = new Trade( //information necessary to create a swap transaction.
-      route,
-      new TokenAmount(token1, amountIn),
-      TradeType.EXACT_INPUT
-    );
-    */
-
-    // const token = token0 == WETH9[ChainId.MAINNET] ? token1 : token0;
-    // console.log(`T0: ${token0} T1: ${token1}`);
     const pair = await createPair(token0, token1);
 
     const route = new Route([pair], token1, token0);
@@ -467,11 +457,6 @@ async function swapTokens(
 
     const amountOutMin = trade.minimumAmountOut(slippageTolerance).quotient; // needs to be converted to e.g. hex
     const amountOutMinHex = ethers.toBeHex(amountOutMin.toString());
-    /*
-    const amountOutMinHex = ethers.BigNumber.from(
-      amountOutMin.toString()
-    ).toHexString();
-    */
     const path = [token1.address, token0.address]; //An array of token addresses
     const to = constants.getWallet().address; // should be a checksummed recipient address
     const deadline = Math.floor(Date.now() / 1000) + 60 * 10; // 10 minutes from the current Unix time
@@ -512,47 +497,17 @@ async function swapTokens(
       );
     }
     return ret;
-
-    // console.log("Transaction sent:", txn);
-
-    /*
-    //Return a copy of transactionRequest, The default implementation calls checkTransaction and resolves to if it is an ENS name, adds gasPrice, nonce, gasLimit and chainId based on the related operations on Signer.
-    const rawTxn = await constants.UNISWAP_ROUTER_CONTRACT.getFunction(
-      "swapExactETHForTokens"
-    ).call(amountOutMinHex, path, to, deadline, {
-      value: valueHex,
-    });
-
-    //Returns a Promise which resolves to the transaction.
-    let sendTxn = (await constants.getWallet()).sendTransaction(rawTxn);
-    return sendTxn;
-
-    //Resolves to the TransactionReceipt once the transaction has been included in the chain for x confirms blocks.
-    let reciept = (await sendTxn).wait();
-
-    //Logs the information about the transaction it has been mined.
-    if (reciept) {
-      console.log(
-        " - Transaction is mined - " + "\n" + "Transaction Hash:",
-        (await sendTxn).hash +
-          "\n" +
-          "Block Number: " +
-          (await reciept)?.blockNumber +
-          "\n" +
-          "Navigate to https://etherscan.io/tx/" +
-          (await sendTxn).hash,
-        "to see your transaction"
-      );
-    } else {
-      console.log("Error submitting transaction");
-    }
-      */
   } catch (e) {
     console.log(e);
   }
 }
+*/
 
-async function approveAmountIn(token1: Token, amountIn: bigint) {
+async function approveAmountIn(
+  token1: Token,
+  decimals: number,
+  amountIn: bigint
+) {
   const ownerAddress = constants.getWallet().address; // 代币拥有者的地址
   const spenderAddress = constants.UNISWAP_ROUTER_ADDRESS; // Router 合约地址
   const tokenContract = new ethers.Contract(
@@ -566,7 +521,7 @@ async function approveAmountIn(token1: Token, amountIn: bigint) {
     spenderAddress
   );
 
-  const decimals = Number(await getDecimals(constants.chainId, token1.address));
+  // const decimals = Number(await getDecimals(constants.chainId, token1.address));
   logger.info(
     `Current Allowance: ${ethers.formatUnits(
       currentAllowance,
@@ -596,7 +551,7 @@ async function tradetest() {
   buyTokenMainnet(tokenAddress, 0.01)
     .then((buyFeeUsed) => {
       console.log(`Buy gas fee ${buyFeeUsed}`);
-      sellTokenMainnet(tokenAddress)
+      sellTokenMainnet(tokenAddress, 9)
         .then((sellFeeUsed) => {
           console.log(`Sell gas fee ${sellFeeUsed}`);
         })

@@ -79,12 +79,12 @@ function main() {
           .toString()
           .padEnd(constants.SYMBAL_PAD + 2)} ${token.buyPrice
           .toString()
-          .padEnd(constants.PRICE_PAD)} ${token.highPrice} \x1b[0m`
+          .padEnd(constants.PRICE_PAD)} ${token.decimals} \x1b[0m`
       );
 
       try {
         eth
-          .getPrice(token.address)
+          .getPrice(token.address, token.decimals)
           .then(async (ethPrice: number) => {
             const curPrice = ethPrice;
             let prevPrice = token.historyPrice[token.historyPrice.length - 1];
@@ -133,7 +133,7 @@ function main() {
                 token.sellPending = true;
 
                 eth
-                  .sellToken(token.address)
+                  .sellToken(token.address, token.decimals)
                   .then((gasUsed: string) => {
                     token.sellPending = false;
 

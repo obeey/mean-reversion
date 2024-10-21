@@ -3,8 +3,10 @@ import { Token } from "./token.d.js";
 let tokens: Token[] = [];
 
 let largeLossTokens: Token[] = [
+  /*
   {
     name: "CULT",
+    decimals: 9,
     address: "0x3d2c4f3789010a8c8d4b5bb566e5d0a91ffb8c3d",
     buyTimestamp: NaN,
     historyPrice: [],
@@ -22,5 +24,6 @@ let largeLossTokens: Token[] = [
     tradeWin: 0,
     tradeCount: 0,
   },
+  */
 ];
 export default { tokens, largeLossTokens };

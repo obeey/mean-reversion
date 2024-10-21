@@ -76,6 +76,9 @@ function updateHotTokens(page: number = 1) {
 
           let token: Token = {
             name: pool.symbol,
+            decimals: Number(
+              await eth.getDecimals(constants.chainId, pool.address)
+            ),
             buyTimestamp: NaN,
             address: pool.address,
             historyPrice: [],
