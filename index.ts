@@ -89,223 +89,242 @@ function main() {
       try {
         eth
           .getPrice(token.address, token.decimals)
-          .then(async (ethPrice: number) => {
-            const curPrice = ethPrice;
+          .then(
+            async ([ethPrice, reserveETH, reserveToken]: [
+              number,
+              number,
+              number
+            ]) => {
+              const curPrice = ethPrice;
 
-            if (curPrice == token.historyPrice[token.historyPrice.length - 1])
-              return;
+              if (curPrice == token.historyPrice[token.historyPrice.length - 1])
+                return;
 
-            let prevPrice = token.historyPrice[token.historyPrice.length - 1];
-            if (curPrice == prevPrice) {
-              prevPrice = token.historyPrice[token.historyPrice.length - 2];
-            }
-
-            const downPercent: number =
-              ((curPrice - prevPrice) / prevPrice) * 100;
-            const tradeProfilePercent: Number =
-              ((curPrice - token.buyPrice) / token.buyPrice) * 100;
-
-            const buyAmount = await helpers.getBuyAmount(token);
-
-            logger.info(
-              `\x1b[35m ${token.name.padEnd(constants.SYMBAL_PAD)} ${ethPrice
-                .toString()
-                .padEnd(constants.PRICE_PAD + 5)} ${downPercent
-                .toFixed(4)
-                .toString()
-                .padStart(constants.PRICE_PAD)}% ${tradeProfilePercent
-                .toFixed(4)
-                .toString()
-                .padStart(constants.PRICE_PAD)}% \t ${token.buyPending} \t ${
-                token.sellPending
-              } \x1b[0m`
-            );
-
-            if (!Number.isNaN(token.highPrice) && token.highPrice < curPrice) {
-              token.highPrice = curPrice;
-            }
-
-            token.historyPrice.push(curPrice);
-            if (token.historyPrice.length > constants.MAX_HISTORY_PRICE_LEN) {
-              token.historyPrice.shift();
-            }
-            if (!helpers.calcPrice(token)) {
-              return;
-            }
-
-            if (!token.sellPending && buyAmount > 0) {
-              if (helpers.canSell(token)) {
-                token.sellPending = true;
-
-                eth
-                  .sellToken(token.address, token.decimals)
-                  .then((gasUsed: string) => {
-                    token.sellPending = false;
-
-                    const gasUsedNum = Number(gasUsed);
-                    if (!Number.isNaN(gasUsedNum))
-                      token.sellGasUsed = gasUsedNum;
-
-                    const returnProfile = token.buyAmount * ethPrice;
-                    token.buyTimestamp = NaN;
-                    token.buyAmount = 0;
-                    token.buyPrice = NaN;
-                    token.highPrice = NaN;
-
-                    helpers.addProfile(returnProfile);
-                    const profit =
-                      returnProfile -
-                      token.buyEthCost -
-                      token.buyGasUsed -
-                      token.sellGasUsed;
-                    if (!Number.isNaN(profit)) {
-                      token.profit += profit;
-                      totalProfit += profit;
-                    } else {
-                      logger.error("Sell Profit not add.");
-                    }
-
-                    if (profit > 0) {
-                      TRADE_WIN++;
-                      token.tradeWin++;
-                    }
-                    TRADE_COUNT++;
-                    token.tradeCount++;
-
-                    token.buyEthCost = 0;
-
-                    logger.warn(
-                      `\x1b[32m S ${token.name.padEnd(constants.SYMBAL_PAD)} ${
-                        token.address
-                      } Return ${returnProfile} Profit ${profit} Price ${curPrice} GAS ${gasUsed}ETH \x1b[0m`
-                    );
-                  })
-                  .catch((error) => {
-                    token.sellPending = false;
-                    logger.warn(
-                      `\x1b[32m S ${token.name.padEnd(constants.SYMBAL_PAD)} ${
-                        token.address
-                      } ${curPrice} ETH failed. \x1b[0m`
-                    );
-                    logger.error(error);
-                  });
+              let prevPrice = token.historyPrice[token.historyPrice.length - 1];
+              if (curPrice == prevPrice) {
+                prevPrice = token.historyPrice[token.historyPrice.length - 2];
               }
 
-              return;
-            }
+              const downPercent: number =
+                ((curPrice - prevPrice) / prevPrice) * 100;
+              const tradeProfilePercent: Number =
+                ((curPrice - token.buyPrice) / token.buyPrice) * 100;
 
-            if (
-              !token.buyPending &&
-              buyAmount === 0n &&
-              helpers.canBuy(token)
-            ) {
+              const buyAmount = await helpers.getBuyAmount(token);
+
+              logger.info(
+                `\x1b[35m ${token.name.padEnd(constants.SYMBAL_PAD)} ${ethPrice
+                  .toString()
+                  .padEnd(constants.PRICE_PAD + 5)} ${downPercent
+                  .toFixed(4)
+                  .toString()
+                  .padStart(constants.PRICE_PAD)}% ${tradeProfilePercent
+                  .toFixed(4)
+                  .toString()
+                  .padStart(constants.PRICE_PAD)}% \t ${token.buyPending} \t ${
+                  token.sellPending
+                } \x1b[0m`
+              );
+
               if (
-                profile <
-                constants.RESERVE_PROFILE + constants.TRADE_AMOUNT_MIN
+                !Number.isNaN(token.highPrice) &&
+                token.highPrice < curPrice
               ) {
-                logger.error(
-                  `B Profile too low ${profile} for Buy ${token.name}`
-                );
+                token.highPrice = curPrice;
+              }
+
+              token.historyPrice.push(curPrice);
+              if (token.historyPrice.length > constants.MAX_HISTORY_PRICE_LEN) {
+                token.historyPrice.shift();
+              }
+              if (!helpers.calcPrice(token)) {
                 return;
               }
 
-              const pGlobal = TRADE_COUNT == 0 ? 0.5 : TRADE_WIN / TRADE_COUNT;
-              const p =
-                token.tradeCount < 5
-                  ? pGlobal
-                  : token.tradeWin / token.tradeCount;
-              const b = helpers.getOdds();
-              let kelly = helpers.getKelly(b, p);
+              if (!token.sellPending && buyAmount > 0) {
+                if (helpers.canSell(token)) {
+                  token.sellPending = true;
 
-              if (kelly > 0.9) {
-                logger.info(`Kelly too high K ${kelly} b ${b} p ${p}`);
-                kelly = 0.9;
-              }
+                  eth
+                    .sellToken(token.address, token.decimals)
+                    .then((gasUsed: string) => {
+                      token.sellPending = false;
 
-              if (kelly < 0.2) {
-                logger.info(`Kelly too low K ${kelly} b ${b} p ${p}`);
-                kelly = 0.2;
-              }
+                      const gasUsedNum = Number(gasUsed);
+                      if (!Number.isNaN(gasUsedNum))
+                        token.sellGasUsed = gasUsedNum;
 
-              let buyEth = profile * kelly;
-              if (buyEth < constants.TRADE_AMOUNT_MIN)
-                buyEth = constants.TRADE_AMOUNT_MIN;
-              const nowProfile = await helpers.getProfile();
-              if (buyEth > nowProfile - constants.RESERVE_PROFILE) {
-                logger.error(
-                  `B No money buy ${token.name.padEnd(
-                    constants.SYMBAL_PAD
-                  )} Need: ${buyEth} Remain: ${profile}`
-                );
+                      const returnProfile =
+                        reserveETH -
+                        (reserveETH * reserveToken) /
+                          (reserveToken + token.buyAmount * 0.997);
+                      token.buyTimestamp = NaN;
+                      token.buyAmount = 0;
+                      token.buyPrice = NaN;
+                      token.highPrice = NaN;
+
+                      helpers.addProfile(returnProfile);
+                      const profit =
+                        returnProfile -
+                        token.buyEthCost -
+                        token.buyGasUsed -
+                        token.sellGasUsed;
+                      if (!Number.isNaN(profit)) {
+                        token.profit += profit;
+                        totalProfit += profit;
+                      } else {
+                        logger.error("Sell Profit not add.");
+                      }
+
+                      if (profit > 0) {
+                        TRADE_WIN++;
+                        token.tradeWin++;
+                      }
+                      TRADE_COUNT++;
+                      token.tradeCount++;
+
+                      token.buyEthCost = 0;
+
+                      logger.warn(
+                        `\x1b[32m S ${token.name.padEnd(
+                          constants.SYMBAL_PAD
+                        )} ${
+                          token.address
+                        } Return ${returnProfile} Profit ${profit} Price ${curPrice} GAS ${gasUsed}ETH \x1b[0m`
+                      );
+                    })
+                    .catch((error) => {
+                      token.sellPending = false;
+                      logger.warn(
+                        `\x1b[32m S ${token.name.padEnd(
+                          constants.SYMBAL_PAD
+                        )} ${token.address} ${curPrice} ETH failed. \x1b[0m`
+                      );
+                      logger.error(error);
+                    });
+                }
+
                 return;
               }
 
-              const maxEthBuy = Number(await eth.getMaxTradeEth(token.address));
-              if (maxEthBuy < constants.TRADE_AMOUNT_MIN) {
-                logger.error(
-                  `B ${token.name} Max ETH to buy ${maxEthBuy} less then MIN ${constants.TRADE_AMOUNT_MIN}`
+              if (
+                !token.buyPending &&
+                buyAmount === 0n &&
+                helpers.canBuy(token)
+              ) {
+                if (
+                  profile <
+                  constants.RESERVE_PROFILE + constants.TRADE_AMOUNT_MIN
+                ) {
+                  logger.error(
+                    `B Profile too low ${profile} for Buy ${token.name}`
+                  );
+                  return;
+                }
+
+                const pGlobal =
+                  TRADE_COUNT == 0 ? 0.5 : TRADE_WIN / TRADE_COUNT;
+                const p =
+                  token.tradeCount < 5
+                    ? pGlobal
+                    : token.tradeWin / token.tradeCount;
+                const b = helpers.getOdds();
+                let kelly = helpers.getKelly(b, p);
+
+                if (kelly > 0.9) {
+                  logger.info(`Kelly too high K ${kelly} b ${b} p ${p}`);
+                  kelly = 0.9;
+                }
+
+                if (kelly < 0.2) {
+                  logger.info(`Kelly too low K ${kelly} b ${b} p ${p}`);
+                  kelly = 0.2;
+                }
+
+                let buyEth = profile * kelly;
+                if (buyEth < constants.TRADE_AMOUNT_MIN)
+                  buyEth = constants.TRADE_AMOUNT_MIN;
+                const nowProfile = await helpers.getProfile();
+                if (buyEth > nowProfile - constants.RESERVE_PROFILE) {
+                  logger.error(
+                    `B No money buy ${token.name.padEnd(
+                      constants.SYMBAL_PAD
+                    )} Need: ${buyEth} Remain: ${profile}`
+                  );
+                  return;
+                }
+
+                const maxEthBuy = Number(
+                  await eth.getMaxTradeEth(token.address)
                 );
-                return;
-              }
+                if (maxEthBuy < constants.TRADE_AMOUNT_MIN) {
+                  logger.error(
+                    `B ${token.name} Max ETH to buy ${maxEthBuy} less then MIN ${constants.TRADE_AMOUNT_MIN}`
+                  );
+                  return;
+                }
 
-              if (buyEth > maxEthBuy) {
-                buyEth = maxEthBuy;
-              }
+                if (buyEth > maxEthBuy) {
+                  buyEth = maxEthBuy;
+                }
 
-              /*
+                /*
               buyEth =
                 profile >= buyEth + constants.RESERVE_PROFILE
                   ? constants.TRADE_AMOUNT
                   : constants.TRADE_AMOUNT_MIN;
               */
-              const buyNum = buyEth / ethPrice;
-              if (buyNum <= 0) {
-                logger.error(
-                  `B No money buy ${token.name.padEnd(
-                    constants.SYMBAL_PAD
-                  )} ${profile}`
-                );
-                return;
-              }
-
-              token.buyPending = true;
-
-              eth
-                .buyToken(token.address, buyEth)
-                .then(async (gasUsed: string) => {
-                  token.buyPending = false;
-
-                  const newPrice = curPrice;
-                  token.buyAmount = buyNum;
-                  token.buyPrice = newPrice;
-                  token.buyEthCost = buyEth;
-                  token.buyTimestamp = Date.now();
-                  token.highPrice = newPrice;
-                  // token.historyPrice.length = 0;
-                  // token.historyPrice.push(newPrice);
-
-                  logger.warn(
-                    ` B ${token.name} ${buyEth}ETH for Price ${token.buyPrice} GAS ${gasUsed}`
+                const buyNum =
+                  reserveToken -
+                  (reserveETH * reserveToken) / (reserveETH + buyEth * 0.997);
+                if (buyNum <= 0) {
+                  logger.error(
+                    `B No money buy ${token.name.padEnd(
+                      constants.SYMBAL_PAD
+                    )} ${profile}`
                   );
+                  return;
+                }
 
-                  const buyGasUsedNum = Number(gasUsed);
-                  if (!Number.isNaN(buyGasUsedNum)) {
-                    token.buyGasUsed = buyGasUsedNum;
-                  }
-                  helpers.subProfile(buyEth);
-                })
-                .catch((error) => {
-                  token.buyPending = false;
-                  logger.error(error);
-                });
+                token.buyPending = true;
 
-              logger.warn(
-                `\x1b[31m B ${token.name.padEnd(constants.SYMBAL_PAD)} ${
-                  token.address
-                } ${buyEth} k ${kelly} p ${p} ${curPrice} ETH\x1b[0m`
-              );
+                eth
+                  .buyToken(token.address, buyEth)
+                  .then(async (gasUsed: string) => {
+                    token.buyPending = false;
+
+                    const newPrice = curPrice;
+                    token.buyAmount = buyNum;
+                    token.buyPrice = newPrice;
+                    token.buyEthCost = buyEth;
+                    token.buyTimestamp = Date.now();
+                    token.highPrice = newPrice;
+                    // token.historyPrice.length = 0;
+                    // token.historyPrice.push(newPrice);
+
+                    logger.warn(
+                      ` B ${token.name} ${buyEth}ETH for Price ${token.buyPrice} GAS ${gasUsed}`
+                    );
+
+                    const buyGasUsedNum = Number(gasUsed);
+                    if (!Number.isNaN(buyGasUsedNum)) {
+                      token.buyGasUsed = buyGasUsedNum;
+                    }
+                    helpers.subProfile(buyEth);
+                  })
+                  .catch((error) => {
+                    token.buyPending = false;
+                    logger.error(error);
+                  });
+
+                logger.warn(
+                  `\x1b[31m B ${token.name.padEnd(constants.SYMBAL_PAD)} ${
+                    token.address
+                  } ${buyEth} k ${kelly} p ${p} ${curPrice} ETH\x1b[0m`
+                );
+              }
             }
-          })
+          )
           .catch((error) => {
             logger.error(`Process ${token.name} failed. ${error}`);
             // helpers.fetchBestProvider();

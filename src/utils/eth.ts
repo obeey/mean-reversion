@@ -93,7 +93,7 @@ async function getMaxTradeEth(tokenAddress: string): Promise<string> {
 async function getRealPrice(
   tokenAddress: string,
   decimals: number
-): Promise<number> {
+): Promise<[priceETH: number, reserveETH: number, reserveToken: number]> {
   const token0 = constants.WETH;
   // const decimals = Number(await getDecimals(constants.chainId, tokenAddress));
   const token1 = new Token(constants.chainId, tokenAddress, decimals);
@@ -112,13 +112,13 @@ async function getRealPrice(
 
   // console.log( `${tokenAddress} ETH: ${eth} token: ${token} decimal: ${decimals}`);
 
-  return eth / token;
+  return [eth / token, eth, token];
 }
 
 async function getMidPrice(
   tokenAddress: string,
   decimals: number
-): Promise<number> {
+): Promise<[priceETH: number, reserveETH: number, reserveToken: number]> {
   // const decimals = Number(await getDecimals(constants.chainId, tokenAddress));
   // console.log(`decimals ${decimals} ${typeof(decimals)}`)
 
@@ -128,7 +128,7 @@ async function getMidPrice(
 
   const route = new Route([pair], constants.WETH, token);
 
-  return Number(route.midPrice.invert().toSignificant(6));
+  return [Number(route.midPrice.invert().toSignificant(6)), 0, 0];
 }
 
 // Uniswap V2 Router 合约地址
