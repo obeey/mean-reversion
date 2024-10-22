@@ -177,7 +177,7 @@ function main() {
                     logger.warn(
                       `\x1b[32m S ${token.name.padEnd(constants.SYMBAL_PAD)} ${
                         token.address
-                      } ${returnProfile} ${profit} ${curPrice} ETH \x1b[0m`
+                      } Return ${returnProfile} Profit ${profit} Price ${curPrice} GAS ${gasUsed}ETH \x1b[0m`
                     );
                   })
                   .catch((error) => {
@@ -285,7 +285,7 @@ function main() {
                   // token.historyPrice.push(newPrice);
 
                   logger.warn(
-                    ` B ${token.name} ${buyEth}ETH for price ${token.buyPrice} gas ${gasUsed}`
+                    ` B ${token.name} ${buyEth}ETH for Price ${token.buyPrice} GAS ${gasUsed}`
                   );
 
                   const buyGasUsedNum = Number(gasUsed);
