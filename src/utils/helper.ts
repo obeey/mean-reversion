@@ -157,6 +157,12 @@ function canSell(token: Token): boolean {
   const downPercentTotal = (highPriceTotal - lowPriceTotal) / highPriceTotal;
 
   const profilePercent = (newestPrice - buyPrice) / buyPrice;
+  logger.debug(
+    `S return ${(profilePercent * 100).toFixed(4)}% Large Down: ${(
+      downPercentTotal * 100
+    ).toFixed(4)}%`
+  );
+
   if (profilePercent > downPercentTotal / 2) {
     logger.warn(
       `S Large return ${(profilePercent * 100).toFixed(4)}% Large Down: ${(
