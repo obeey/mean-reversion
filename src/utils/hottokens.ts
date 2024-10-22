@@ -116,8 +116,9 @@ function updateHotTokens(page: number = 1) {
           })
         );
 
+        // 按照 pool 中的 ETH 倒序，也就是 ETH 最多的 pool 踢出去
         hotTokens = hotTokensTmp
-          .sort((a, b) => a.poolEthValue - b.poolEthValue)
+          .sort((a, b) => b.poolEthValue - a.poolEthValue)
           .slice(0, constants.MAX_TRACE_TOKENS)
           .map(({ poolEthValue, ...token }) => token);
       }
