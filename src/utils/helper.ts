@@ -200,6 +200,7 @@ function canSell(token: Token): boolean {
   }
 
   const priceDifferences = historyPrice
+    .slice(-5)
     .map((price, index, array) => {
       if (index === 0) return null;
       const prevPrice = array[index - 1];
