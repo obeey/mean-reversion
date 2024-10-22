@@ -216,7 +216,7 @@ function main() {
                   profile <
                   constants.RESERVE_PROFILE + constants.TRADE_AMOUNT_MIN
                 ) {
-                  logger.error(
+                  logger.warn(
                     `B Profile too low ${profile} for Buy ${token.name}`
                   );
                   return;
@@ -246,7 +246,7 @@ function main() {
                   buyEth = constants.TRADE_AMOUNT_MIN;
                 const nowProfile = await helpers.getProfile();
                 if (buyEth > nowProfile - constants.RESERVE_PROFILE) {
-                  logger.error(
+                  logger.warn(
                     `B No money buy ${token.name.padEnd(
                       constants.SYMBAL_PAD
                     )} Need: ${buyEth} Remain: ${profile}`
