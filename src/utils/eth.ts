@@ -385,6 +385,12 @@ async function buyTokenTest(
   tokenAddress: string,
   amountIn: number
 ): Promise<string> {
+  const balance = await helper.getProfile();
+
+  if (amountIn >= balance) {
+    throw Error(`Not enough money ${balance} buy ${amountIn} ${tokenAddress}`);
+  }
+
   const GAS_USED = 145832;
   return updateGasFee(BigInt(GAS_USED));
 }

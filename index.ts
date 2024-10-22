@@ -294,9 +294,9 @@ function main() {
                     token.buyPending = false;
 
                     const newPrice = curPrice;
-                    token.buyAmount = buyNum;
+                    token.buyAmount += buyNum;
                     token.buyPrice = newPrice;
-                    token.buyEthCost = buyEth;
+                    token.buyEthCost += buyEth;
                     token.buyTimestamp = Date.now();
                     token.highPrice = newPrice;
                     // token.historyPrice.length = 0;
