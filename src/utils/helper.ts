@@ -180,7 +180,7 @@ function canSell(token: Token): boolean {
   const deltaPrice = highPrice - newestPrice;
   const downPercent = deltaPrice / highPrice;
 
-  if (historyPrice.length < constants.MAX_HISTORY_PRICE_LEN) {
+  if (historyPrice.length < constants.RECENT_HISTORY_PRICE_LEN) {
     // Down too much.
     if (downPercent > constants.STOP_LOSS) {
       logger.warn(`S down too much ${(downPercent * 100).toFixed(4)}%`);
