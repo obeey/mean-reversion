@@ -115,7 +115,9 @@ function main() {
               const buyAmount = await helpers.getBuyAmount(token);
 
               logger.info(
-                `\x1b[35m ${token.name.padEnd(constants.SYMBAL_PAD)} ${ethPrice
+                `\x1b[35m ${token.name.padEnd(constants.SYMBAL_PAD)} ${
+                  token.address
+                } ${ethPrice
                   .toString()
                   .padEnd(constants.PRICE_PAD + 5)} ${downPercent
                   .toFixed(4)
