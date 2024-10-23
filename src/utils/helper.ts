@@ -112,7 +112,7 @@ function canBuy(token: Token): boolean {
   const downPercent = deltaPrice / highPrice;
   const curRaisePercent = (newestPrice - lowPrice) / lowPrice;
 
-  const variance = calculateVariance(token.pricePercent.slice(-3)) * 10000;
+  const variance = calculateVariance(token.pricePercent.slice(-5)) * 10000;
 
   logger.debug(
     `B H ${highPrice} L ${lowPrice} -${(downPercent * 100).toFixed(
@@ -214,7 +214,7 @@ function canSell(token: Token): boolean {
     .filter((diff) => diff !== null);
   */
 
-  const priceVariance = calculateVariance(historyPrice.slice(-3)) * 10000;
+  const priceVariance = calculateVariance(historyPrice.slice(-5)) * 10000;
   logger.debug(
     `S Price Variance: ${priceVariance} ${(profilePercent * 100).toFixed(4)}%`
   );
