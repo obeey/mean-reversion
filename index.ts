@@ -122,10 +122,10 @@ function main() {
                   .padEnd(constants.PRICE_PAD + 5)} ${downPercent
                   .toFixed(4)
                   .toString()
-                  .padStart(constants.PRICE_PAD)}% ${tradeProfilePercent
+                  .padStart(7)}% ${tradeProfilePercent
                   .toFixed(4)
                   .toString()
-                  .padStart(constants.PRICE_PAD)}% \t ${token.buyPending} \t ${
+                  .padStart(7)}% \t ${token.buyPending} \t ${
                   token.sellPending
                 } \x1b[0m`
               );
