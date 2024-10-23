@@ -112,7 +112,7 @@ function canBuy(token: Token): boolean {
   const downPercent = deltaPrice / highPrice;
   const curRaisePercent = (newestPrice - lowPrice) / lowPrice;
 
-  const variance = calculateVariance(token.pricePercent.slice(-5));
+  const variance = calculateVariance(token.pricePercent.slice(-5)) * 1000;
 
   logger.debug(
     `B H ${highPrice} L ${lowPrice} -${(downPercent * 100).toFixed(
@@ -126,7 +126,7 @@ function canBuy(token: Token): boolean {
   if (
     curRaisePercent < 0.01 &&
     downPercent > constants.BUY_DOWN_PERCENT &&
-    ((lastMa !== undefined && lastMa > -0.01) || variance < 0.5)
+    ((lastMa !== undefined && lastMa > -0.01) || variance < 1)
   ) {
     logger.warn(
       `B rebound or variance(${variance}) low. down ${(
@@ -208,7 +208,7 @@ function canSell(token: Token): boolean {
     })
     .filter((diff) => diff !== null);
 
-  const priceVariance = calculateVariance(priceDifferences);
+  const priceVariance = calculateVariance(priceDifferences) * 1000;
   logger.debug(
     `S Price Variance: ${priceVariance} ${(profilePercent * 100).toFixed(4)}%`
   );
@@ -237,7 +237,7 @@ function calculateVariance(numbers: number[]): number {
       return sum + diff * diff;
     }, 0) / numbers.length;
 
-  return variance;
+  return Math.sqrt(variance);
 }
 
 /**
