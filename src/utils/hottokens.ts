@@ -64,47 +64,50 @@ function updateHotTokens(page: number = 1) {
       logger.info(
         "------------------------------------ hot tokens ------------------------------------"
       );
-      const promises = poolTokens.map(async (pool) => {
-        const ethAmount = await eth.getPoolEth(pool.address);
-        if (ethAmount.valueOf() > constants.POOL_ETH_MIN) {
-          if (
-            hotTokens.find((token) => token.name === pool.symbol) ||
-            largeLossTokens.find((token) => token.name === pool.symbol)
-          ) {
-            return;
+      let delays = 0;
+      const promises = poolTokens.map(async (pool) =>
+        setTimeout(async () => {
+          const ethAmount = await eth.getPoolEth(pool.address);
+          if (ethAmount.valueOf() > constants.POOL_ETH_MIN) {
+            if (
+              hotTokens.find((token) => token.name === pool.symbol) ||
+              largeLossTokens.find((token) => token.name === pool.symbol)
+            ) {
+              return;
+            }
+
+            let token: Token = {
+              name: pool.symbol,
+              decimals: Number(
+                await eth.getDecimals(constants.chainId, pool.address)
+              ),
+              buyTimestamp: NaN,
+              address: pool.address,
+              historyPrice: [],
+              pricePercent: [],
+              pricePercentMa: [],
+              buyPrice: NaN,
+              highPrice: NaN,
+              buyAmount: 0,
+              buyEthCost: 0,
+              buyGasUsed: 0,
+              sellGasUsed: 0,
+              sellPending: false,
+              buyPending: false,
+              profit: 0,
+              tradeWin: 0,
+              tradeCount: 0,
+            };
+            hotTokens.push(token);
+
+            logger.info(
+              `${pool.symbol.padEnd(constants.SYMBAL_PAD + 8)} ${
+                pool.address
+              } ${ethAmount}`
+            );
           }
-
-          let token: Token = {
-            name: pool.symbol,
-            decimals: Number(
-              await eth.getDecimals(constants.chainId, pool.address)
-            ),
-            buyTimestamp: NaN,
-            address: pool.address,
-            historyPrice: [],
-            pricePercent: [],
-            pricePercentMa: [],
-            buyPrice: NaN,
-            highPrice: NaN,
-            buyAmount: 0,
-            buyEthCost: 0,
-            buyGasUsed: 0,
-            sellGasUsed: 0,
-            sellPending: false,
-            buyPending: false,
-            profit: 0,
-            tradeWin: 0,
-            tradeCount: 0,
-          };
-          hotTokens.push(token);
-
-          logger.info(
-            `${pool.symbol.padEnd(constants.SYMBAL_PAD + 8)} ${
-              pool.address
-            } ${ethAmount}`
-          );
-        }
-      });
+        }, delays++ * 1000)
+      );
 
       await Promise.all(promises);
 
