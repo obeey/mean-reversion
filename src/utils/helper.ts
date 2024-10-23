@@ -146,6 +146,10 @@ function canSell(token: Token): boolean {
   const buyTimestamp = token.buyTimestamp;
 
   const diffSeconds = (Date.now() - buyTimestamp) / 1000;
+  if (diffSeconds < 12) {
+    return false;
+  }
+
   if (diffSeconds > constants.MAX_TOKEN_HOLD_SECONDS) {
     logger.warn(`S ${token.name} hold to long: ${diffSeconds} seconds`);
     return true;
