@@ -1,11 +1,9 @@
 import { Token } from "./src/token.js";
 import eth from "./src/utils/eth.js";
 import logger from "./src/utils/logger.js";
-// import tokens from "./src/tokens.js";
 import tokens from "./src/utils/hottokens.js";
 import helpers from "./src/utils/helper.js";
 import constants from "./src/constants.js";
-import { error } from "console";
 
 function main() {
   logger.info("Start profiling...");
@@ -13,6 +11,8 @@ function main() {
   let TRADE_COUNT = 0;
   let TRADE_WIN = 0;
   let totalProfit = 0;
+  let winProfit = 0;
+  let lossProfit = 0;
 
   let runLoops = 0;
   setInterval(async () => {
@@ -82,7 +82,10 @@ function main() {
             .toString()
             .padEnd(constants.SYMBAL_PAD + 2)} ${token.buyPrice
             .toString()
-            .padEnd(constants.PRICE_PAD + 2)} ${token.decimals} \x1b[0m`
+            .padEnd(constants.PRICE_PAD + 2)} ${(lossProfit == 0
+            ? 0
+            : winProfit / lossProfit
+          ).toFixed(2)} \x1b[0m`
         );
       }
 
@@ -177,9 +180,13 @@ function main() {
                       }
 
                       if (profit > 0) {
+                        winProfit += profit;
                         TRADE_WIN++;
                         token.tradeWin++;
+                      } else {
+                        lossProfit -= profit;
                       }
+
                       TRADE_COUNT++;
                       token.tradeCount++;
 
@@ -228,7 +235,10 @@ function main() {
                   token.tradeCount < 5
                     ? pGlobal
                     : token.tradeWin / token.tradeCount;
-                const b = helpers.getOdds();
+                const b =
+                  TRADE_COUNT < 5 || lossProfit == 0
+                    ? helpers.getOdds()
+                    : winProfit / lossProfit;
                 let kelly = helpers.getKelly(b, p);
 
                 if (kelly > 0.9) {
