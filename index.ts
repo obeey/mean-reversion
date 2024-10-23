@@ -55,7 +55,9 @@ function main() {
         0
           ? 0
           : TRADE_WIN / TRADE_COUNT
-        ).toFixed(2)} \x1b[0m) +++++++++++++++++++++++++++++++++++`
+        ).toFixed(2)} ${(lossProfit == 0 ? 0 : winProfit / lossProfit).toFixed(
+          2
+        )} \x1b[0m) +++++++++++++++++++++++++++++++++++`
       );
     }
 
@@ -82,10 +84,7 @@ function main() {
             .toString()
             .padEnd(constants.SYMBAL_PAD + 2)} ${token.buyPrice
             .toString()
-            .padEnd(constants.PRICE_PAD + 2)} ${(lossProfit == 0
-            ? 0
-            : winProfit / lossProfit
-          ).toFixed(2)} \x1b[0m`
+            .padEnd(constants.PRICE_PAD + 2)} ${token.decimals} \x1b[0m`
         );
       }
 
