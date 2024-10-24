@@ -159,10 +159,7 @@ function canSell(token: Token): boolean {
 
   const newestPrice = historyPrice[historyPrice.length - 1];
   const profilePercent = (newestPrice - buyPrice) / buyPrice;
-  const highPriceTotal = Math.max(
-    ...historyPrice.slice(-constants.RECENT_HISTORY_PRICE_LEN)
-  );
-  const downPercentTotal = (highPriceTotal - newestPrice) / highPriceTotal;
+  const downPercentTotal = (highPrice - newestPrice) / highPrice;
   logger.debug(
     `S profit ${(profilePercent * 100).toFixed(4)}% D -${(
       downPercentTotal * 100
