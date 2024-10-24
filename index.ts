@@ -55,9 +55,10 @@ function main() {
         0
           ? 0
           : TRADE_WIN / TRADE_COUNT
-        ).toFixed(2)} ${(lossProfit == 0 ? 0 : winProfit / lossProfit).toFixed(
-          2
-        )} \x1b[0m) +++++++++++++++++++++++++++++++++++`
+        ).toFixed(2)} ${(lossProfit == 0 || TRADE_WIN == 0
+          ? 0
+          : (winProfit * (TRADE_COUNT - TRADE_WIN)) / (lossProfit * TRADE_WIN)
+        ).toFixed(2)} \x1b[0m) +++++++++++++++++++++++++++++++++++`
       );
     }
 
@@ -238,9 +239,10 @@ function main() {
                     ? pGlobal
                     : token.tradeWin / token.tradeCount;
                 const b =
-                  TRADE_COUNT < 5 || lossProfit == 0
+                  TRADE_COUNT < 5 || lossProfit == 0 || TRADE_WIN == 0
                     ? helpers.getOdds()
-                    : winProfit / lossProfit;
+                    : (winProfit * (TRADE_COUNT - TRADE_WIN)) /
+                      (lossProfit * TRADE_WIN);
                 let kelly = helpers.getKelly(b, p);
 
                 if (kelly > 0.9) {
