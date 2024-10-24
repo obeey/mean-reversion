@@ -191,7 +191,11 @@ function canSell(token: Token): boolean {
   */
 
   if (downPercentTotal > constants.STOP_LOSS) {
-    logger.warn(`S Large LOSS -${(profilePercent * 100).toFixed(4)}%`);
+    logger.warn(
+      `S profit ${(profilePercent * 100).toFixed(4)}% D -${(
+        downPercentTotal * 100
+      ).toFixed(4)}%`
+    );
     return true;
   }
 
