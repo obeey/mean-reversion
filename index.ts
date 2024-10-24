@@ -270,7 +270,7 @@ function main() {
                   await eth.getMaxTradeEth(token.address)
                 );
                 if (maxEthBuy < constants.TRADE_AMOUNT_MIN) {
-                  logger.error(
+                  logger.warn(
                     `B ${token.name} Max ETH to buy ${maxEthBuy} less then MIN ${constants.TRADE_AMOUNT_MIN}`
                   );
                   return;
