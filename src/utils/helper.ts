@@ -93,9 +93,7 @@ function canBuy(token: Token): boolean {
     logger.debug(
       `B continuse down -${(continuseDownPercentAvg * 100).toFixed(
         4
-      )}% down number ${downNum} Current down ${(curDownPercent * 100).toFixed(
-        4
-      )}%`
+      )}% down number ${downNum}`
     );
     if (continuseDownPercentAvg > 0.03 && downNum > 3) {
       logger.warn(
