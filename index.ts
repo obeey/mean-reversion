@@ -63,6 +63,10 @@ function main() {
 
     tokens.getHotTokens().forEach((token: Token) => {
       if (runLoops % 12 == 0) {
+        const curPrice = token.historyPrice[token.historyPrice.length - 1];
+        const tradeProfilePercent: number =
+          ((curPrice - token.buyPrice) / token.buyPrice) * 100;
+
         logger.info(
           `\x1b[34m ${token.name.padEnd(constants.SYMBAL_PAD + 8)} ${
             token.address
@@ -84,7 +88,9 @@ function main() {
             .toString()
             .padEnd(constants.SYMBAL_PAD + 2)} ${token.buyPrice
             .toString()
-            .padEnd(constants.PRICE_PAD + 2)} ${token.decimals} \x1b[0m`
+            .padEnd(constants.PRICE_PAD + 2)} ${tradeProfilePercent.toFixed(
+            4
+          )}% \x1b[0m`
         );
       }
 
@@ -109,8 +115,7 @@ function main() {
 
               const downPercent: number =
                 ((curPrice - prevPrice) / prevPrice) * 100;
-              const tradeProfilePercent: Number =
-                ((curPrice - token.buyPrice) / token.buyPrice) * 100;
+              // const tradeProfilePercent: Number = ((curPrice - token.buyPrice) / token.buyPrice) * 100;
 
               const buyAmount = await helpers.getBuyAmount(token);
 
@@ -120,9 +125,6 @@ function main() {
                 } ${ethPrice
                   .toString()
                   .padEnd(constants.PRICE_PAD + 5)} ${downPercent
-                  .toFixed(4)
-                  .toString()
-                  .padStart(7)}% ${tradeProfilePercent
                   .toFixed(4)
                   .toString()
                   .padStart(7)}% \t ${token.buyPending} \t ${
