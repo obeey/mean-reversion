@@ -68,7 +68,7 @@ async function getPoolEthWei(tokenAddress: string): Promise<bigint> {
   return reserve;
 }
 
-async function getPoolEth(tokenAddress: string): Promise<Number> {
+async function getPoolEth(tokenAddress: string): Promise<number> {
   const wei = BigInt(await getPoolEthWei(tokenAddress));
   const ethStr = ethers.formatEther(wei);
   const ethAmount = Number(ethStr);

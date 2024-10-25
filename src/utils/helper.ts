@@ -70,6 +70,22 @@ function getHighPriceAndNum(token: Token): [highPrice: number, num: number] {
   return [highPriceRecent, downNum];
 }
 
+function mapValue(x: number): number {
+  const x1 = 50;
+  const y1 = 0.15;
+  const x2 = 2000;
+  const y2 = 0.05;
+
+  if (x < x1) {
+    return y1; // 小于 50 的情况
+  } else if (x > x2) {
+    return y2; // 大于 2000 的情况
+  } else {
+    // 线性插值
+    return y1 + ((y2 - y1) / (x2 - x1)) * (x - x1);
+  }
+}
+
 function canBuy(token: Token): boolean {
   /*
   const calcPriceOk = calcPrice(token);
@@ -80,8 +96,13 @@ function canBuy(token: Token): boolean {
 
   const curDownPercent = token.pricePercent[token.pricePercent.length - 1];
   // 单区块下跌
-  if (curDownPercent < -0.13) {
-    logger.warn(`B current down ${(curDownPercent * 100).toFixed(4)}%`);
+  const downPercentThrehold = mapValue(token.poolETH);
+  if (curDownPercent < -downPercentThrehold) {
+    logger.warn(
+      `B current down ${(curDownPercent * 100).toFixed(4)}% Threshold ${(
+        downPercentThrehold * 100
+      ).toFixed(4)}%`
+    );
     return true;
   }
 
@@ -123,7 +144,9 @@ function canBuy(token: Token): boolean {
   logger.debug(
     `B H ${highPrice} L ${lowPrice} -${(downPercent * 100).toFixed(4)}% U ${(
       curDownPercent * 100
-    ).toFixed(4)}% MA ${lastMa}`
+    ).toFixed(4)}% MA ${lastMa} Threshold ${(downPercentThrehold * 100).toFixed(
+      4
+    )}%`
   );
 
   //  1. 当前价格没有上涨太多；2. 价格下降幅度够大；3. 最后价格上涨或者平稳；

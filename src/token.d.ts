@@ -1,6 +1,7 @@
 export interface Token {
   name: string;
   decimals: number;
+  poolETH: number;
   buyTimestamp: number;
   address: string;
   historyPrice: number[];

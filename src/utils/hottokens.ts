@@ -61,10 +61,19 @@ function updateHotTokens(page: number = 1) {
         );
 
       // let poolTokens: PoolTokenInfo[] = [];
+      let delays = 0;
+      hotTokens.forEach((t) =>
+        setTimeout(async () => {
+          const ethAmount = await eth.getPoolEth(t.address);
+
+          t.poolETH = ethAmount;
+        }, delays++ * 1000)
+      );
+
       logger.info(
         "------------------------------------ hot tokens ------------------------------------"
       );
-      let delays = 0;
+      delays = 0;
       const promises = poolTokens.map(async (pool) =>
         setTimeout(async () => {
           const ethAmount = await eth.getPoolEth(pool.address);
@@ -81,6 +90,7 @@ function updateHotTokens(page: number = 1) {
               decimals: Number(
                 await eth.getDecimals(constants.chainId, pool.address)
               ),
+              poolETH: ethAmount,
               buyTimestamp: NaN,
               address: pool.address,
               historyPrice: [],
@@ -112,6 +122,7 @@ function updateHotTokens(page: number = 1) {
       await Promise.all(promises);
 
       if (hotTokens.length > constants.MAX_TRACE_TOKENS) {
+        /*
         const hotTokensTmp = await Promise.all(
           hotTokens.map(async (token) => {
             const poolEthValue = await eth.getPoolEth(token.address);
@@ -125,6 +136,11 @@ function updateHotTokens(page: number = 1) {
           .sort((a, b) => b.poolEthValue - a.poolEthValue)
           .slice(0, constants.MAX_TRACE_TOKENS)
           .map(({ poolEthValue, ...token }) => token);
+        */
+        hotTokens = hotTokens
+          .filter((t) => t.poolETH >= constants.POOL_ETH_MIN)
+          .sort((a, b) => b.poolETH - a.poolETH)
+          .slice(0, constants.MAX_TRACE_TOKENS);
       }
 
       if (largeLossTokens.length > 0) {
