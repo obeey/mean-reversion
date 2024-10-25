@@ -72,7 +72,7 @@ function getHighPriceAndNum(token: Token): [highPrice: number, num: number] {
 
 function mapValue(x: number): number {
   const x1 = 50;
-  const y1 = 0.15;
+  const y1 = 0.12;
   const x2 = 2000;
   const y2 = 0.05;
 
