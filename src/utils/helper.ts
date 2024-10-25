@@ -97,7 +97,7 @@ function canBuy(token: Token): boolean {
   const curDownPercent = token.pricePercent[token.pricePercent.length - 1];
   // 单区块下跌
   const downPercentThrehold = mapValue(token.poolETH);
-  if (curDownPercent < -downPercentThrehold) {
+  if (curDownPercent + downPercentThrehold < 0) {
     logger.warn(
       `B current down ${(curDownPercent * 100).toFixed(4)}% Threshold ${(
         downPercentThrehold * 100
