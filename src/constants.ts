@@ -78,7 +78,7 @@ const ODDS = 1.5;
 const BUY_DOWN_PERCENT = 0.2;
 const TOKEN_LARGE_LOSS = -0.1;
 
-const MAX_TRACE_TOKENS = 15;
+const MAX_TRACE_TOKENS = 20;
 
 const BIGINT_PRECISION = 1000000000000000n; // bigint division point precision.
 
