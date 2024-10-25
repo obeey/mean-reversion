@@ -80,12 +80,13 @@ function canBuy(token: Token): boolean {
 
   const curDownPercent = token.pricePercent[token.pricePercent.length - 1];
   // 单区块下跌
-  if (curDownPercent < -0.1) {
+  if (curDownPercent < -0.13) {
     logger.warn(`B current down ${(curDownPercent * 100).toFixed(4)}%`);
     return true;
   }
 
   const newestPrice = token.historyPrice[token.historyPrice.length - 1];
+  /*
   const [highPriceRecent, downNum] = getHighPriceAndNum(token);
   if (downNum > 0) {
     const continuseDownPercentAvg =
@@ -104,6 +105,7 @@ function canBuy(token: Token): boolean {
       return true;
     }
   }
+  */
 
   const recentHistoryPrice = token.historyPrice.slice(
     -constants.RECENT_HISTORY_PRICE_LEN
