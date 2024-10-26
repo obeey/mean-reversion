@@ -97,7 +97,8 @@ function main() {
 
       try {
         eth
-          .getPrice(token.address, token.decimals)
+          // .getPrice(token.address, token.decimals)
+          .getPrice(token)
           .then(
             async ([ethPrice, reserveETH, reserveToken]: [
               number,

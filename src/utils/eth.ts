@@ -54,6 +54,21 @@ async function createPair(token0: Token, token1: Token): Promise<Pair> {
   return pair;
 }
 
+async function getPoolContract(tokenAddress: string): Promise<ethers.Contract> {
+  const token0 = constants.WETH;
+  const decimals = Number(await getDecimals(constants.chainId, tokenAddress));
+  const token1 = new Token(constants.chainId, tokenAddress, decimals);
+  const pairAddress = Pair.getAddress(token0, token1);
+
+  const pairContract = new ethers.Contract(
+    pairAddress,
+    poolabi,
+    constants.getProvider()
+  );
+
+  return pairContract;
+}
+
 async function getPoolEthWei(tokenAddress: string): Promise<bigint> {
   const token0 = constants.WETH;
   const decimals = Number(await getDecimals(constants.chainId, tokenAddress));
@@ -80,11 +95,38 @@ function getMaxTradeEth(token: MyToken): number {
   return token.poolETH * constants.TRADE_POOL_ETH_PERCENT;
 }
 
+async function getRealPrice(
+  myToken: MyToken
+): Promise<[priceETH: number, reserveETH: number, reserveToken: number]> {
+  const token0 = constants.WETH;
+  // const decimals = Number(await getDecimals(constants.chainId, tokenAddress));
+  const token1 = new Token(
+    constants.chainId,
+    myToken.address,
+    myToken.decimals
+  );
+
+  const [reserve0, reserve1]: [bigint, bigint] = await myToken.poolContract[
+    "getReserves"
+  ]();
+
+  const [reserveETH, reserveToken] = token0.sortsBefore(token1)
+    ? [reserve0, reserve1]
+    : [reserve1, reserve0];
+
+  const eth = Number(reserveETH) / 10 ** 18;
+  const token = Number(reserveToken) / 10 ** myToken.decimals;
+
+  // console.log( `${tokenAddress} ETH: ${eth} token: ${token} decimal: ${decimals}`);
+
+  return [eth / token, eth, token];
+}
 /**
  *  只能以 ETH 的价格表示，否则涨跌的方向是反的
  * @param tokenAddress token's address
  * @returns ETH price
  */
+/*
 async function getRealPrice(
   tokenAddress: string,
   decimals: number
@@ -109,6 +151,7 @@ async function getRealPrice(
 
   return [eth / token, eth, token];
 }
+*/
 
 async function getMidPrice(
   tokenAddress: string,
@@ -591,4 +634,5 @@ export default {
   getPoolEth,
   getMaxTradeEth,
   getDecimals,
+  getPoolContract,
 };

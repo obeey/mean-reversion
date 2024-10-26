@@ -1,7 +1,10 @@
+import { ethers } from "ethers";
+
 export interface Token {
   name: string;
   decimals: number;
   poolETH: number;
+  poolContract: ethers.Contract;
   buyTimestamp: number;
   address: string;
   historyPrice: number[];

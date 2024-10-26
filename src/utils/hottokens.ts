@@ -91,6 +91,7 @@ function updateHotTokens(page: number = 1) {
                 await eth.getDecimals(constants.chainId, pool.address)
               ),
               poolETH: ethAmount,
+              poolContract: await eth.getPoolContract(pool.address),
               buyTimestamp: NaN,
               address: pool.address,
               historyPrice: [],
