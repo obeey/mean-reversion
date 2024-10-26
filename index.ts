@@ -15,13 +15,13 @@ function main() {
   let lossProfit = 0;
 
   let runLoops = 0;
-  let startSkip = 0;
+  // let startSkip = 0;
   setInterval(async () => {
-    if (startSkip > 0) {
-      runLoops++;
-      startSkip--;
-      return;
-    }
+    // if (startSkip > 0) {
+    //   runLoops++;
+    //   startSkip--;
+    //   return;
+    // }
 
     const profile = await helpers.getProfile();
 
@@ -117,7 +117,7 @@ function main() {
               if (curPrice == token.historyPrice[token.historyPrice.length - 1])
                 return;
 
-              startSkip = 10;
+              // startSkip = 10;
 
               let prevPrice = token.historyPrice[token.historyPrice.length - 1];
               if (curPrice == prevPrice) {
