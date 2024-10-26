@@ -53,21 +53,22 @@ function calcPrice(token: Token): boolean {
 }
 
 function getHighPriceAndNum(token: Token): [highPrice: number, num: number] {
-  let idx = token.pricePercentMa.length - 1;
-  const lastMa = token.pricePercentMa[idx];
-  let curPriceMa = lastMa;
-  let prePriceMa = token.pricePercentMa[idx - 1];
-  while (idx > 1 && prePriceMa > curPriceMa) {
+  let idx = token.historyPrice.length - 1;
+  const lastPrice = token.historyPrice[idx];
+  let curPrice = lastPrice;
+  let prePrice = token.historyPrice[idx - 1];
+  while (idx > 1 && prePrice > curPrice) {
     idx -= 1;
-    curPriceMa = prePriceMa;
-    prePriceMa = token.pricePercentMa[idx - 1];
+    curPrice = prePrice;
+    prePrice = token.historyPrice[idx - 1];
   }
-  idx = idx >= constants.MA - 1 ? idx - (constants.MA - 1) : 0;
+  // idx = idx >= constants.MA - 1 ? idx - (constants.MA - 1) : 0;
 
-  const downNum = token.historyPrice.length - idx;
-  const highPriceRecent = Math.max(...token.historyPrice.slice(-downNum));
+  const downNum = token.historyPrice.length - 1 - idx;
+  // const highPriceRecent = Math.max(...token.historyPrice.slice(-downNum));
+  // const highPriceRecent = (curPrice - lastPrice) / curPrice;
 
-  return [highPriceRecent, downNum];
+  return [curPrice, downNum];
 }
 
 function mapValue(
@@ -121,9 +122,9 @@ function canBuy(token: Token): boolean {
       (highPriceRecent - newestPrice) / newestPrice / downNum;
     const continuseDownPercentThrehold = mapValue(
       50,
-      0.08,
+      0.05,
       2000,
-      0.03,
+      0.02,
       token.poolETH
     );
     logger.debug(
@@ -161,9 +162,9 @@ function canBuy(token: Token): boolean {
   logger.debug(
     `B H ${highPrice} L ${lowPrice} -${(downPercent * 100).toFixed(4)}% U ${(
       curDownPercent * 100
-    ).toFixed(4)}% MA ${lastMa} Threshold ${(downPercentThrehold * 100).toFixed(
-      4
-    )}%`
+    ).toFixed(4)}% MA ${lastMa} Threshold -${(
+      downPercentThrehold * 100
+    ).toFixed(4)}%`
   );
 
   //  1. 当前价格没有上涨太多；2. 价格下降幅度够大；3. 最后价格上涨或者平稳；
