@@ -70,11 +70,19 @@ function getHighPriceAndNum(token: Token): [highPrice: number, num: number] {
   return [highPriceRecent, downNum];
 }
 
-function mapValue(x: number): number {
+function mapValue(
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  x: number
+): number {
+  /*
   const x1 = 50;
   const y1 = 0.12;
   const x2 = 2000;
   const y2 = 0.05;
+  */
 
   if (x < x1) {
     return y1; // 小于 50 的情况
@@ -96,10 +104,10 @@ function canBuy(token: Token): boolean {
 
   const curDownPercent = token.pricePercent[token.pricePercent.length - 1];
   // 单区块下跌
-  const downPercentThrehold = mapValue(token.poolETH);
+  const downPercentThrehold = mapValue(50, 0.11, 2000, 0.05, token.poolETH);
   if (curDownPercent + downPercentThrehold < 0) {
     logger.warn(
-      `B current down ${(curDownPercent * 100).toFixed(4)}% Threshold ${(
+      `B current down -${(curDownPercent * 100).toFixed(4)}% Threshold -${(
         downPercentThrehold * 100
       ).toFixed(4)}%`
     );
@@ -107,26 +115,35 @@ function canBuy(token: Token): boolean {
   }
 
   const newestPrice = token.historyPrice[token.historyPrice.length - 1];
-  /*
   const [highPriceRecent, downNum] = getHighPriceAndNum(token);
   if (downNum > 0) {
     const continuseDownPercentAvg =
       (highPriceRecent - newestPrice) / newestPrice / downNum;
+    const continuseDownPercentThrehold = mapValue(
+      50,
+      0.08,
+      2000,
+      0.03,
+      token.poolETH
+    );
     logger.debug(
       `B continuse down -${(continuseDownPercentAvg * 100).toFixed(
         4
-      )}% down number ${downNum}`
+      )}% down number ${downNum} Threshold -${(
+        continuseDownPercentThrehold * 100
+      ).toFixed(4)}%`
     );
-    if (continuseDownPercentAvg > 0.03 && downNum > 3) {
+    if (continuseDownPercentAvg > continuseDownPercentThrehold) {
       logger.warn(
         `B continuse down -${(continuseDownPercentAvg * 100).toFixed(
           4
-        )}% down number ${downNum}`
+        )}% down number ${downNum} Threshold -${(
+          continuseDownPercentThrehold * 100
+        ).toFixed(4)}%`
       );
       return true;
     }
   }
-  */
 
   const recentHistoryPrice = token.historyPrice.slice(
     -constants.RECENT_HISTORY_PRICE_LEN
