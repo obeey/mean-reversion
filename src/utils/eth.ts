@@ -13,6 +13,7 @@ import erc20abi from "../abi/erc20.abi.json" assert { type: "json" };
 import constants from "../constants.js";
 import logger from "./logger.js";
 import helper from "./helper.js";
+import { Token as MyToken } from "../token.js";
 
 async function getDecimals(
   chainId: ChainId,
@@ -75,14 +76,8 @@ async function getPoolEth(tokenAddress: string): Promise<number> {
   return ethAmount;
 }
 
-async function getMaxTradeEth(tokenAddress: string): Promise<string> {
-  const reserve = await getPoolEthWei(tokenAddress);
-
-  const wei = reserve / BigInt(constants.TRADE_RAISE_PERCENT_DIVISOR);
-  const eth = ethers.formatEther(wei);
-  // console.log(`wei ${wei} eth ${eth}`);
-
-  return eth;
+function getMaxTradeEth(token: MyToken): number {
+  return token.poolETH * constants.TRADE_POOL_ETH_PERCENT;
 }
 
 /**
