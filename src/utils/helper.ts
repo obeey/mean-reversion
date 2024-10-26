@@ -117,7 +117,7 @@ function canBuy(token: Token): boolean {
 
   const newestPrice = token.historyPrice[token.historyPrice.length - 1];
   const [highPriceRecent, downNum] = getHighPriceAndNum(token);
-  if (downNum > 0) {
+  if (downNum > 2) {
     const continuseDownPercentAvg =
       (highPriceRecent - newestPrice) / newestPrice / downNum;
     const continuseDownPercentThrehold = mapValue(
