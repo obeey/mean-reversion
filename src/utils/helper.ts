@@ -108,7 +108,7 @@ function canBuy(token: Token): boolean {
   const downPercentThrehold = mapValue(50, 0.11, 2000, 0.05, token.poolETH);
   if (curDownPercent + downPercentThrehold < 0) {
     logger.warn(
-      `B current down -${(curDownPercent * 100).toFixed(4)}% Threshold -${(
+      `B current down ${(curDownPercent * 100).toFixed(4)}% Threshold -${(
         downPercentThrehold * 100
       ).toFixed(4)}%`
     );
