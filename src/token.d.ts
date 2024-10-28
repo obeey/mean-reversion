@@ -6,6 +6,7 @@ export interface Token {
   poolETH: number;
   poolContract: ethers.Contract;
   buyTimestamp: number;
+  buyPriceNum: number;
   address: string;
   historyPrice: number[];
   pricePercent: number[];

@@ -117,6 +117,7 @@ function main() {
               if (curPrice == token.historyPrice[token.historyPrice.length - 1])
                 return;
 
+              token.buyPriceNum++;
               // startSkip = 10;
 
               let prevPrice = token.historyPrice[token.historyPrice.length - 1];
@@ -321,6 +322,7 @@ function main() {
                     token.buyEthCost += buyEth;
                     token.buyTimestamp = Date.now();
                     token.highPrice = newPrice;
+                    token.buyPriceNum = 0;
                     // token.historyPrice.length = 0;
                     // token.historyPrice.push(newPrice);
 

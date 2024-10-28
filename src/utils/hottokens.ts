@@ -93,6 +93,7 @@ function updateHotTokens(page: number = 1) {
               poolETH: ethAmount,
               poolContract: await eth.getPoolContract(pool.address),
               buyTimestamp: NaN,
+              buyPriceNum: 0,
               address: pool.address,
               historyPrice: [],
               pricePercent: [],

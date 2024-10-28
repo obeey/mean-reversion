@@ -200,6 +200,13 @@ function canSell(token: Token): boolean {
     return true;
   }
 
+  if (token.buyPriceNum > constants.MAX_TOKEN_HOLD_PRICE_NUM) {
+    logger.warn(
+      `S ${token.name} hold to long: ${token.buyPriceNum} Price changes.`
+    );
+    return true;
+  }
+
   const newestPrice = historyPrice[historyPrice.length - 1];
   const profilePercent = (newestPrice - buyPrice) / buyPrice;
   const downPercentTotal = (highPrice - newestPrice) / highPrice;
