@@ -529,7 +529,7 @@ async function sendPostRequestAndMeasureTime(
 }
 
 const fetchBestProvider = fetchBestProviderByRandom;
-// fetchBestProvider();
+fetchBestProvider();
 setInterval(() => fetchBestProvider(), 300000);
 
 export default {
