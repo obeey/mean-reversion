@@ -450,6 +450,11 @@ async function getAllProvider(): Promise<string[]> {
   });
 
   for await (const url of rl) {
+    const trimedUrl = url.trim();
+    if ("" == trimedUrl || trimedUrl.startsWith("#")) {
+      continue;
+    }
+
     providers.push(url);
   }
 
