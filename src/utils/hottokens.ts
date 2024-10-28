@@ -197,10 +197,10 @@ function updateHotTokens(page: number = 1) {
 }
 
 updateHotTokens(1);
-setInterval(() => updateHotTokens(1), 3600000);
+setInterval(() => updateHotTokens(1), 1800000);
 setTimeout(() => {
   updateHotTokens(2);
-  setInterval(() => updateHotTokens(2), 3600000);
+  setInterval(() => updateHotTokens(2), 1800000);
 }, 60000);
 
 function getHotTokens() {
