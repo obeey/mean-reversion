@@ -122,9 +122,9 @@ function canBuy(token: Token): boolean {
       (highPriceRecent - newestPrice) / newestPrice / downNum;
     const continuseDownPercentThrehold = mapValue(
       50,
-      0.05,
+      0.03,
       2000,
-      0.02,
+      0.01,
       token.poolETH
     );
     logger.debug(
