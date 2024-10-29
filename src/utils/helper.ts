@@ -117,6 +117,7 @@ function canBuy(token: Token): boolean {
   }
 
   const newestPrice = token.historyPrice[token.historyPrice.length - 1];
+  /*
   const [highPriceRecent, downNum] = getHighPriceAndNum(token);
   if (downNum > 2) {
     const continuseDownPercentAvg =
@@ -146,6 +147,7 @@ function canBuy(token: Token): boolean {
       return true;
     }
   }
+  */
 
   const recentHistoryPrice = token.historyPrice.slice(
     -constants.RECENT_HISTORY_PRICE_LEN
