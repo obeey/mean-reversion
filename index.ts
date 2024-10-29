@@ -263,14 +263,21 @@ function main() {
                   kelly = 0.9;
                 }
 
+                /*
                 if (kelly < 0.2) {
                   logger.info(`Kelly too low K ${kelly} b ${b} p ${p}`);
                   kelly = 0.2;
                 }
+                */
 
                 let buyEth = profile * kelly;
-                if (buyEth < constants.TRADE_AMOUNT_MIN)
-                  buyEth = constants.TRADE_AMOUNT_MIN;
+                if (buyEth < constants.TRADE_AMOUNT_MIN) {
+                  logger.error(
+                    `Kelly too low K ${kelly} b ${b} p ${p} to buy ${buyEth}ETH`
+                  );
+                  // buyEth = constants.TRADE_AMOUNT_MIN;
+                  return;
+                }
                 const nowProfile = await helpers.getProfile();
                 if (buyEth > nowProfile - constants.RESERVE_PROFILE) {
                   logger.warn(
