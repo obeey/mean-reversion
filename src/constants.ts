@@ -75,7 +75,7 @@ const MAX_TOKEN_HOLD_SECONDS = 600;
 const MAX_TOKEN_HOLD_PRICE_NUM = 30;
 const STOP_LOSS = 0.013;
 const TAKE_PROFIT = 0.1;
-const ODDS = 1.5;
+const ODDS = 1;
 const BUY_DOWN_PERCENT = 0.2;
 const TOKEN_LARGE_LOSS = -0.1;
 
