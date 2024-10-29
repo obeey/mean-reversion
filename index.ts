@@ -196,10 +196,12 @@ function main() {
 
                       if (profit > 0) {
                         winProfit += profit;
+                        token.profitWin += profit;
                         TRADE_WIN++;
                         token.tradeWin++;
                       } else {
                         lossProfit -= profit;
+                        token.profitLoss -= profit;
                       }
 
                       TRADE_COUNT++;
@@ -246,14 +248,14 @@ function main() {
 
                 const pGlobal = TRADE_COUNT < 5 ? 0.5 : TRADE_WIN / TRADE_COUNT;
                 const p =
-                  token.tradeCount < 5
+                  token.tradeCount < 3
                     ? pGlobal
                     : token.tradeWin / token.tradeCount;
                 const b =
-                  TRADE_COUNT < 5 || lossProfit == 0 || TRADE_WIN == 0
+                  TRADE_COUNT < 3 || lossProfit == 0 || TRADE_WIN == 0
                     ? helpers.getOdds()
-                    : (winProfit * (TRADE_COUNT - TRADE_WIN)) /
-                      (lossProfit * TRADE_WIN);
+                    : (token.profitWin * (token.tradeCount - token.tradeWin)) /
+                      (token.profitLoss * token.tradeWin);
                 let kelly = helpers.getKelly(b, p);
 
                 if (kelly > 0.9) {

@@ -22,4 +22,6 @@ export interface Token {
   profit: number;
   tradeWin: number;
   tradeCount: number;
+  profitWin: number;
+  profitLoss: number;
 }

@@ -109,6 +109,8 @@ function updateHotTokens(page: number = 1) {
               profit: 0,
               tradeWin: 0,
               tradeCount: 0,
+              profitWin: 0,
+              profitLoss: 0,
             };
             hotTokens.push(token);
 
