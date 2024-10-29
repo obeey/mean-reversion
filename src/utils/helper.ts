@@ -7,6 +7,7 @@ import constants from "../constants.js";
 import eth from "./eth.js";
 import { ethers } from "ethers";
 import { error } from "console";
+import hottokens from "./hottokens.js";
 
 let profile: number = constants.INIT_PROFILE;
 
@@ -436,6 +437,9 @@ function fetchBestProviderByRandom() {
       const newProvider = providers[getRandomInt(0, providers.length)];
       constants.setProvider(newProvider);
       logger.info(`Set provider to ${newProvider}`);
+      hottokens.getHotTokens().forEach(async (t) => {
+        t.poolContract = await eth.getPoolContract(t.address);
+      });
     })
     .catch((error) => {
       logger.error(error);
