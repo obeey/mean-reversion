@@ -247,18 +247,22 @@ function main() {
                 }
 
                 const pGlobal =
-                  TRADE_COUNT < 5 ? constants.KELLY_P : TRADE_WIN / TRADE_COUNT;
+                  TRADE_COUNT < constants.KELLY_DEFAULT
+                    ? constants.KELLY_P
+                    : TRADE_WIN / TRADE_COUNT;
                 const bGlobal =
-                  TRADE_COUNT < 3 || lossProfit == 0 || winProfit == 0
+                  TRADE_COUNT < constants.KELLY_DEFAULT ||
+                  lossProfit == 0 ||
+                  winProfit == 0
                     ? helpers.getOdds()
                     : (winProfit * (TRADE_COUNT - TRADE_WIN)) /
                       (lossProfit * TRADE_WIN);
                 const p =
-                  token.tradeCount < 3
+                  token.tradeCount < constants.KELLY_DEFAULT
                     ? pGlobal
                     : token.tradeWin / token.tradeCount;
                 const b =
-                  token.tradeCount < 3 ||
+                  token.tradeCount < constants.KELLY_DEFAULT ||
                   token.profitLoss == 0 ||
                   token.profitWin == 0
                     ? bGlobal

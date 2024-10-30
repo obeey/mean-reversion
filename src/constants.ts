@@ -77,6 +77,7 @@ const STOP_LOSS = 0.013;
 const TAKE_PROFIT = 0.1;
 const KELLY_ODDS = 2;
 const KELLY_P = 0.9;
+const KELLY_DEFAULT = 20;
 const BUY_DOWN_PERCENT = 0.2;
 const TOKEN_LARGE_LOSS = -0.1;
 
@@ -111,6 +112,7 @@ export default {
   TAKE_PROFIT,
   KELLY_ODDS,
   KELLY_P,
+  KELLY_DEFAULT,
   BUY_DOWN_PERCENT,
   TOKEN_LARGE_LOSS,
   MAX_TRACE_TOKENS,
