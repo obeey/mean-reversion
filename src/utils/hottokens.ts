@@ -204,10 +204,10 @@ function updateHotTokens(page: number = 1) {
 }
 
 updateHotTokens(1);
-setInterval(() => updateHotTokens(1), 600000);
+setInterval(() => updateHotTokens(1), 60000);
 setTimeout(() => {
   updateHotTokens(2);
-  setInterval(() => updateHotTokens(2), 600000);
+  setInterval(() => updateHotTokens(2), 60000);
 }, 60000);
 
 function getHotTokens() {

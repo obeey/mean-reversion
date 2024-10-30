@@ -116,6 +116,7 @@ function canBuy(token: Token): boolean {
       );
       return false;
     }
+
     logger.warn(
       `B current down ${(curDownPercent * 100).toFixed(4)}% Threshold -${(
         downPercentThrehold * 100
