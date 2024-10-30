@@ -364,6 +364,10 @@ function subProfileMainnet(delta: number) {}
 
 async function getBuyAmountTest(token: Token): Promise<bigint> {
   try {
+    if (Number.isNaN(token.buyAmount)) {
+      return 0n;
+    }
+
     if (Number.isNaN(token.decimals)) {
       token.decimals = await eth.getDecimals(constants.chainId, token.address);
     }
@@ -371,7 +375,9 @@ async function getBuyAmountTest(token: Token): Promise<bigint> {
     const decimals = token.decimals;
     return ethers.parseUnits(token.buyAmount.toFixed(decimals), decimals);
   } catch (error) {
-    logger.error(`getBuyAmountTest failed: ${error}`);
+    logger.error(
+      `getBuyAmountTest decimals: ${token.decimals} ${token.buyAmount}ETH ${error}`
+    );
     return 0n;
   }
 }

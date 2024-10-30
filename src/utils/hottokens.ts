@@ -67,6 +67,10 @@ function updateHotTokens(page: number = 1) {
           const ethAmount = await eth.getPoolEth(t.address);
 
           t.poolETH = ethAmount;
+
+          if (Number.isNaN(t.decimals)) {
+            t.decimals = await eth.getDecimals(constants.chainId, t.address);
+          }
         }, delays++ * 1000)
       );
 
