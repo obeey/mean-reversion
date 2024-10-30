@@ -246,7 +246,8 @@ function main() {
                   return;
                 }
 
-                const pGlobal = TRADE_COUNT < 5 ? 0.8 : TRADE_WIN / TRADE_COUNT;
+                const pGlobal =
+                  TRADE_COUNT < 5 ? constants.KELLY_P : TRADE_WIN / TRADE_COUNT;
                 const bGlobal =
                   TRADE_COUNT < 3 || lossProfit == 0 || winProfit == 0
                     ? helpers.getOdds()

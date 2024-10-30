@@ -317,7 +317,7 @@ function calculateVariance(numbers: number[]): number {
  * @returns 赔率
  */
 function getOdds() {
-  return constants.ODDS;
+  return constants.KELLY_ODDS;
 }
 
 /**
