@@ -258,11 +258,11 @@ function main() {
                     : (winProfit * (TRADE_COUNT - TRADE_WIN)) /
                       (lossProfit * TRADE_WIN);
                 const p =
-                  token.tradeCount < constants.KELLY_DEFAULT
+                  token.tradeCount < constants.KELLY_TOKEN_DEFAULT
                     ? pGlobal
                     : token.tradeWin / token.tradeCount;
                 const b =
-                  token.tradeCount < constants.KELLY_DEFAULT ||
+                  token.tradeCount < constants.KELLY_TOKEN_DEFAULT ||
                   token.profitLoss == 0 ||
                   token.profitWin == 0
                     ? bGlobal
