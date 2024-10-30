@@ -247,13 +247,20 @@ function main() {
                 }
 
                 const pGlobal = TRADE_COUNT < 5 ? 0.8 : TRADE_WIN / TRADE_COUNT;
+                const bGlobal =
+                  TRADE_COUNT < 3 || lossProfit == 0 || winProfit == 0
+                    ? helpers.getOdds()
+                    : (winProfit * (TRADE_COUNT - TRADE_WIN)) /
+                      (lossProfit * TRADE_WIN);
                 const p =
                   token.tradeCount < 3
                     ? pGlobal
                     : token.tradeWin / token.tradeCount;
                 const b =
-                  TRADE_COUNT < 3 || lossProfit == 0 || TRADE_WIN == 0
-                    ? helpers.getOdds()
+                  token.tradeCount < 3 ||
+                  token.profitLoss == 0 ||
+                  token.profitWin == 0
+                    ? bGlobal
                     : (token.profitWin * (token.tradeCount - token.tradeWin)) /
                       (token.profitLoss * token.tradeWin);
                 let kelly = helpers.getKelly(b, p);
@@ -353,7 +360,7 @@ function main() {
                 logger.warn(
                   `\x1b[31m B ${token.name.padEnd(constants.SYMBAL_PAD)} ${
                     token.address
-                  } ${buyEth} k ${kelly} p ${p} ${curPrice} ETH\x1b[0m`
+                  } ${buyEth} k ${kelly} b ${b} p ${p} ${curPrice} ETH\x1b[0m`
                 );
               }
             }
