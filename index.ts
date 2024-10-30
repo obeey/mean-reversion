@@ -280,7 +280,7 @@ function main() {
                 let buyEth = profile * kelly;
                 if (buyEth < constants.TRADE_AMOUNT_MIN) {
                   logger.warn(
-                    `Kelly too low K ${kelly} b ${b} p ${p} to buy ${buyEth}ETH`
+                    `${token.name} Kelly too low K ${kelly} b ${b} p ${p} to buy ${buyEth}ETH`
                   );
                   // buyEth = constants.TRADE_AMOUNT_MIN;
                   return;
