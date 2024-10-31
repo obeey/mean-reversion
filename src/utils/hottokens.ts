@@ -37,7 +37,8 @@ function updateHotTokens(page: number = 1) {
         hotTokens.filter((token) => token.profit <= constants.TOKEN_LARGE_LOSS)
       );
       hotTokens = hotTokens.filter(
-        (token) => token.profit > constants.TOKEN_LARGE_LOSS
+        (token) =>
+          token.profit > constants.TOKEN_LARGE_LOSS || token.buyAmount > 0
       );
 
       const pools = response.data.data as Pools[];
@@ -146,7 +147,7 @@ function updateHotTokens(page: number = 1) {
           .map(({ poolEthValue, ...token }) => token);
         */
         hotTokens = hotTokens
-          .filter((t) => t.poolETH >= constants.POOL_ETH_MIN)
+          .filter((t) => t.poolETH >= constants.POOL_ETH_MIN || t.buyAmount > 0)
           .sort((a, b) => b.poolETH - a.poolETH)
           .slice(0, constants.MAX_TRACE_TOKENS);
       }
