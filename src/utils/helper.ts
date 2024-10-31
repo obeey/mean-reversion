@@ -112,7 +112,9 @@ function canBuy(token: Token): boolean {
       logger.warn(
         `B current down too much ${(curDownPercent * 100).toFixed(
           4
-        )}% Threshold -${(downPercentThrehold * 100).toFixed(4)}%`
+        )}% Threshold -${(downPercentThrehold * 100).toFixed(4)}% for ${
+          token.name
+        }`
       );
       return false;
     }
