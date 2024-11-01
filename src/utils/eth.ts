@@ -589,6 +589,87 @@ async function approveAmountIn(
   }
 }
 
+// 创建工厂合约实例
+const factoryContract = new ethers.Contract(
+  constants.UNISWAP_V2_FACTORY_ADDRESS,
+  [
+    "event PairCreated(address indexed token0, address indexed token1, address pair, uint)",
+    "function getPair(address tokenA, address tokenB) view returns (address)",
+  ],
+  constants.getProvider()
+);
+
+// 获取创建时间
+async function getPairCreationTime(tokenAddress: string) {
+  const provider = constants.getProvider();
+  const wethAddress = constants.WETH.address; // WETH 地址
+
+  // 获取与 Token 相关的 Pair 地址
+  const pairAddress = await factoryContract.getPair(tokenAddress, wethAddress);
+
+  if (pairAddress === ethers.ZeroAddress) {
+    console.log("Pair does not exist for this token.");
+    return;
+  }
+
+  // const filter = factoryContract.filters.PairCreated(null, null, null); // 将 pair 设置为 null
+  const blockNumber = await provider.getBlockNumber();
+
+  /*
+  const events = await provider.getLogs({
+    fromBlock: blockNumber - (60 * 24 * 3600) / 12,
+    toBlock: "latest",
+    address: constants.UNISWAP_V2_FACTORY_ADDRESS,
+    topics: await filter.getTopicFilter(),
+  });
+  */
+  const batchSize = 2000; // 设置每次请求的区块数量
+
+  for (let i = 0; i < (30 * 24 * 3600) / 12; i += batchSize) {
+    const fromBlock = blockNumber - (i + batchSize);
+    const toBlock = blockNumber - i;
+
+    const filter = factoryContract.filters.PairCreated(null, null, null);
+
+    const logEvents = await provider.getLogs({
+      fromBlock,
+      toBlock,
+      address: constants.UNISWAP_V2_FACTORY_ADDRESS,
+      topics: await filter.getTopicFilter(),
+    });
+
+    // events = events.concat(logEvents);
+
+    // 在 events 中找到创建该 Pair 的事件
+    const pairCreatedEvent = logEvents.find((event) => {
+      const decoded = factoryContract.interface.decodeEventLog(
+        "PairCreated",
+        event.data,
+        event.topics
+      );
+      return decoded.pair.toLowerCase() === pairAddress.toLowerCase();
+    });
+
+    if (pairCreatedEvent) {
+      const block = await provider.getBlock(pairCreatedEvent.blockNumber);
+      return block?.timestamp;
+    }
+  }
+
+  console.log("No PairCreated event found for the specified pair.");
+}
+
+async function getPairCreationTimeTest() {
+  const timestamp = await getPairCreationTime(
+    "0x5200b34e6a519f289f5258de4554ebd3db12e822"
+  );
+  if (timestamp)
+    logger.info(`Pair created at: ${new Date(timestamp * 1000).toISOString()}`);
+  else logger.info("token create loog loog ago.");
+}
+
+// getPairCreationTimeTest();
+
 async function tradetest() {
   const tokenAddress = "0x28561b8a2360f463011c16b6cc0b0cbef8dbbcad"; // MOODENG
 
@@ -635,4 +716,5 @@ export default {
   getMaxTradeEth,
   getDecimals,
   getPoolContract,
+  getPairCreationTime,
 };

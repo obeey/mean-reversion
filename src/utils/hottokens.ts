@@ -90,6 +90,16 @@ function updateHotTokens(page: number = 1) {
               return;
             }
 
+            const ts = await eth.getPairCreationTime(pool.address);
+            if (ts) {
+              logger.error(
+                `${pool.symbol} ${pool.address} Pair created at: ${new Date(
+                  ts * 1000
+                ).toISOString()} . Too young.`
+              );
+              return;
+            }
+
             let token: Token = {
               name: pool.symbol,
               decimals: Number(
@@ -205,10 +215,10 @@ function updateHotTokens(page: number = 1) {
 }
 
 updateHotTokens(1);
-setInterval(() => updateHotTokens(1), 60000);
+setInterval(() => updateHotTokens(1), 3600000);
 setTimeout(() => {
   updateHotTokens(2);
-  setInterval(() => updateHotTokens(2), 60000);
+  setInterval(() => updateHotTokens(2), 3600000);
 }, 60000);
 
 function getHotTokens() {

@@ -9,7 +9,9 @@ dotenv.config();
 const chainId = ChainId.MAINNET;
 let HTTP_PROVIDER_LINK =
   "https://eth-mainnet.g.alchemy.com/v2/HqMqCcOiNeA_LwLQWHo9ZIgU1V1IG8Q3";
-const UNISWAP_ROUTER_ADDRESS = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D";
+const UNISWAP_V2_ROUTER_ADDRESS = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D";
+// Uniswap V2 工厂合约地址
+const UNISWAP_V2_FACTORY_ADDRESS = "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f";
 
 /*
 const chainId = ChainId.SEPOLIA;
@@ -90,7 +92,7 @@ const UNISWAP_ROUTER_ABI = fs
   .readFileSync("src/abi/uniswap-router.abi.json")
   .toString();
 const UNISWAP_ROUTER_CONTRACT = new ethers.Contract(
-  UNISWAP_ROUTER_ADDRESS,
+  UNISWAP_V2_ROUTER_ADDRESS,
   UNISWAP_ROUTER_ABI,
   wallet
 );
@@ -121,7 +123,8 @@ export default {
   BIGINT_PRECISION,
   MAX_TOKEN_HOLD_SECONDS,
   MAX_TOKEN_HOLD_PRICE_NUM,
-  UNISWAP_ROUTER_ADDRESS,
+  UNISWAP_ROUTER_ADDRESS: UNISWAP_V2_ROUTER_ADDRESS,
+  UNISWAP_V2_FACTORY_ADDRESS,
   UNISWAP_ROUTER_CONTRACT,
   setProvider,
   chainId,
