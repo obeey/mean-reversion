@@ -78,7 +78,11 @@ function main() {
         logger.info(
           `\x1b[34m ${token.name.padEnd(constants.SYMBAL_PAD + 8)} ${
             token.address
-          } ${token.historyPrice.length.toString().padEnd(5)} ${token.tradeWin
+          } ${token.poolETH
+            .toFixed(4)
+            .padEnd(constants.SYMBAL_PAD)} ${token.historyPrice.length
+            .toString()
+            .padEnd(5)} ${token.tradeWin
             .toString()
             .padEnd(4)} ${token.tradeCount
             .toString()
