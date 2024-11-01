@@ -1,7 +1,6 @@
-# https://eth-mainnet.g.alchemy.com/v2/hWT7tiQl88VfR5ob5m3XxYUU8CLaoqp7
-# https://eth-mainnet.g.alchemy.com/v2/HqMqCcOiNeA_LwLQWHo9ZIgU1V1IG8Q3
-# https://eth-mainnet.g.alchemy.com/v2/-LTjILrr6nRjYGE_OtpzFS3PJ_dtomOa
-
+https://eth-mainnet.g.alchemy.com/v2/hWT7tiQl88VfR5ob5m3XxYUU8CLaoqp7
+https://eth-mainnet.g.alchemy.com/v2/HqMqCcOiNeA_LwLQWHo9ZIgU1V1IG8Q3
+https://eth-mainnet.g.alchemy.com/v2/-LTjILrr6nRjYGE_OtpzFS3PJ_dtomOa
 https://mainnet.chainnodes.org/8e5877bf-2365-4b87-84ac-82b094b3a39f
 https://mainnet.chainnodes.org/4017f6c2-e620-41ab-b0b1-1e5e1cccf965
 https://mainnet.chainnodes.org/2b17ea54-fae9-4f3c-92c8-f45750bc2cb3
@@ -12,6 +11,6 @@ https://mainnet.chainnodes.org/0fe60dcf-ffaa-422d-8157-6e0ac59c90c5
 https://mainnet.chainnodes.org/9ca46dbf-fd0f-44dd-8709-d4f23b828e76
 https://mainnet.chainnodes.org/20c209bf-c501-489c-a5da-261c964db213
 https://mainnet.chainnodes.org/12c71455-8646-4dec-b455-8eb2695a12cc
-https://eth.llamarpc.com
-https://eth-pokt.nodies.app
-https://ethereum-rpc.publicnode.com
+# https://eth.llamarpc.com
+# https://eth-pokt.nodies.app
+# https://ethereum-rpc.publicnode.com
