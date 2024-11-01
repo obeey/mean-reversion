@@ -46,8 +46,8 @@ function main() {
         100
       ).toFixed(2);
 
-      logger.warn(
-        ` +++++++++++++++++++++++++++++++++++ PROFILING(\x1b[33m ${totalProfit
+      logger.info(
+        ` ++++++++++++++++++++++++++++++++++++++++ PROFILING(\x1b[33m ${totalProfit
           .toFixed(5)
           .toString()
           .padEnd(constants.SYMBAL_PAD)} ${curProfile
@@ -65,7 +65,7 @@ function main() {
         ).toFixed(2)} ${(lossProfit == 0 || TRADE_WIN == 0
           ? 0
           : (winProfit * (TRADE_COUNT - TRADE_WIN)) / (lossProfit * TRADE_WIN)
-        ).toFixed(2)} \x1b[0m) +++++++++++++++++++++++++++++++++++`
+        ).toFixed(2)} \x1b[0m) ++++++++++++++++++++++++++++++++++++++++`
       );
     }
 
