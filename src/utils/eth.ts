@@ -612,20 +612,11 @@ async function getPairCreationTime(tokenAddress: string) {
     return;
   }
 
-  // const filter = factoryContract.filters.PairCreated(null, null, null); // 将 pair 设置为 null
   const blockNumber = await provider.getBlockNumber();
 
-  /*
-  const events = await provider.getLogs({
-    fromBlock: blockNumber - (60 * 24 * 3600) / 12,
-    toBlock: "latest",
-    address: constants.UNISWAP_V2_FACTORY_ADDRESS,
-    topics: await filter.getTopicFilter(),
-  });
-  */
   const batchSize = 2000; // 设置每次请求的区块数量
 
-  for (let i = 0; i < (30 * 24 * 3600) / 12; i += batchSize) {
+  for (let i = 0; i < (7 * 24 * 3600) / 12; i += batchSize) {
     const fromBlock = blockNumber - (i + batchSize);
     const toBlock = blockNumber - i;
 
@@ -637,8 +628,6 @@ async function getPairCreationTime(tokenAddress: string) {
       address: constants.UNISWAP_V2_FACTORY_ADDRESS,
       topics: await filter.getTopicFilter(),
     });
-
-    // events = events.concat(logEvents);
 
     // 在 events 中找到创建该 Pair 的事件
     const pairCreatedEvent = logEvents.find((event) => {
@@ -656,7 +645,7 @@ async function getPairCreationTime(tokenAddress: string) {
     }
   }
 
-  console.log("No PairCreated event found for the specified pair.");
+  logger.info(`No PairCreated event found for ${tokenAddress}.`);
 }
 
 async function getPairCreationTimeTest() {
