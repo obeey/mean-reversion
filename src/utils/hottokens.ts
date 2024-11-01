@@ -158,7 +158,7 @@ function updateHotTokens(page: number = 1) {
         */
         hotTokens = hotTokens
           .filter((t) => t.poolETH >= constants.POOL_ETH_MIN || t.buyAmount > 0)
-          .sort((a, b) => b.poolETH - a.poolETH)
+          .sort((a, b) => b.poolETH - a.poolETH + a.buyAmount)
           .slice(0, constants.MAX_TRACE_TOKENS);
       }
 
