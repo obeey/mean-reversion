@@ -106,7 +106,7 @@ function canBuy(token: Token): boolean {
 
   const curDownPercent = token.pricePercent[token.pricePercent.length - 1];
   // 单区块下跌
-  const downPercentThrehold = mapValue(50, 0.8, 2000, 0.03, token.poolETH);
+  const downPercentThrehold = mapValue(50, 0.08, 2000, 0.03, token.poolETH);
   if (curDownPercent + downPercentThrehold < 0) {
     /*
     if (curDownPercent + 2 * downPercentThrehold < 0) {
