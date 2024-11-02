@@ -106,8 +106,9 @@ function canBuy(token: Token): boolean {
 
   const curDownPercent = token.pricePercent[token.pricePercent.length - 1];
   // 单区块下跌
-  const downPercentThrehold = mapValue(50, 0.11, 2000, 0.05, token.poolETH);
+  const downPercentThrehold = mapValue(50, 0.8, 2000, 0.03, token.poolETH);
   if (curDownPercent + downPercentThrehold < 0) {
+    /*
     if (curDownPercent + 2 * downPercentThrehold < 0) {
       logger.warn(
         `B current down too much ${(curDownPercent * 100).toFixed(
@@ -118,6 +119,7 @@ function canBuy(token: Token): boolean {
       );
       return false;
     }
+    */
 
     logger.warn(
       `B current down ${(curDownPercent * 100).toFixed(4)}% Threshold -${(
