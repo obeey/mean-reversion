@@ -96,6 +96,10 @@ function mapValue(
   }
 }
 
+function getDownThreshold(poolETH: number): number {
+  return mapValue(50, 0.08, 2000, 0.03, poolETH);
+}
+
 function canBuy(token: Token): boolean {
   /*
   const calcPriceOk = calcPrice(token);
@@ -106,8 +110,8 @@ function canBuy(token: Token): boolean {
 
   const curDownPercent = token.pricePercent[token.pricePercent.length - 1];
   // 单区块下跌
-  const downPercentThrehold = mapValue(50, 0.08, 2000, 0.03, token.poolETH);
-  if (curDownPercent + downPercentThrehold < 0) {
+  const downPercentThreshold = getDownThreshold(token.poolETH);
+  if (curDownPercent + downPercentThreshold < 0) {
     /*
     if (curDownPercent + 2 * downPercentThrehold < 0) {
       logger.warn(
@@ -123,7 +127,7 @@ function canBuy(token: Token): boolean {
 
     logger.warn(
       `B current down ${(curDownPercent * 100).toFixed(4)}% Threshold -${(
-        downPercentThrehold * 100
+        downPercentThreshold * 100
       ).toFixed(4)}%`
     );
     return true;
@@ -179,7 +183,7 @@ function canBuy(token: Token): boolean {
     `B H ${highPrice} L ${lowPrice} -${(downPercent * 100).toFixed(4)}% U ${(
       curDownPercent * 100
     ).toFixed(4)}% MA ${lastMa} Threshold -${(
-      downPercentThrehold * 100
+      downPercentThreshold * 100
     ).toFixed(4)}%`
   );
 
@@ -226,10 +230,13 @@ function canSell(token: Token): boolean {
   const newestPrice = historyPrice[historyPrice.length - 1];
   const profilePercent = (newestPrice - buyPrice) / buyPrice;
   const downPercentTotal = (highPrice - newestPrice) / highPrice;
+
+  const stopLoss = getDownThreshold(token.poolETH) * 0.15;
+
   logger.debug(
     `S profit ${(profilePercent * 100).toFixed(4)}% D -${(
       downPercentTotal * 100
-    ).toFixed(4)}%`
+    ).toFixed(4)}% Stop loss -${(stopLoss * 100).toFixed(4)}%`
   );
   /*
   const lowPriceTotal = Math.min(...historyPrice);
@@ -251,11 +258,11 @@ function canSell(token: Token): boolean {
   }
   */
 
-  if (downPercentTotal > constants.STOP_LOSS) {
+  if (downPercentTotal > stopLoss) {
     logger.warn(
       `S profit ${(profilePercent * 100).toFixed(4)}% D -${(
         downPercentTotal * 100
-      ).toFixed(4)}%`
+      ).toFixed(4)}% Stop loss -${(stopLoss * 100).toFixed(4)}%`
     );
     return true;
   }
