@@ -227,6 +227,14 @@ function canSell(token: Token): boolean {
     return true;
   }
 
+  const curChangePercent = token.pricePercent[token.pricePercent.length - 1];
+  if (curChangePercent > constants.TAKE_PROFIT) {
+    logger.warn(
+      `S ${token.name} take profit: ${(curChangePercent * 100).toFixed(4)}%`
+    );
+    return true;
+  }
+
   const newestPrice = historyPrice[historyPrice.length - 1];
   const profilePercent = (newestPrice - buyPrice) / buyPrice;
   const downPercentTotal = (highPrice - newestPrice) / highPrice;
