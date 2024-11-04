@@ -80,7 +80,7 @@ const TAKE_PROFIT = 0.1;
 const KELLY_ODDS = 1.5;
 const KELLY_P = 0.8;
 const KELLY_DEFAULT = 20;
-const KELLY_TOKEN_DEFAULT = 3;
+const KELLY_TOKEN_DEFAULT = 5;
 const BUY_DOWN_PERCENT = 0.2;
 const TOKEN_LARGE_LOSS = -0.1;
 
