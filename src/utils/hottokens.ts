@@ -37,8 +37,7 @@ function updateHotTokens(page: number = 1) {
         hotTokens.filter((token) => token.profit <= constants.TOKEN_LARGE_LOSS)
       );
       hotTokens = hotTokens.filter(
-        (token) =>
-          token.profit > constants.TOKEN_LARGE_LOSS || token.buyAmount > 0
+        (token) => token.profit > constants.POOL_ETH_MIN || token.buyAmount > 0
       );
 
       const pools = response.data.data as Pools[];
