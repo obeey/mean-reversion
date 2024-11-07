@@ -84,7 +84,7 @@ const KELLY_TOKEN_DEFAULT = 5;
 const BUY_DOWN_PERCENT = 0.2;
 const TOKEN_LARGE_LOSS = -0.1;
 
-const MAX_TRACE_TOKENS = 18;
+const MAX_TRACE_TOKENS = 15;
 
 const BIGINT_PRECISION = 1000000000000000n; // bigint division point precision.
 
