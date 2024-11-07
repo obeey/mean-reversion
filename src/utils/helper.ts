@@ -1,15 +1,13 @@
 import fs from "fs";
 import readline from "readline";
 import logger from "./logger.js";
-import tokens from "../tokens.js";
 import { Token } from "../token.js";
 import constants from "../constants.js";
 import eth from "./eth.js";
 import { ethers } from "ethers";
-import { error } from "console";
 import hottokens from "./hottokens.js";
 
-let profile: number = constants.INIT_PROFILE;
+// let profile: number = constants.INIT_PROFILE;
 
 function calcPrice(token: Token): boolean {
   const MA = constants.MA;
@@ -371,7 +369,8 @@ async function getProfileTest() {
 }
 
 async function getProfileMainnet() {
-  return Number(ethers.formatEther(await eth.getEthBalance()));
+  // return Number(ethers.formatEther(await eth.getEthBalance()));
+  return profile;
 }
 
 function addProfileTest(delta: number) {
@@ -386,9 +385,28 @@ function subProfileTest(delta: number) {
   }
 }
 
-function addProfileMainnet(delta: number) {}
+function addProfileMainnet(delta: number) {
+  // profile = Number(ethers.formatEther(await eth.getEthBalance()));
+  eth
+    .getEthBalance()
+    .then((balance) => {
+      profile = Number(ethers.formatEther(balance));
+    })
+    .catch((err) => {
+      logger.error(`Get ETH balance failed. ${err}`);
+    });
+}
 
-function subProfileMainnet(delta: number) {}
+function subProfileMainnet(delta: number) {
+  eth
+    .getEthBalance()
+    .then((balance) => {
+      profile = Number(ethers.formatEther(balance));
+    })
+    .catch((err) => {
+      logger.error(`Get ETH balance failed. ${err}`);
+    });
+}
 
 async function getBuyAmountTest(token: Token): Promise<bigint> {
   try {
@@ -578,6 +596,8 @@ async function sendPostRequestAndMeasureTime(
 const fetchBestProvider = fetchBestProviderByRandom;
 fetchBestProvider();
 setInterval(() => fetchBestProvider(), 3600000);
+
+let profile: number = await getInitProfileMamiNet();
 
 export default {
   canBuy,
