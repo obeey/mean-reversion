@@ -68,8 +68,8 @@ const MAX_HISTORY_PRICE_LEN = 100;
 const RECENT_HISTORY_PRICE_LEN = 16;
 const MA = 5;
 
-const INIT_PROFILE = 0.8;
-const TRADE_AMOUNT_MIN = 0.45;
+const INIT_PROFILE = 0.4;
+const TRADE_AMOUNT_MIN = 0.3;
 const POOL_ETH_MIN = 50;
 const RESERVE_PROFILE = 0.01;
 const TRADE_POOL_ETH_PERCENT = 0.01;
@@ -84,7 +84,7 @@ const KELLY_TOKEN_DEFAULT = 5;
 const BUY_DOWN_PERCENT = 0.2;
 const TOKEN_LARGE_LOSS = -0.1;
 
-const MAX_TRACE_TOKENS = 15;
+const MAX_TRACE_TOKENS = 10;
 
 const BIGINT_PRECISION = 1000000000000000n; // bigint division point precision.
 
