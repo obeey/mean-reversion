@@ -137,10 +137,13 @@ function updateHotTokens(page: number = 1) {
         }, delays++ * 1000)
       );
 
-      await Promise.all(promises);
-
-      if (hotTokens.length > constants.MAX_TRACE_TOKENS) {
-        /*
+      Promise.all(promises).finally(() =>
+        setTimeout(() => {
+          logger.info(
+            `Tokens have ${hotTokens.length} MAX ${constants.MAX_TRACE_TOKENS}`
+          );
+          if (hotTokens.length > constants.MAX_TRACE_TOKENS) {
+            /*
         const hotTokensTmp = await Promise.all(
           hotTokens.map(async (token) => {
             const poolEthValue = await eth.getPoolEth(token.address);
@@ -155,24 +158,28 @@ function updateHotTokens(page: number = 1) {
           .slice(0, constants.MAX_TRACE_TOKENS)
           .map(({ poolEthValue, ...token }) => token);
         */
-        hotTokens = hotTokens
-          .filter((t) => t.poolETH >= constants.POOL_ETH_MIN || t.buyAmount > 0)
-          .sort((a, b) => b.poolETH - a.poolETH + a.buyAmount)
-          .slice(0, constants.MAX_TRACE_TOKENS);
-      }
+            hotTokens = hotTokens
+              .filter(
+                (t) => t.poolETH >= constants.POOL_ETH_MIN || t.buyAmount > 0
+              )
+              .sort((a, b) => b.poolETH - a.poolETH + a.buyAmount)
+              .slice(0, constants.MAX_TRACE_TOKENS);
+          }
 
-      if (largeLossTokens.length > 0) {
-        logger.info(
-          "----------------------------- large loss tokens ----------------------------"
-        );
-        largeLossTokens.forEach((token) =>
-          logger.info(
-            `${token.name.padEnd(constants.SYMBAL_PAD + 8)} ${token.address} ${
-              token.profit
-            }`
-          )
-        );
-      }
+          if (largeLossTokens.length > 0) {
+            logger.info(
+              "----------------------------- large loss tokens ----------------------------"
+            );
+            largeLossTokens.forEach((token) =>
+              logger.info(
+                `${token.name.padEnd(constants.SYMBAL_PAD + 8)} ${
+                  token.address
+                } ${token.profit}`
+              )
+            );
+          }
+        }, 180000)
+      );
 
       /*
       hotTokens.filter(
