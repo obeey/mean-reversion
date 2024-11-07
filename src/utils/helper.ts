@@ -7,7 +7,7 @@ import eth from "./eth.js";
 import { ethers } from "ethers";
 import hottokens from "./hottokens.js";
 
-// let profile: number = constants.INIT_PROFILE;
+let profile: number = constants.INIT_PROFILE;
 
 function calcPrice(token: Token): boolean {
   const MA = constants.MA;
@@ -596,8 +596,6 @@ async function sendPostRequestAndMeasureTime(
 const fetchBestProvider = fetchBestProviderByRandom;
 fetchBestProvider();
 setInterval(() => fetchBestProvider(), 3600000);
-
-let profile: number = await getInitProfileMamiNet();
 
 export default {
   canBuy,
