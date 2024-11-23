@@ -129,8 +129,7 @@ function updateHotTokens(page: number = 1) {
             hotTokens.push(token);
 
             logger.info(
-              `${pool.symbol.padEnd(constants.SYMBAL_PAD + 8)} ${
-                pool.address
+              `${pool.symbol.padEnd(constants.SYMBAL_PAD + 8)} ${pool.address
               } ${ethAmount}`
             );
           }
@@ -162,7 +161,7 @@ function updateHotTokens(page: number = 1) {
               .filter(
                 (t) => t.poolETH >= constants.POOL_ETH_MIN || t.buyAmount > 0
               )
-              .sort((a, b) => b.poolETH - a.poolETH + a.buyAmount)
+              .sort((a, b) => a.poolETH - b.poolETH + a.buyAmount)
               .slice(0, constants.MAX_TRACE_TOKENS);
           }
 
@@ -172,8 +171,7 @@ function updateHotTokens(page: number = 1) {
             );
             largeLossTokens.forEach((token) =>
               logger.info(
-                `${token.name.padEnd(constants.SYMBAL_PAD + 8)} ${
-                  token.address
+                `${token.name.padEnd(constants.SYMBAL_PAD + 8)} ${token.address
                 } ${token.profit}`
               )
             );
