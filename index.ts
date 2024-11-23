@@ -123,6 +123,18 @@ function main() {
               token.buyPriceNum++;
               // startSkip = 10;
 
+              if (
+                !Number.isNaN(token.highPrice) &&
+                token.highPrice < curPrice
+              ) {
+                token.highPrice = curPrice;
+              }
+
+              token.historyPrice.push(curPrice);
+              if (token.historyPrice.length > constants.MAX_HISTORY_PRICE_LEN) {
+                token.historyPrice.shift();
+              }
+
               let highPrice = Math.max(...token.historyPrice);
               /*
               let prevPrice = token.historyPrice[token.historyPrice.length - 1];
@@ -148,17 +160,6 @@ function main() {
                 } \x1b[0m`
               );
 
-              if (
-                !Number.isNaN(token.highPrice) &&
-                token.highPrice < curPrice
-              ) {
-                token.highPrice = curPrice;
-              }
-
-              token.historyPrice.push(curPrice);
-              if (token.historyPrice.length > constants.MAX_HISTORY_PRICE_LEN) {
-                token.historyPrice.shift();
-              }
               if (!helpers.calcPrice(token)) {
                 return;
               }
