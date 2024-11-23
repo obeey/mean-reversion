@@ -202,7 +202,7 @@ function canSell(token: Token): boolean {
   // const highPrice = token.highPrice;
   // const buyTimestamp = token.buyTimestamp;
 
-  const profitPercentThrehold = mapValue(50, 0.2, 2000, 0.1, token.poolETH);
+  const profitPercentThrehold = mapValue(50, 0.16, 2000, 0.08, token.poolETH);
   const newestPrice = historyPrice[historyPrice.length - 1];
   const profilePercent = (newestPrice - buyPrice) / buyPrice;
 
