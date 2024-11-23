@@ -123,13 +123,16 @@ function main() {
               token.buyPriceNum++;
               // startSkip = 10;
 
+              let highPrice = Math.max(...token.historyPrice);
+              /*
               let prevPrice = token.historyPrice[token.historyPrice.length - 1];
               if (curPrice == prevPrice) {
                 prevPrice = token.historyPrice[token.historyPrice.length - 2];
               }
+              */
 
               const downPercent: number =
-                ((curPrice - prevPrice) / prevPrice) * 100;
+                ((curPrice - highPrice) / highPrice) * 100;
               // const tradeProfilePercent: Number = ((curPrice - token.buyPrice) / token.buyPrice) * 100;
 
               const buyAmount = await helpers.getBuyAmount(token);
