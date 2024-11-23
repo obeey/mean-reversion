@@ -68,7 +68,7 @@ const MAX_HISTORY_PRICE_LEN = 100;
 const RECENT_HISTORY_PRICE_LEN = 16;
 const MA = 5;
 
-const INIT_PROFILE = 0.4;
+const INIT_PROFILE = 0.14;
 const TRADE_AMOUNT_MIN = 0.3;
 const POOL_ETH_MIN = 50;
 const RESERVE_PROFILE = 0.01;

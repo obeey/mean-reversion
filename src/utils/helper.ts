@@ -106,23 +106,11 @@ function canBuy(token: Token): boolean {
   }
   */
 
+  /*
   const curDownPercent = token.pricePercent[token.pricePercent.length - 1];
   // 单区块下跌
   const downPercentThreshold = getDownThreshold(token.poolETH);
   if (curDownPercent + downPercentThreshold < 0) {
-    /*
-    if (curDownPercent + 2 * downPercentThrehold < 0) {
-      logger.warn(
-        `B current down too much ${(curDownPercent * 100).toFixed(
-          4
-        )}% Threshold -${(downPercentThrehold * 100).toFixed(4)}% for ${
-          token.name
-        }`
-      );
-      return false;
-    }
-    */
-
     logger.warn(
       `B current down ${(curDownPercent * 100).toFixed(4)}% Threshold -${(
         downPercentThreshold * 100
@@ -130,18 +118,18 @@ function canBuy(token: Token): boolean {
     );
     return true;
   }
+  */
 
   const newestPrice = token.historyPrice[token.historyPrice.length - 1];
-  /*
   const [highPriceRecent, downNum] = getHighPriceAndNum(token);
-  if (downNum > 2) {
+  if (downNum > 10) {
     const continuseDownPercentAvg =
       (highPriceRecent - newestPrice) / newestPrice / downNum;
     const continuseDownPercentThrehold = mapValue(
       50,
-      0.03,
+      0.1,
       2000,
-      0.01,
+      0.5,
       token.poolETH
     );
     logger.debug(
@@ -162,13 +150,16 @@ function canBuy(token: Token): boolean {
       return true;
     }
   }
-  */
 
+  /*
   const recentHistoryPrice = token.historyPrice.slice(
     -constants.RECENT_HISTORY_PRICE_LEN
   );
   const highPrice = Math.max(...recentHistoryPrice);
   const lowPrice = Math.min(...recentHistoryPrice);
+  */
+  const highPrice = Math.max(...token.historyPrice);
+  const lowPrice = Math.min(...token.historyPrice);
   const deltaPrice = highPrice - lowPrice;
   const downPercent = deltaPrice / highPrice;
   const curRaisePercent = (newestPrice - lowPrice) / lowPrice;
@@ -178,23 +169,26 @@ function canBuy(token: Token): boolean {
   const idx = token.pricePercentMa.length - 1;
   const lastMa = token.pricePercentMa[idx];
   logger.debug(
-    `B H ${highPrice} L ${lowPrice} -${(downPercent * 100).toFixed(4)}% U ${(
-      curDownPercent * 100
-    ).toFixed(4)}% MA ${lastMa} Threshold -${(
-      downPercentThreshold * 100
-    ).toFixed(4)}%`
+    `B H ${highPrice} L ${lowPrice} -${(downPercent * 100).toFixed(4)}% MA ${lastMa}`
   );
 
+  const downPercentThrehold = mapValue(
+    50,
+    0.2,
+    2000,
+    0.1,
+    token.poolETH
+  );
   //  1. 当前价格没有上涨太多；2. 价格下降幅度够大；3. 最后价格上涨或者平稳；
   if (
     newestPrice > lowPrice &&
     curRaisePercent < 0.01 &&
-    downPercent > constants.BUY_DOWN_PERCENT &&
+    downPercent > downPercentThrehold &&
     lastMa !== undefined &&
     lastMa > -0.01
   ) {
     logger.warn(
-      `B rebound. down -${(downPercent * 100).toFixed(4)}% last MA ${lastMa}`
+      `B rebound. down -${(downPercent * 100).toFixed(4)}% threshold -${(downPercentThrehold * 100).toFixed(4)}% last MA ${lastMa}`
     );
     return true;
   }
@@ -205,9 +199,20 @@ function canBuy(token: Token): boolean {
 function canSell(token: Token): boolean {
   const historyPrice = token.historyPrice;
   const buyPrice = token.buyPrice;
-  const highPrice = token.highPrice;
-  const buyTimestamp = token.buyTimestamp;
+  // const highPrice = token.highPrice;
+  // const buyTimestamp = token.buyTimestamp;
 
+  const newestPrice = historyPrice[historyPrice.length - 1];
+  const profilePercent = (newestPrice - buyPrice) / buyPrice;
+  if (profilePercent > constants.TAKE_PROFIT) {
+    logger.warn(
+      `S ${token.name} take profit: ${(profilePercent * 100).toFixed(4)}%`
+    );
+    return true;
+
+  }
+
+  /*
   const diffSeconds = (Date.now() - buyTimestamp) / 1000;
   if (diffSeconds < 12) {
     return false;
@@ -244,6 +249,8 @@ function canSell(token: Token): boolean {
       downPercentTotal * 100
     ).toFixed(4)}% Stop loss -${(stopLoss * 100).toFixed(4)}%`
   );
+  */
+
   /*
   const lowPriceTotal = Math.min(...historyPrice);
   const downPercentTotal = (highPriceTotal - lowPriceTotal) / highPriceTotal;
