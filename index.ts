@@ -51,21 +51,21 @@ function main() {
           .toFixed(5)
           .toString()
           .padEnd(constants.SYMBAL_PAD)} ${curProfile
-          .toFixed(5)
-          .toString()
-          .padEnd(constants.SYMBAL_PAD)} ${profile
-          .toFixed(5)
-          .toString()
-          .padEnd(
-            constants.SYMBAL_PAD
-          )} ${totalReturn}% W:${TRADE_WIN} C:${TRADE_COUNT} R:${(TRADE_COUNT ===
-        0
-          ? 0
-          : TRADE_WIN / TRADE_COUNT
-        ).toFixed(2)} ${(lossProfit == 0 || TRADE_WIN == 0
-          ? 0
-          : (winProfit * (TRADE_COUNT - TRADE_WIN)) / (lossProfit * TRADE_WIN)
-        ).toFixed(2)} \x1b[0m) ++++++++++++++++++++++++++++++++++++++`
+            .toFixed(5)
+            .toString()
+            .padEnd(constants.SYMBAL_PAD)} ${profile
+              .toFixed(5)
+              .toString()
+              .padEnd(
+                constants.SYMBAL_PAD
+              )} ${totalReturn}% W:${TRADE_WIN} C:${TRADE_COUNT} R:${(TRADE_COUNT ===
+                0
+                ? 0
+                : TRADE_WIN / TRADE_COUNT
+              ).toFixed(2)} ${(lossProfit == 0 || TRADE_WIN == 0
+                ? 0
+                : (winProfit * (TRADE_COUNT - TRADE_WIN)) / (lossProfit * TRADE_WIN)
+              ).toFixed(2)} \x1b[0m) ++++++++++++++++++++++++++++++++++++++`
       );
     }
 
@@ -76,33 +76,32 @@ function main() {
           ((curPrice - token.buyPrice) / token.buyPrice) * 100;
 
         logger.info(
-          `\x1b[34m ${token.name.padEnd(constants.SYMBAL_PAD + 8)} ${
-            token.address
+          `\x1b[34m ${token.name.padEnd(constants.SYMBAL_PAD + 8)} ${token.address
           } ${token.poolETH
             .toFixed(4)
             .padEnd(constants.SYMBAL_PAD)} ${token.historyPrice.length
-            .toString()
-            .padEnd(5)} ${token.tradeWin
-            .toString()
-            .padEnd(4)} ${token.tradeCount
-            .toString()
-            .padEnd(4)} ${(token.tradeCount === 0
-            ? 0
-            : token.tradeWin / token.tradeCount
-          )
-            .toFixed(2)
-            .toString()
-            .padEnd(5)} ${token.profit
-            .toFixed(4)
-            .toString()
-            .padEnd(constants.SYMBAL_PAD + 2)} ${token.buyEthCost
-            .toFixed(4)
-            .toString()
-            .padEnd(constants.SYMBAL_PAD + 2)} ${token.buyPrice
-            .toString()
-            .padEnd(constants.PRICE_PAD + 2)} ${tradeProfilePercent.toFixed(
-            4
-          )}% \x1b[0m`
+              .toString()
+              .padEnd(5)} ${token.tradeWin
+                .toString()
+                .padEnd(4)} ${token.tradeCount
+                  .toString()
+                  .padEnd(4)} ${(token.tradeCount === 0
+                    ? 0
+                    : token.tradeWin / token.tradeCount
+                  )
+                    .toFixed(2)
+                    .toString()
+                    .padEnd(5)} ${token.profit
+                      .toFixed(4)
+                      .toString()
+                      .padEnd(constants.SYMBAL_PAD + 2)} ${token.buyEthCost
+                        .toFixed(4)
+                        .toString()
+                        .padEnd(constants.SYMBAL_PAD + 2)} ${token.buyPrice
+                          .toString()
+                          .padEnd(constants.PRICE_PAD + 2)} ${tradeProfilePercent.toFixed(
+                            4
+                          )}% \x1b[0m`
         );
       }
 
@@ -136,15 +135,13 @@ function main() {
               const buyAmount = await helpers.getBuyAmount(token);
 
               logger.info(
-                `\x1b[35m ${token.name.padEnd(constants.SYMBAL_PAD)} ${
-                  token.address
+                `\x1b[35m ${token.name.padEnd(constants.SYMBAL_PAD)} ${token.address
                 } ${ethPrice
                   .toString()
                   .padEnd(constants.PRICE_PAD + 5)} ${downPercent
-                  .toFixed(4)
-                  .toString()
-                  .padStart(7)}% \t ${token.buyPending} \t ${
-                  token.sellPending
+                    .toFixed(4)
+                    .toString()
+                    .padStart(7)}% \t ${token.buyPending} \t ${token.sellPending
                 } \x1b[0m`
               );
 
@@ -179,7 +176,7 @@ function main() {
                       const returnProfile =
                         reserveETH -
                         (reserveETH * reserveToken) /
-                          (reserveToken + token.buyAmount * 0.997);
+                        (reserveToken + token.buyAmount * 0.997);
                       token.buyTimestamp = NaN;
                       token.buyAmount = 0;
                       token.buyPrice = NaN;
@@ -216,8 +213,7 @@ function main() {
                       logger.warn(
                         `\x1b[32m S ${token.name.padEnd(
                           constants.SYMBAL_PAD
-                        )} ${
-                          token.address
+                        )} ${token.address
                         } Return ${returnProfile} Profit ${profit} Price ${curPrice} GAS ${gasUsed}ETH \x1b[0m`
                       );
                     })
@@ -240,6 +236,7 @@ function main() {
                 buyAmount === 0n &&
                 helpers.canBuy(token)
               ) {
+                /*
                 if (
                   profile <
                   constants.RESERVE_PROFILE + constants.TRADE_AMOUNT_MIN
@@ -256,35 +253,28 @@ function main() {
                     : TRADE_WIN / TRADE_COUNT;
                 const bGlobal =
                   TRADE_COUNT < constants.KELLY_DEFAULT ||
-                  lossProfit == 0 ||
-                  winProfit == 0
+                    lossProfit == 0 ||
+                    winProfit == 0
                     ? helpers.getOdds()
                     : (winProfit * (TRADE_COUNT - TRADE_WIN)) /
-                      (lossProfit * TRADE_WIN);
+                    (lossProfit * TRADE_WIN);
                 const p =
                   token.tradeCount < constants.KELLY_TOKEN_DEFAULT
                     ? pGlobal
                     : token.tradeWin / token.tradeCount;
                 const b =
                   token.tradeCount < constants.KELLY_TOKEN_DEFAULT ||
-                  token.profitLoss == 0 ||
-                  token.profitWin == 0
+                    token.profitLoss == 0 ||
+                    token.profitWin == 0
                     ? bGlobal
                     : (token.profitWin * (token.tradeCount - token.tradeWin)) /
-                      (token.profitLoss * token.tradeWin);
+                    (token.profitLoss * token.tradeWin);
                 let kelly = helpers.getKelly(b, p);
 
                 if (kelly > 0.9) {
                   logger.info(`Kelly too high K ${kelly} b ${b} p ${p}`);
                   kelly = 0.9;
                 }
-
-                /*
-                if (kelly < 0.2) {
-                  logger.info(`Kelly too low K ${kelly} b ${b} p ${p}`);
-                  kelly = 0.2;
-                }
-                */
 
                 let buyEth = profile * kelly;
                 if (buyEth < constants.TRADE_AMOUNT_MIN) {
@@ -294,6 +284,7 @@ function main() {
                   // buyEth = constants.TRADE_AMOUNT_MIN;
                   return;
                 }
+
                 const nowProfile = await helpers.getProfile();
                 if (buyEth > nowProfile - constants.RESERVE_PROFILE) {
                   logger.warn(
@@ -303,7 +294,10 @@ function main() {
                   );
                   return;
                 }
+                */
 
+                const nowProfile = await helpers.getProfile();
+                let buyEth = nowProfile - constants.RESERVE_PROFILE;
                 const maxEthBuy = eth.getMaxTradeEth(token);
                 if (maxEthBuy < constants.TRADE_AMOUNT_MIN) {
                   logger.warn(
@@ -366,10 +360,13 @@ function main() {
                     logger.error(error);
                   });
 
+                // logger.warn(
+                //   `\x1b[31m B ${token.name.padEnd(constants.SYMBAL_PAD)} ${token.address
+                //   } ${buyEth} k ${kelly} b ${b} p ${p} ${curPrice} ETH\x1b[0m`
+                // );
                 logger.warn(
-                  `\x1b[31m B ${token.name.padEnd(constants.SYMBAL_PAD)} ${
-                    token.address
-                  } ${buyEth} k ${kelly} b ${b} p ${p} ${curPrice} ETH\x1b[0m`
+                  `\x1b[31m B ${token.name.padEnd(constants.SYMBAL_PAD)} ${token.address
+                  } ${buyEth} ${curPrice} ETH\x1b[0m`
                 );
               }
             }
