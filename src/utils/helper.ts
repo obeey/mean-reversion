@@ -168,7 +168,7 @@ function canBuy(token: Token): boolean {
 
   const idx = token.pricePercentMa.length - 1;
   const lastMa = token.pricePercentMa[idx];
-  const downPercentThrehold = mapValue(50, 0.2, 2000, 0.1, token.poolETH);
+  const downPercentThrehold = mapValue(50, 0.2, 1000, 0.1, token.poolETH);
   logger.debug(
     `B H ${highPrice} L ${lowPrice} -${(downPercent * 100).toFixed(
       4
@@ -202,7 +202,7 @@ function canSell(token: Token): boolean {
   // const highPrice = token.highPrice;
   // const buyTimestamp = token.buyTimestamp;
 
-  const profitPercentThrehold = mapValue(50, 0.16, 2000, 0.08, token.poolETH);
+  const profitPercentThrehold = mapValue(50, 0.16, 1000, 0.08, token.poolETH);
   const newestPrice = historyPrice[historyPrice.length - 1];
   const profilePercent = (newestPrice - buyPrice) / buyPrice;
 
