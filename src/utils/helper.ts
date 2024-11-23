@@ -269,7 +269,6 @@ function canSell(token: Token): boolean {
     );
     return true;
   }
-  */
 
   if (downPercentTotal > stopLoss) {
     logger.warn(
@@ -279,6 +278,7 @@ function canSell(token: Token): boolean {
     );
     return true;
   }
+  */
 
   /*
   const deltaPrice = highPrice - newestPrice;
