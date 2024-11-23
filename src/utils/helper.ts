@@ -129,7 +129,7 @@ function canBuy(token: Token): boolean {
       50,
       0.1,
       2000,
-      0.5,
+      0.05,
       token.poolETH
     );
     logger.debug(
@@ -168,10 +168,6 @@ function canBuy(token: Token): boolean {
 
   const idx = token.pricePercentMa.length - 1;
   const lastMa = token.pricePercentMa[idx];
-  logger.debug(
-    `B H ${highPrice} L ${lowPrice} -${(downPercent * 100).toFixed(4)}% MA ${lastMa}`
-  );
-
   const downPercentThrehold = mapValue(
     50,
     0.2,
@@ -179,10 +175,14 @@ function canBuy(token: Token): boolean {
     0.1,
     token.poolETH
   );
+  logger.debug(
+    `B H ${highPrice} L ${lowPrice} -${(downPercent * 100).toFixed(4)}% Threshold -${( downPercentThrehold * 100).toFixed(4)}% R ${(curRaisePercent*100).toFixed(4)}% MA ${lastMa}`
+  );
+
   //  1. 当前价格没有上涨太多；2. 价格下降幅度够大；3. 最后价格上涨或者平稳；
   if (
     newestPrice > lowPrice &&
-    curRaisePercent < 0.01 &&
+    curRaisePercent < 0.02 &&
     downPercent > downPercentThrehold &&
     lastMa !== undefined &&
     lastMa > -0.01

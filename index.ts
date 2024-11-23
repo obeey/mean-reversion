@@ -135,7 +135,7 @@ function main() {
                 token.historyPrice.shift();
               }
 
-              let highPrice = Math.max(...token.historyPrice);
+              // let highPrice = Math.max(...token.historyPrice);
               /*
               let prevPrice = token.historyPrice[token.historyPrice.length - 1];
               if (curPrice == prevPrice) {
@@ -143,8 +143,8 @@ function main() {
               }
               */
 
-              const downPercent: number =
-                ((curPrice - highPrice) / highPrice) * 100;
+              // const downPercent: number =
+              //   ((curPrice - highPrice) / highPrice) * 100;
               // const tradeProfilePercent: Number = ((curPrice - token.buyPrice) / token.buyPrice) * 100;
 
               const buyAmount = await helpers.getBuyAmount(token);
@@ -153,10 +153,7 @@ function main() {
                 `\x1b[35m ${token.name.padEnd(constants.SYMBAL_PAD)} ${token.address
                 } ${ethPrice
                   .toString()
-                  .padEnd(constants.PRICE_PAD + 5)} ${downPercent
-                    .toFixed(4)
-                    .toString()
-                    .padStart(7)}% \t ${token.buyPending} \t ${token.sellPending
+                  .padEnd(constants.PRICE_PAD + 5)} \t ${token.buyPending} \t ${token.sellPending
                 } \x1b[0m`
               );
 
