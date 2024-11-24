@@ -64,12 +64,16 @@ function updateHotTokens(page: number = 1) {
       let delays = 0;
       hotTokens.forEach((t) =>
         setTimeout(async () => {
-          const ethAmount = await eth.getPoolEth(t.address);
+          try {
+            const ethAmount = await eth.getPoolEth(t.address);
 
-          t.poolETH = ethAmount;
+            t.poolETH = ethAmount;
 
-          if (Number.isNaN(t.decimals)) {
-            t.decimals = await eth.getDecimals(constants.chainId, t.address);
+            if (Number.isNaN(t.decimals)) {
+              t.decimals = await eth.getDecimals(constants.chainId, t.address);
+            }
+          } catch (error) {
+            logger.error(error);
           }
         }, delays++ * 1000)
       );
@@ -80,59 +84,63 @@ function updateHotTokens(page: number = 1) {
       delays = 0;
       const promises = poolTokens.map(async (pool) =>
         setTimeout(async () => {
-          const ethAmount = await eth.getPoolEth(pool.address);
-          if (ethAmount.valueOf() > constants.POOL_ETH_MIN) {
-            if (
-              hotTokens.find((token) => token.name === pool.symbol) ||
-              largeLossTokens.find((token) => token.name === pool.symbol)
-            ) {
-              return;
-            }
+          try {
+            const ethAmount = await eth.getPoolEth(pool.address);
+            if (ethAmount.valueOf() > constants.POOL_ETH_MIN) {
+              if (
+                hotTokens.find((token) => token.name === pool.symbol) ||
+                largeLossTokens.find((token) => token.name === pool.symbol)
+              ) {
+                return;
+              }
 
-            const ts = await eth.getPairCreationTime(pool.address);
-            if (ts) {
-              logger.error(
-                `${pool.symbol} ${pool.address} Pair created at: ${new Date(
-                  ts * 1000
-                ).toISOString()} . Too young.`
+              const ts = await eth.getPairCreationTime(pool.address);
+              if (ts) {
+                logger.error(
+                  `${pool.symbol} ${pool.address} Pair created at: ${new Date(
+                    ts * 1000
+                  ).toISOString()} . Too young.`
+                );
+                return;
+              }
+
+              let token: Token = {
+                name: pool.symbol,
+                decimals: Number(
+                  await eth.getDecimals(constants.chainId, pool.address)
+                ),
+                poolETH: ethAmount,
+                poolContract: await eth.getPoolContract(pool.address),
+                buyTimestamp: NaN,
+                buyPriceNum: 0,
+                address: pool.address,
+                historyPrice: [],
+                pricePercent: [],
+                pricePercentMa: [],
+                buyPrice: NaN,
+                highPrice: NaN,
+                buyAmount: 0,
+                buyEthCost: 0,
+                buyGasUsed: 0,
+                sellGasUsed: 0,
+                sellPending: false,
+                buyPending: false,
+                profit: 0,
+                tradeWin: 0,
+                tradeCount: 0,
+                profitWin: 0,
+                profitLoss: 0,
+              };
+              hotTokens.push(token);
+
+              logger.info(
+                `${pool.symbol.padEnd(constants.SYMBAL_PAD + 8)} ${
+                  pool.address
+                } ${ethAmount}`
               );
-              return;
             }
-
-            let token: Token = {
-              name: pool.symbol,
-              decimals: Number(
-                await eth.getDecimals(constants.chainId, pool.address)
-              ),
-              poolETH: ethAmount,
-              poolContract: await eth.getPoolContract(pool.address),
-              buyTimestamp: NaN,
-              buyPriceNum: 0,
-              address: pool.address,
-              historyPrice: [],
-              pricePercent: [],
-              pricePercentMa: [],
-              buyPrice: NaN,
-              highPrice: NaN,
-              buyAmount: 0,
-              buyEthCost: 0,
-              buyGasUsed: 0,
-              sellGasUsed: 0,
-              sellPending: false,
-              buyPending: false,
-              profit: 0,
-              tradeWin: 0,
-              tradeCount: 0,
-              profitWin: 0,
-              profitLoss: 0,
-            };
-            hotTokens.push(token);
-
-            logger.info(
-              `${pool.symbol.padEnd(constants.SYMBAL_PAD + 8)} ${
-                pool.address
-              } ${ethAmount}`
-            );
+          } catch (error) {
+            logger.error(error);
           }
         }, delays++ * 1000)
       );
