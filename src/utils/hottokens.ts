@@ -129,7 +129,8 @@ function updateHotTokens(page: number = 1) {
             hotTokens.push(token);
 
             logger.info(
-              `${pool.symbol.padEnd(constants.SYMBAL_PAD + 8)} ${pool.address
+              `${pool.symbol.padEnd(constants.SYMBAL_PAD + 8)} ${
+                pool.address
               } ${ethAmount}`
             );
           }
@@ -171,7 +172,8 @@ function updateHotTokens(page: number = 1) {
             );
             largeLossTokens.forEach((token) =>
               logger.info(
-                `${token.name.padEnd(constants.SYMBAL_PAD + 8)} ${token.address
+                `${token.name.padEnd(constants.SYMBAL_PAD + 8)} ${
+                  token.address
                 } ${token.profit}`
               )
             );
@@ -220,10 +222,13 @@ function updateHotTokens(page: number = 1) {
 
 updateHotTokens(1);
 setInterval(() => updateHotTokens(1), 3600000);
+
+/*
 setTimeout(() => {
   updateHotTokens(2);
   setInterval(() => updateHotTokens(2), 3600000);
 }, 60000);
+*/
 
 function getHotTokens() {
   return hotTokens;
