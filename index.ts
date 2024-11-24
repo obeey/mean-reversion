@@ -150,17 +150,21 @@ function main() {
 
               const buyAmount = await helpers.getBuyAmount(token);
 
-              logger.info(
-                `\x1b[35m ${token.name.padEnd(constants.SYMBAL_PAD)} ${
-                  token.address
-                } ${ethPrice.toString().padEnd(constants.PRICE_PAD + 5)} \t ${
-                  token.buyPending
-                } \t ${token.sellPending} \x1b[0m`
-              );
-
               if (!helpers.calcPrice(token)) {
                 return;
               }
+
+              const curPercentPrice =
+                token.pricePercent[token.pricePercent.length - 1];
+              logger.info(
+                `\x1b[35m ${token.name.padEnd(constants.SYMBAL_PAD)} ${
+                  token.address
+                } ${ethPrice.toString().padEnd(constants.PRICE_PAD + 5)} \t ${(
+                  curPercentPrice * 100
+                ).toFixed(4)}% ${token.buyPending} \t ${
+                  token.sellPending
+                } \x1b[0m`
+              );
 
               if (!token.sellPending && buyAmount > 0) {
                 if (helpers.canSell(token)) {
