@@ -64,7 +64,7 @@ function getWallet() {
 const SYMBAL_PAD = 10;
 const PRICE_PAD = 20;
 
-const MAX_HISTORY_PRICE_LEN = 1000;
+const MAX_HISTORY_PRICE_LEN = 500;
 const RECENT_HISTORY_PRICE_LEN = 16;
 const MA = 5;
 
