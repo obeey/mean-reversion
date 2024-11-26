@@ -33,9 +33,12 @@ function updateHotTokens(page: number = 1) {
     .request(options)
     .then(async function (response: AxiosResponse) {
       // 亏损太多的暂时删除
+      /*
       largeLossTokens = largeLossTokens.concat(
         hotTokens.filter((token) => token.profit <= constants.TOKEN_LARGE_LOSS)
       );
+      */
+
       hotTokens = hotTokens.filter(
         (token) => token.poolETH > constants.POOL_ETH_MIN || token.buyAmount > 0
       );
@@ -88,8 +91,8 @@ function updateHotTokens(page: number = 1) {
             const ethAmount = await eth.getPoolEth(pool.address);
             if (ethAmount.valueOf() > constants.POOL_ETH_MIN) {
               if (
-                hotTokens.find((token) => token.name === pool.symbol) ||
-                largeLossTokens.find((token) => token.name === pool.symbol)
+                hotTokens.find((token) => token.name === pool.symbol)
+                //  || largeLossTokens.find((token) => token.name === pool.symbol)
               ) {
                 return;
               }
@@ -170,10 +173,11 @@ function updateHotTokens(page: number = 1) {
               .filter(
                 (t) => t.poolETH >= constants.POOL_ETH_MIN || t.buyAmount > 0
               )
-              .sort((a, b) => a.poolETH - b.poolETH + a.buyAmount)
+              .sort((a, b) => a.poolETH - b.poolETH + a.buyAmount * 1000000000)
               .slice(0, constants.MAX_TRACE_TOKENS);
           }
 
+          /*
           if (largeLossTokens.length > 0) {
             logger.info(
               "----------------------------- large loss tokens ----------------------------"
@@ -186,6 +190,7 @@ function updateHotTokens(page: number = 1) {
               )
             );
           }
+      */
         }, 180000)
       );
 
