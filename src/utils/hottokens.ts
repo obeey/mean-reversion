@@ -81,6 +81,7 @@ function updateHotTokens(page: number = 1) {
         }, delays++ * 1000)
       );
 
+      let newTokens: Token[] = [];
       logger.info(
         "------------------------------------ hot tokens ------------------------------------"
       );
@@ -134,7 +135,8 @@ function updateHotTokens(page: number = 1) {
                 profitWin: 0,
                 profitLoss: 0,
               };
-              hotTokens.push(token);
+              // hotTokens.push(token);
+              newTokens.push(token);
 
               logger.info(
                 `${pool.symbol.padEnd(constants.SYMBAL_PAD + 8)} ${
@@ -151,30 +153,38 @@ function updateHotTokens(page: number = 1) {
       Promise.all(promises).finally(() =>
         setTimeout(() => {
           logger.info(
-            `Tokens have ${hotTokens.length} MAX ${constants.MAX_TRACE_TOKENS}`
+            `Tokens have ${hotTokens.length} new tokens ${newTokens.length} MAX ${constants.MAX_TRACE_TOKENS}`
           );
-          if (hotTokens.length > constants.MAX_TRACE_TOKENS) {
-            /*
-        const hotTokensTmp = await Promise.all(
-          hotTokens.map(async (token) => {
-            const poolEthValue = await eth.getPoolEth(token.address);
-            return { ...token, poolEthValue: poolEthValue.valueOf() };
-          })
-        );
 
-        // 按照 pool 中的 ETH 倒序，也就是 ETH 最多的 pool 踢出去
-        hotTokens = hotTokensTmp
-          .filter((t) => t.poolEthValue >= constants.POOL_ETH_MIN)
-          .sort((a, b) => b.poolEthValue - a.poolEthValue)
-          .slice(0, constants.MAX_TRACE_TOKENS)
-          .map(({ poolEthValue, ...token }) => token);
-        */
-            hotTokens = hotTokens
-              .filter(
-                (t) => t.poolETH >= constants.POOL_ETH_MIN || t.buyAmount > 0
-              )
-              .sort((a, b) => a.poolETH - b.poolETH + a.buyAmount * 1000000000)
-              .slice(0, constants.MAX_TRACE_TOKENS);
+          const totalTokens = hotTokens.length + newTokens.length;
+          if (totalTokens <= constants.MAX_TRACE_TOKENS) {
+            hotTokens = hotTokens.concat(newTokens);
+            return;
+          }
+
+          const tokensToRemove = totalTokens - constants.MAX_TRACE_TOKENS;
+
+          // 计算需要移除的元素数量
+          let removedCount = 0;
+
+          // 从后往前遍历 hotTokens
+          for (let i = hotTokens.length - 1; i >= 0; i--) {
+            if (removedCount >= tokensToRemove) {
+              break; // 如果已经移除足够的元素，停止
+            }
+
+            // 检查 buyAmount 字段
+            const token = hotTokens[i];
+            if (token.buyAmount > 0) {
+              continue; // 如果 buyAmount 大于 0，跳过当前元素
+            }
+
+            logger.info(
+              `${token.name} \t\t ${token.address} ${token.profit} Removed`
+            );
+
+            hotTokens.splice(i, 1); // 移除当前元素
+            removedCount++;
           }
 
           /*
