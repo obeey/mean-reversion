@@ -82,6 +82,7 @@ function updateHotTokens(page: number = 1) {
       );
 
       let newTokens: Token[] = [];
+      let doubleTokens: Token[] = [];
       logger.info(
         "------------------------------------ hot tokens ------------------------------------"
       );
@@ -91,11 +92,13 @@ function updateHotTokens(page: number = 1) {
           try {
             const ethAmount = await eth.getPoolEth(pool.address);
             if (ethAmount.valueOf() > constants.POOL_ETH_MIN) {
-              if (
-                hotTokens.find((token) => token.name === pool.symbol)
-                //  || largeLossTokens.find((token) => token.name === pool.symbol)
-              ) {
-                return;
+              for (let i = hotTokens.length - 1; i >= 0; i--) {
+                const token = hotTokens[i];
+                if (token.name === pool.symbol) {
+                  doubleTokens.push(token); // 将符合条件的 token 加入 doubleTokens
+                  hotTokens.splice(i, 1); // 从 hotTokens 中删除该 token
+                  return;
+                }
               }
 
               const ts = await eth.getPairCreationTime(pool.address);
@@ -153,12 +156,15 @@ function updateHotTokens(page: number = 1) {
       Promise.all(promises).finally(() =>
         setTimeout(() => {
           logger.info(
-            `Tokens have ${hotTokens.length} new tokens ${newTokens.length} MAX ${constants.MAX_TRACE_TOKENS}`
+            `Tokens have ${hotTokens.length} double hit ${doubleTokens.length} new tokens ${newTokens.length} MAX ${constants.MAX_TRACE_TOKENS}`
           );
+
+          // put double hit tokens to the front
+          hotTokens = doubleTokens.concat(hotTokens);
 
           const totalTokens = hotTokens.length + newTokens.length;
           if (totalTokens <= constants.MAX_TRACE_TOKENS) {
-            hotTokens = hotTokens.concat(newTokens);
+            hotTokens = newTokens.concat(hotTokens);
             return;
           }
 
@@ -187,20 +193,7 @@ function updateHotTokens(page: number = 1) {
             removedCount++;
           }
 
-          /*
-          if (largeLossTokens.length > 0) {
-            logger.info(
-              "----------------------------- large loss tokens ----------------------------"
-            );
-            largeLossTokens.forEach((token) =>
-              logger.info(
-                `${token.name.padEnd(constants.SYMBAL_PAD + 8)} ${
-                  token.address
-                } ${token.profit}`
-              )
-            );
-          }
-      */
+          hotTokens = newTokens.concat(hotTokens);
         }, 180000)
       );
 
