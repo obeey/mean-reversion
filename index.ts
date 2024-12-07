@@ -148,8 +148,6 @@ function main() {
               //   ((curPrice - highPrice) / highPrice) * 100;
               // const tradeProfilePercent: Number = ((curPrice - token.buyPrice) / token.buyPrice) * 100;
 
-              const buyAmount = await helpers.getBuyAmount(token);
-
               if (!helpers.calcPrice(token)) {
                 return;
               }
@@ -165,6 +163,17 @@ function main() {
                   token.sellPending
                 } \x1b[0m`
               );
+
+              const buyAmount = await helpers.getBuyAmount(token);
+              if (buyAmount === 0n && token.buyAmount !== 0) {
+                logger.warn(
+                  `\x1b[31m ${token.name.padEnd(constants.SYMBAL_PAD)} ${
+                    token.address
+                  } set buy amount( ${token.buyAmount} ) to 0 \x1b[0m`
+                );
+
+                token.buyAmount = 0;
+              }
 
               if (!token.sellPending && buyAmount > 0) {
                 if (helpers.canSell(token)) {
