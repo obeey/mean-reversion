@@ -7,7 +7,8 @@ import eth from "./eth.js";
 import { ethers } from "ethers";
 import hottokens from "./hottokens.js";
 
-let profile: number = constants.INIT_PROFILE;
+// let profile: number = constants.INIT_PROFILE;
+let profile: number = await getInitProfileMamiNet();
 
 function calcPrice(token: Token): boolean {
   const MA = constants.MA;
