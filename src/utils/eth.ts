@@ -700,10 +700,10 @@ async function tradetest() {
 
 export default {
   getPrice: getRealPrice,
-  // buyToken: buyTokenMainnet,
-  // sellToken: sellTokenMainnet,
-  buyToken: buyTokenTest,
-  sellToken: sellTokenTest,
+  buyToken: buyTokenMainnet,
+  sellToken: sellTokenMainnet,
+  // buyToken: buyTokenTest,
+  // sellToken: sellTokenTest,
   getEthBalance,
   getErc20Balanceof,
   getPoolEthWei,
